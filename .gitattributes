@@ -1,0 +1,8 @@
+[attr]source text eol=lf
+
+*.java source
+*.xml source
+*.md source
+
+*.puml source linguist-detectable
+*.svg source linguist-generated

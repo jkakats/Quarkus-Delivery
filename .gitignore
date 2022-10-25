@@ -1,11 +1,76 @@
+## Java
+*.class
+*.[jw]ar
+*.log
+*.zip
+*.tar
+*.tar.*
+
+## Maven
 target/
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+buildNumber.properties
+release.properties
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
-release.properties
 dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
-.mvn/wrapper/maven-wrapper.jar
+
+## IntelliJ
+.idea/*
+out/
+*.iws
+*.iml
+*.ipr
+
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/externalDependencies.xml
+!.idea/findbugs-idea.xml
+!.idea/checkstyle-idea.xml
+!.idea/google-java-format.xml
+!.idea/vcs.xml
+
+## VSCode
+.vscode/
+.history/
+.history
+.ionide
+
+## Eclipse
+bin/
+tmp/
+.settings/
+.externalToolBuilders/
+.recommenders/
+.apt_generated/
+.apt_generated_test/
+local.properties
+*.tmp
+*.bak
+*.swp
+*~.nib
+*.launch
+.loadpath
+.recommenders
+.project
+.classpath
+.metadata
+.factorypath
+
+## Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+Sessionx.vim
+.netrwhist
+*~
+tags
+[._]*.un~
+.nvimrc
+.exrc

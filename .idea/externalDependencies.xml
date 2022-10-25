@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="CheckStyle-IDEA" />
+    <plugin id="Coverage" />
+    <plugin id="GenerateSerialVersionUID" />
+    <plugin id="JUnit" />
+    <plugin id="PlantUML integration" />
+    <plugin id="ch.raffael.mddoclet.integrations.idea.MarkdownDocletIdea" />
+    <plugin id="com.github.lppedd.idea-conventional-commit" />
+    <plugin id="com.intellij.hibernate" />
+    <plugin id="com.intellij.quarkus" />
+    <plugin id="com.jetbrains.restClient" />
+    <plugin id="com.jetbrains.restWebServices" />
+    <plugin id="google-java-format" />
+    <plugin id="lermitage.intellij.iconviewer" />
+    <plugin id="mobi.hsz.idea.gitignore" />
+    <plugin id="org.intellij.plugins.markdown" />
+    <plugin id="org.jetbrains.idea.maven" />
+    <plugin id="org.jetbrains.plugins.spotbugs" />
+  </component>
+</project>
