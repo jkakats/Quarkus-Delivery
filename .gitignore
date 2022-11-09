@@ -33,6 +33,10 @@ out/
 !.idea/google-java-format.xml
 !.idea/vcs.xml
 
+## H2
+*.mv.db
+*.trace.db
+
 ## VSCode
 .vscode/
 .history/
