@@ -6,8 +6,8 @@
     <plugin id="GenerateSerialVersionUID" />
     <plugin id="JUnit" />
     <plugin id="PlantUML integration" />
-    <plugin id="ch.raffael.mddoclet.integrations.idea.MarkdownDocletIdea" />
     <plugin id="com.github.lppedd.idea-conventional-commit" />
+    <plugin id="com.intellij.beanValidation" />
     <plugin id="com.intellij.hibernate" />
     <plugin id="com.intellij.quarkus" />
     <plugin id="com.jetbrains.restClient" />
