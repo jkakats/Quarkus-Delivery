@@ -15,7 +15,7 @@ jobs:
       - name: Convert diagrams to SVG
         uses: Timmy/plantuml-action@v1
         with:
-          version: 1.2022.7
+          version: 1.2022.12
           args: -nometadata -tsvg docs/uml/*.puml
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v4

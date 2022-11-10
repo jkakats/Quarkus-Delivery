@@ -14,7 +14,6 @@ class Store {
 }
 
 class Order {
-  id : string
   cost : decimal
   confirmed : boolean
   delivered : boolean
@@ -37,14 +36,13 @@ class Product {
 class Client {
   username : string
   password : Password
-  email : Email
+  email : EmailAddress
   name : string
-  phone : Phone
+  phone : PhoneNumber
 }
 
 class Address {
-  streetName : string
-  streetNumber : string
+  street : string
   apartment : string
 }
 
@@ -70,34 +68,33 @@ together {
     password : string
   }
 
-  class Email <<value>> {
+  class EmailAddress <<value>> {
     email : string
   }
 
-  class Phone <<value>> {
-    phone : string
+  class PhoneNumber <<value>> {
+    number : string
   }
 }
 
-Password -down[hidden]- Email
-Email -down[hidden]- Phone
+Password -down[hidden]- EmailAddress
+EmailAddress -down[hidden]- PhoneNumber
 
 Review <|-- OrderReview
 Review <|-- ProductReview
 
 Client "1" -left- "*" Order
-Client "\n\t\t~*" *-- "1 " Address
+Client "~*   " *-- "1" Address
 
-Order "~* " -- "1 " Store
-Order "*" o-- "1..* " Product
+Order "\n\n~*" -- "1" Store
+Order "*" o-- "1..*" Product
 (Order, Product) .. OrderProduct
 
-Store "~*  " -- " 1..*" Area
-Store "1 " o-- "1..*" Product
+Store "~*    " -- "1..*" Area
 
-Address "~* " o-- "1 " Area
+Address "*" o-- "1   " Area
 
-Order "\n\n\n*" -- "1" OrderReview
-OrderReview "1  " *-- "~*  " ProductReview
-ProductReview "*" o-left- "1" Product
+Order "1" -- "1" OrderReview
+OrderReview "1" *-- "*" ProductReview
+ProductReview "1    " -up- "1" OrderProduct
 @enduml
