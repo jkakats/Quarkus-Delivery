@@ -1,5 +1,6 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
+import gr.aueb.mscis.softeng.team6.delivery.validation.Phone;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @Embeddable
 public class PhoneNumber implements Serializable {
   /** Phone number field. */
+  @Phone
   @NotNull
   @NotBlank
   @Column(name = "phone_number", nullable = false, length = 20)
