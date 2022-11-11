@@ -9,6 +9,7 @@
     <plugin id="com.github.lppedd.idea-conventional-commit" />
     <plugin id="com.intellij.beanValidation" />
     <plugin id="com.intellij.hibernate" />
+    <plugin id="com.intellij.javaee.el" />
     <plugin id="com.intellij.quarkus" />
     <plugin id="com.jetbrains.restClient" />
     <plugin id="com.jetbrains.restWebServices" />
