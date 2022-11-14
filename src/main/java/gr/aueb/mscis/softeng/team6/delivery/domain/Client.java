@@ -1,0 +1,126 @@
+package gr.aueb.mscis.softeng.team6.delivery.domain;
+
+import static jakarta.persistence.GenerationType.IDENTITY;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import java.io.Serializable;
+import org.hibernate.validator.constraints.Length;
+
+/**
+ * Client entity.
+ *
+ * @since 0.1.0
+ */
+@Entity
+@Table(
+    name = "client",
+    uniqueConstraints = {
+      @UniqueConstraint(
+          name = "UK_username",
+          columnNames = {"username"})
+    })
+public class Client implements Serializable {
+  /** Auto-generated ID field. */
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
+  private Long id;
+
+  /** Username field. */
+  @NotNull
+  @Length(min = 1, max = 20)
+  @Pattern(regexp = "[a-zA-Z0-9_-]+")
+  @Column(length = 20)
+  private String username;
+
+  /** Real name field. */
+  @NotNull @NotBlank private String name;
+
+  /** Password field. */
+  @Embedded @Valid private Password password;
+
+  /** Email address field. */
+  @Embedded @Valid private EmailAddress email;
+
+  /** Phone number field. */
+  @Embedded @Valid private PhoneNumber phone;
+
+  // TODO(axill12): add address field
+
+  // TODO(ObserverOfTime): add orders field
+
+  public Long getId() {
+    return id;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public Client setUsername(String username) {
+    this.username = username;
+    return this;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public Client setName(String name) {
+    this.name = name;
+    return this;
+  }
+
+  public Password getPassword() {
+    return password;
+  }
+
+  public Client setPassword(Password password) {
+    this.password = password;
+    return this;
+  }
+
+  public EmailAddress getEmail() {
+    return email;
+  }
+
+  public Client setEmail(EmailAddress email) {
+    this.email = email;
+    return this;
+  }
+
+  public PhoneNumber getPhone() {
+    return phone;
+  }
+
+  public Client setPhone(PhoneNumber phone) {
+    this.phone = phone;
+    return this;
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    return this == that || (that instanceof Client other && username.equals(other.username));
+  }
+
+  @Override
+  public int hashCode() {
+    return username.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "Client{username=\"%s\", name=\"%s\", email=\"%s\", phone=\"%s\"}",
+        username, name, email, phone);
+  }
+}
