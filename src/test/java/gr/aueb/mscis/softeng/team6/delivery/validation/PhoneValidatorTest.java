@@ -1,11 +1,16 @@
 package gr.aueb.mscis.softeng.team6.delivery.validation;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(SoftAssertionsExtension.class)
 class PhoneValidatorTest {
+  @InjectSoftAssertions private SoftAssertions softly;
+
   private PhoneValidator validator;
 
   @BeforeEach
@@ -16,23 +21,23 @@ class PhoneValidatorTest {
 
   @Test
   void testValidateMobile() {
-    assertThat(validator.isValid("6946006665", null)).isTrue();
-    assertThat(validator.isValid("+30 6946006665", null)).isTrue();
-    assertThat(validator.isValid("94278853", null)).isFalse();
-    assertThat(validator.isValid("+357 94278853", null)).isFalse();
+    softly.assertThat(validator.isValid("6946006665", null)).isTrue();
+    softly.assertThat(validator.isValid("+30 6946006665", null)).isTrue();
+    softly.assertThat(validator.isValid("94278853", null)).isFalse();
+    softly.assertThat(validator.isValid("+357 94278853", null)).isFalse();
   }
 
   @Test
   void testValidateLandline() {
-    assertThat(validator.isValid("2106801900", null)).isTrue();
-    assertThat(validator.isValid("+30 2106801900", null)).isTrue();
-    assertThat(validator.isValid("22628188", null)).isFalse();
-    assertThat(validator.isValid("+357 22628188", null)).isFalse();
+    softly.assertThat(validator.isValid("2106801900", null)).isTrue();
+    softly.assertThat(validator.isValid("+30 2106801900", null)).isTrue();
+    softly.assertThat(validator.isValid("22628188", null)).isFalse();
+    softly.assertThat(validator.isValid("+357 22628188", null)).isFalse();
   }
 
   @Test
   void testValidateNaN() {
-    assertThat(validator.isValid("", null)).isFalse();
-    assertThat(validator.isValid("NaN", null)).isFalse();
+    softly.assertThat(validator.isValid("", null)).isFalse();
+    softly.assertThat(validator.isValid("NaN", null)).isFalse();
   }
 }

@@ -2,6 +2,7 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 class PasswordTest {
@@ -18,7 +19,9 @@ class PasswordTest {
   void testVerify() {
     var password = new Password().setPassword(TEST_PASSWORD);
     password.hash();
-    assertThat(password.verify(TEST_PASSWORD)).isTrue();
-    assertThat(password.verify("otherpassword")).isFalse();
+    var softly = new SoftAssertions();
+    softly.assertThat(password.verify(TEST_PASSWORD)).isTrue();
+    softly.assertThat(password.verify("otherpassword")).isFalse();
+    softly.assertAll();
   }
 }

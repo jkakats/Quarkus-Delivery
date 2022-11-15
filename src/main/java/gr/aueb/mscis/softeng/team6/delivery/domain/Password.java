@@ -52,7 +52,7 @@ public class Password implements Serializable {
    * Verify that the given password matches the stored hash.
    *
    * @param password the input password.
-   * @return <code>true</code> if the password was verified.
+   * @return {@code true} if the password was verified.
    * @see Argon2#verify(String, byte[])
    */
   public boolean verify(String password) {

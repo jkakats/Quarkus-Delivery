@@ -13,11 +13,12 @@ class EntityManagerUtilTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   void testRunTransaction() {
     EntityManagerUtil.runTransaction(
         em -> {
           var query = em.createNativeQuery("SHOW TABLES");
-          assertThat(query.getResultList()).isEmpty();
+          assertThat(query.getResultList()).isNotEmpty();
         });
   }
 }

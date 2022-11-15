@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import gr.aueb.mscis.softeng.team6.delivery.util.EntityManagerUtil;
 import jakarta.validation.ConstraintViolationException;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -38,9 +39,11 @@ class ClientTest {
     EntityManagerUtil.runTransaction(
         tx -> {
           tx.persist(client);
-          assertThat(client.getId()).isNotNull();
-          assertThat(client.getPassword().toString()).isNotEqualTo(TEST_PASSWORD);
-          assertThat(client.getPassword().verify(TEST_PASSWORD)).isTrue();
+          var softly = new SoftAssertions();
+          softly.assertThat(client.getId()).isNotNull();
+          softly.assertThat(client.getPassword().getPassword()).isNotEqualTo(TEST_PASSWORD);
+          softly.assertThat(client.getPassword().verify(TEST_PASSWORD)).isTrue();
+          softly.assertAll();
         });
   }
 
@@ -50,10 +53,12 @@ class ClientTest {
     EntityManagerUtil.runTransaction(
         tx -> {
           var client = tx.createQuery("from Client", Client.class).getResultList().get(0);
-          assertThat(client.getUsername()).isEqualTo(TEST_USERNAME);
-          assertThat(client.getName()).isEqualTo(TEST_NAME);
-          assertThat(client.getEmail().toString()).isEqualTo(TEST_EMAIL);
-          assertThat(client.getPhone().toString()).isEqualTo(TEST_PHONE_NUMBER);
+          var softly = new SoftAssertions();
+          softly.assertThat(client.getUsername()).isEqualTo(TEST_USERNAME);
+          softly.assertThat(client.getName()).isEqualTo(TEST_NAME);
+          softly.assertThat(client.getEmail().toString()).isEqualTo(TEST_EMAIL);
+          softly.assertThat(client.getPhone().toString()).isEqualTo(TEST_PHONE_NUMBER);
+          softly.assertAll();
           tx.createQuery("delete Client").executeUpdate();
         });
   }
