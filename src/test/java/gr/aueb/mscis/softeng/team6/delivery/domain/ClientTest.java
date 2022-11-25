@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import gr.aueb.mscis.softeng.team6.delivery.util.EntityManagerUtil;
 import jakarta.validation.ConstraintViolationException;
+import java.util.Collections;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -14,11 +15,11 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(OrderAnnotation.class)
 class ClientTest {
-  public static final String TEST_USERNAME = "johndoe";
-  public static final String TEST_NAME = "John Doe";
-  public static final String TEST_EMAIL = "john@doe.com";
-  public static final String TEST_PASSWORD = "j0hnd0e!";
-  public static final String TEST_PHONE_NUMBER = "6987654321";
+  private static final String TEST_USERNAME = "johndoe";
+  private static final String TEST_NAME = "John Doe";
+  private static final String TEST_EMAIL = "john@doe.com";
+  private static final String TEST_PASSWORD = "j0hnd0e!";
+  private static final String TEST_PHONE_NUMBER = "6987654321";
 
   private Client client;
 
@@ -37,8 +38,8 @@ class ClientTest {
   @Order(1)
   void testPersist() {
     EntityManagerUtil.runTransaction(
-        tx -> {
-          tx.persist(client);
+        em -> {
+          em.persist(client);
           var softly = new SoftAssertions();
           softly.assertThat(client.getId()).isNotNull();
           softly.assertThat(client.getPassword().getPassword()).isNotEqualTo(TEST_PASSWORD);
@@ -51,74 +52,33 @@ class ClientTest {
   @Order(2)
   void testQuery() {
     EntityManagerUtil.runTransaction(
-        tx -> {
-          var client = tx.createQuery("from Client", Client.class).getResultList().get(0);
-          var softly = new SoftAssertions();
-          softly.assertThat(client.getUsername()).isEqualTo(TEST_USERNAME);
-          softly.assertThat(client.getName()).isEqualTo(TEST_NAME);
-          softly.assertThat(client.getEmail().toString()).isEqualTo(TEST_EMAIL);
-          softly.assertThat(client.getPhone().toString()).isEqualTo(TEST_PHONE_NUMBER);
-          softly.assertAll();
-          tx.createQuery("delete Client").executeUpdate();
-        });
-  }
-
-  @Test
-  void testUsernamePattern() {
-    EntityManagerUtil.runTransaction(
-        tx -> {
-          assertThatExceptionOfType(ConstraintViolationException.class)
-              .isThrownBy(() -> tx.persist(client.setUsername("???")))
-              .withMessageContaining("must match");
-        });
-  }
-
-  @Test
-  void testUsernameLength() {
-    EntityManagerUtil.runTransaction(
-        tx -> {
-          assertThatExceptionOfType(ConstraintViolationException.class)
-              .isThrownBy(() -> tx.persist(client.setUsername("thisusernameiswaytoolong")))
-              .withMessageContaining("length must be");
-        });
-  }
-
-  @Test
-  void testNameNotBlank() {
-    EntityManagerUtil.runTransaction(
-        tx -> {
-          assertThatExceptionOfType(ConstraintViolationException.class)
-              .isThrownBy(() -> tx.persist(client.setName("")))
-              .withMessageContaining("must not be blank");
+        em -> {
+          var client = em.createQuery("from Client", Client.class).getResultList().get(0);
+          assertThat(client)
+              .returns(TEST_USERNAME, Client::getUsername)
+              .returns(TEST_NAME, Client::getName)
+              .returns(TEST_EMAIL, c -> c.getEmail().toString())
+              .returns(TEST_PHONE_NUMBER, c -> c.getPhone().toString());
+          em.remove(client);
         });
   }
 
   @Test
   void testPasswordLength() {
     EntityManagerUtil.runTransaction(
-        tx -> {
+        em -> {
           assertThatExceptionOfType(ConstraintViolationException.class)
-              .isThrownBy(() -> tx.persist(client.setPassword(new Password("short"))))
+              .isThrownBy(() -> em.persist(client.setPassword(new Password("short"))))
               .withMessageContaining("length must be");
-        });
-  }
-
-  @Test
-  void testEmailValid() {
-    EntityManagerUtil.runTransaction(
-        tx -> {
-          assertThatExceptionOfType(ConstraintViolationException.class)
-              .isThrownBy(() -> tx.persist(client.setEmail(new EmailAddress("invalid"))))
-              .withMessageContaining("must be a well-formed email address");
         });
   }
 
   @Test
   void testPhoneValid() {
     EntityManagerUtil.runTransaction(
-        tx -> {
+        em -> {
           assertThatExceptionOfType(ConstraintViolationException.class)
-              .isThrownBy(() -> tx.persist(client.setPhone(new PhoneNumber("invalid"))))
+              .isThrownBy(() -> em.persist(client.setPhone(new PhoneNumber("invalid"))))
               .withMessageContaining("must be a valid phone number");
         });
   }

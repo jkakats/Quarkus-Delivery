@@ -124,6 +124,9 @@
           <xmlOutput>true</xmlOutput>
           <failOnError>false</failOnError>
           <omitVisitors>DefaultEncodingDetector</omitVisitors>
+          <excludeFilterFile>
+            ${project.basedir}/src/test/resources/spotbugs-exclude.xml
+          </excludeFilterFile>
         </configuration>
         <executions>
           <execution>
