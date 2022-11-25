@@ -7,13 +7,15 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.List;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -22,13 +24,7 @@ import org.hibernate.validator.constraints.Length;
  * @since 0.1.0
  */
 @Entity
-@Table(
-    name = "client",
-    uniqueConstraints = {
-      @UniqueConstraint(
-          name = "UK_username",
-          columnNames = {"username"})
-    })
+@Table(name = "client")
 public class Client implements Serializable {
   /** Auto-generated ID field. */
   @Id
@@ -37,9 +33,10 @@ public class Client implements Serializable {
 
   /** Username field. */
   @NotNull
+  @NaturalId
   @Length(min = 1, max = 20)
   @Pattern(regexp = "[a-zA-Z0-9_-]+")
-  @Column(length = 20)
+  @Column(length = 20, unique = true)
   private String username;
 
   /** Real name field. */
@@ -56,7 +53,9 @@ public class Client implements Serializable {
 
   // TODO(axill12): add address field
 
-  // TODO(ObserverOfTime): add orders field
+  /** Orders relation field. */
+  @OneToMany(mappedBy = "client")
+  private List<Order> orders;
 
   public Long getId() {
     return id;
@@ -104,6 +103,15 @@ public class Client implements Serializable {
 
   public Client setPhone(PhoneNumber phone) {
     this.phone = phone;
+    return this;
+  }
+
+  public List<Order> getOrders() {
+    return orders;
+  }
+
+  public Client setOrders(List<Order> orders) {
+    this.orders = orders;
     return this;
   }
 
