@@ -31,7 +31,8 @@ class ClientTest {
             .setName(TEST_NAME)
             .setEmail(new EmailAddress(TEST_EMAIL))
             .setPassword(new Password(TEST_PASSWORD))
-            .setPhone(new PhoneNumber(TEST_PHONE_NUMBER));
+            .setPhone(new PhoneNumber(TEST_PHONE_NUMBER))
+            .setOrders(Collections.emptyList());
   }
 
   @Test
@@ -59,6 +60,7 @@ class ClientTest {
               .returns(TEST_NAME, Client::getName)
               .returns(TEST_EMAIL, c -> c.getEmail().toString())
               .returns(TEST_PHONE_NUMBER, c -> c.getPhone().toString());
+          assertThat(client.getOrders()).isEmpty();
           em.remove(client);
         });
   }
