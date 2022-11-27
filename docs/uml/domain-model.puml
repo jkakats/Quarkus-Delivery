@@ -87,14 +87,15 @@ Client "1" -left- "*" Order
 Client "~*   " *-- "1" Address
 
 Order "\n\n~*" -- "1" Store
-Order "*" o-- "1..*" Product
+Order "*" o-- "1..*      " Product
 (Order, Product) .. OrderProduct
 
 Store "~*    " -- "1..*" Area
+Store "~*" -- "~*    " Product
 
 Address "*" o-- "1   " Area
 
 Order "1" -- "1" OrderReview
-OrderReview "1" *-- "*" ProductReview
+OrderReview "1 " *-- "~* " ProductReview
 ProductReview "1    " -up- "1" OrderProduct
 @enduml
