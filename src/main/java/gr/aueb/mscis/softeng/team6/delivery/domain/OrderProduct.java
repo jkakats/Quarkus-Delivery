@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Min;
@@ -48,6 +49,13 @@ public class OrderProduct implements Serializable {
   @Min(1)
   @Column
   private Integer quantity;
+
+  @OneToOne(mappedBy = "orderProduct")
+  private OrderReview orderReview;
+
+  public OrderReview getOrderReview() {
+    return orderReview;
+  }
 
   public Long getId() {
     return id;

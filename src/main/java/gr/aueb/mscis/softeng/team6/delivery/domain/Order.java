@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
@@ -62,9 +63,11 @@ public class Order implements Serializable {
   @Column(name = "estimated_wait", updatable = false)
   private Long estimatedWait;
 
-  // TODO(axill12): add store relation
+  @ManyToOne (fetch = FetchType.LAZY)
+  private Store store;
 
-  // TODO(axill12): add review relation
+  @OneToOne (mappedBy = "order", fetch = FetchType.LAZY)
+  private OrderReview orderReview;
 
   /** Client relation field. */
   @ManyToOne(fetch = FetchType.LAZY)
@@ -137,6 +140,10 @@ public class Order implements Serializable {
     }
     actualWait = orderedTime.until(deliveredTime, MINUTES);
     return actualWait;
+  }
+
+  public OrderReview getOrderReview() {
+    return orderReview;
   }
 
   public Client getClient() {

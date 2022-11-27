@@ -51,7 +51,7 @@ public class Client implements Serializable {
   /** Phone number field. */
   @Embedded @Valid private PhoneNumber phone;
 
-  // TODO(axill12): add address field
+  // TODO (axill12): add address field
 
   /** Orders relation field. */
   @OneToMany(mappedBy = "client")
