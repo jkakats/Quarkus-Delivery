@@ -17,6 +17,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Length;
 
@@ -25,6 +27,13 @@ import org.hibernate.validator.constraints.Length;
  *
  * @since 0.1.0
  */
+@NamedQueries({
+  @NamedQuery(
+      name = "findClientByUsername",
+      query = "from Client where username like :username",
+      readOnly = true,
+      fetchSize = 1)
+})
 @Entity
 @Table(name = "client")
 public class Client implements Serializable {

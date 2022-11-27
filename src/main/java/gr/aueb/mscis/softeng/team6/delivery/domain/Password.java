@@ -6,7 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import java.io.Serializable;
 
 /**
@@ -32,17 +32,17 @@ public class Password implements Serializable {
   /**
    * Hash the password before it is stored.
    *
-   * @throws ConstraintViolationException if the password is too short
+   * @throws ValidationException if the password is too short
    * @see Argon2#hash(int, int, int, byte[])
    */
   @PrePersist
   @PreUpdate
-  public void hash() throws ConstraintViolationException {
+  public void hash() throws ValidationException {
     byte[] bytes = password.getBytes();
     // HACK: manually check password length
     if (bytes.length < 8) {
       ARGON2.wipeArray(bytes);
-      throw new ConstraintViolationException("password length must be at least 8", null);
+      throw new ValidationException("password length must be at least 8");
     }
     password = ARGON2.hash(4, 1 << 16, 2, bytes);
     ARGON2.wipeArray(bytes);

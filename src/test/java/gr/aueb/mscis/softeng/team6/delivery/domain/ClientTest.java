@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import gr.aueb.mscis.softeng.team6.delivery.util.EntityManagerUtil;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import java.util.Collections;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +70,7 @@ class ClientTest {
   void testPasswordLength() {
     EntityManagerUtil.runTransaction(
         em -> {
-          assertThatExceptionOfType(ConstraintViolationException.class)
+          assertThatExceptionOfType(ValidationException.class)
               .isThrownBy(() -> em.persist(client.setPassword(new Password("short"))))
               .withMessageContaining("length must be");
         });
