@@ -46,7 +46,6 @@ out/
 ## Eclipse
 bin/
 tmp/
-.settings/
 .externalToolBuilders/
 .recommenders/
 .apt_generated/
@@ -59,7 +58,6 @@ local.properties
 *.launch
 .loadpath
 .recommenders
-.project
 .classpath
 .metadata
 .factorypath
