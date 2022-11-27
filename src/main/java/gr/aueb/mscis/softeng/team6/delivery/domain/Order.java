@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -63,15 +64,19 @@ public class Order implements Serializable {
   @Column(name = "estimated_wait", updatable = false)
   private Long estimatedWait;
 
-  @ManyToOne (fetch = FetchType.LAZY)
-  private Store store_order;
-
-  @OneToOne (mappedBy = "order", fetch = FetchType.LAZY)
-  private OrderReview orderReview;
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "order", orphanRemoval = true)
+  @JoinColumn(insertable = false)
+  private OrderReview review;
 
   /** Client relation field. */
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(updatable = false)
   private Client client;
+
+  /** Store relation field. */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(updatable = false)
+  private Store store;
 
   /** Order products relation field. */
   @Size(min = 1)
@@ -142,16 +147,30 @@ public class Order implements Serializable {
     return actualWait;
   }
 
-  public OrderReview getOrderReview() {
-    return orderReview;
-  }
-
   public Client getClient() {
     return client;
   }
 
   public Order setClient(Client client) {
     this.client = client;
+    return this;
+  }
+
+  public Store getStore() {
+    return store;
+  }
+
+  public Order setStore(Store store) {
+    this.store = store;
+    return this;
+  }
+
+  public OrderReview getReview() {
+    return review;
+  }
+
+  public Order setReview(OrderReview review) {
+    this.review = review;
     return this;
   }
 

@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -47,15 +46,11 @@ public class OrderProduct implements Serializable {
   /** Quantity field. */
   @NotNull
   @Min(1)
-  @Column
   private Integer quantity;
 
-  @OneToOne(mappedBy = "orderProduct")
-  private OrderReview orderReview;
-
-  public OrderReview getOrderReview() {
-    return orderReview;
-  }
+  /** Product review relation field. */
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "product", orphanRemoval = true)
+  private ProductReview review;
 
   public Long getId() {
     return id;
@@ -88,6 +83,10 @@ public class OrderProduct implements Serializable {
     return this;
   }
 
+  protected ProductReview getReview() {
+    return review;
+  }
+
   @Override
   public boolean equals(Object that) {
     if (this == that) {
@@ -107,6 +106,7 @@ public class OrderProduct implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "OrderProduct{order=%s, product=%s, quantity=%d}", order, product, quantity);
+        "OrderProduct{order=\"%s\", product=\"%s\", quantity=%d}",
+        order.getUuid(), product.getName(), quantity);
   }
 }

@@ -1,69 +1,81 @@
-/*Area is only table instead of being both embedded and table like in domain model,
- because it's not technically possible to be both at the same time.
- */
-
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
+/**
+ * Area entity.
+ *
+ * @since 0.1.0
+ */
 @Entity
-@Table(name = "areas")
-class Area implements Serializable {
+@Table(name = "area")
+public class Area implements Serializable {
+  /** Zip code field. */
   @Id
-  @Column (name = "zipcode")
-  private int zipCode;
+  @Min(10000)
+  @Max(89999)
+  @Column(name = "zip_code")
+  private Integer zipCode;
 
-  @Column (name = "city")
+  /** City field. */
+  @NotNull
+  @NotBlank
+  @Column(length = 100)
   private String city;
 
-  @Column (name = "state")
+  /** State field. */
+  @NotNull
+  @NotBlank
+  @Column(length = 100)
   private String state;
 
-  @ManyToOne (fetch = FetchType.LAZY)
-  private Store store_area;
-
-  @OneToOne(mappedBy = "area_c", fetch = FetchType.LAZY)
-  private Client client_a;
-
-  public int getZipCode() {
+  public Integer getZipCode() {
     return zipCode;
+  }
+
+  public Area setZipCode(Integer zipCode) {
+    this.zipCode = zipCode;
+    return this;
   }
 
   public String getCity() {
     return city;
   }
 
+  public Area setCity(String city) {
+    this.city = city;
+    return this;
+  }
+
   public String getState() {
     return state;
   }
 
-  public Store getStore_area() {
-    return store_area;
+  public Area setState(String state) {
+    this.state = state;
+    return this;
   }
 
-  public Client getClient_a() {
-    return client_a;
+  @Override
+  public boolean equals(Object that) {
+    return this == that || (that instanceof Area other && zipCode.equals(other.zipCode));
   }
 
-  boolean ValidateZipCode () {
-    if (zipCode >= 10000 && zipCode <= 99999) return true;
-    return false;
+  @Override
+  public int hashCode() {
+    return zipCode.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Area{city=\"%s\", state=\"%s\", zipCode=\"%d\"}", city, state, zipCode);
   }
 }
-
-
-
-
-
-
-
-
-
-

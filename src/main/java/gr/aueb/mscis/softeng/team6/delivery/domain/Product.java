@@ -6,11 +6,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import org.hibernate.annotations.NaturalId;
 
 /**
@@ -42,6 +45,10 @@ public class Product implements Serializable {
   @Column(length = 2000)
   private String comment;
 
+  /** Stores relation field. */
+  @ManyToMany(mappedBy = "products")
+  private List<Store> stores = new ArrayList<>();
+
   public Long getId() {
     return id;
   }
@@ -71,6 +78,10 @@ public class Product implements Serializable {
   public Product setComment(String comment) {
     this.comment = comment;
     return this;
+  }
+
+  public List<Store> getStores() {
+    return stores;
   }
 
   @Override

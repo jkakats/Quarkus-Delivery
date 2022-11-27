@@ -1,55 +1,48 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
-@Entity
-@Table(name = "reviews")
-@Inheritance( strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "subclass", discriminatorType = DiscriminatorType.STRING)
-
-class Review implements Serializable {
-
+/**
+ * Abstract review entity.
+ *
+ * @since 0.1.0
+ */
+@MappedSuperclass
+abstract class Review implements Serializable {
+  /** Auto-generated ID field. */
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private int id;
+  @GeneratedValue(strategy = IDENTITY)
+  protected Long id;
 
-  @Column(name = "rating", nullable = false)
-  private short rating;
+  /** Rating field. */
+  @NotNull
+  @Min(0)
+  @Max(5)
+  @Column(name = "rating")
+  protected Short rating;
 
-  @OneToOne (mappedBy = "orderReview")
-  private Order order;
-
-  @OneToOne (mappedBy = "productReview")
-  private OrderProduct orderProduct;
-
-  public Order getOrder() {
-    return order;
-  }
-
-  public int getId() {
+  public Long getId() {
     return id;
   }
 
   public short getRating() {
     return rating;
   }
+
+  public Review setRating(Short rating) {
+    this.rating = rating;
+    return this;
+  }
+
+  @Override
+  public abstract String toString();
 }
-
-
-
-
-
-
-
-

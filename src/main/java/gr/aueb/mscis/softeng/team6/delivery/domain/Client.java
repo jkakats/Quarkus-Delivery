@@ -5,11 +5,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -62,12 +60,8 @@ public class Client implements Serializable {
   /** Phone number field. */
   @Embedded @Valid private PhoneNumber phone;
 
-  // TODO (axill12): add address field
-  @OneToOne(mappedBy = "client_a", fetch = FetchType.LAZY)
-  private Area area_c;
-
-  @Embedded
-  private Address address;
+  /** Address field. */
+  @Embedded @Valid private Address address;
 
   /** Orders relation field. */
   @OneToMany(mappedBy = "client")
@@ -119,6 +113,15 @@ public class Client implements Serializable {
 
   public Client setPhone(PhoneNumber phone) {
     this.phone = phone;
+    return this;
+  }
+
+  public Address getAddress() {
+    return address;
+  }
+
+  public Client setAddress(Address address) {
+    this.address = address;
     return this;
   }
 

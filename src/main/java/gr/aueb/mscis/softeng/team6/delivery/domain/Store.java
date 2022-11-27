@@ -1,39 +1,69 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+/**
+ * Store entity.
+ *
+ * @since 0.1.0
+ */
 @Entity
-@Table(name = "stores")
-
-class Store implements Serializable {
+@Table(name = "store")
+public class Store implements Serializable {
+  /** Auto-generated ID field. */
   @Id
-  @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private int id;
+  @GeneratedValue(strategy = IDENTITY)
+  private Long id;
 
-  @Column (name = "name", nullable = false)
-  private String name;
+  /** Name field. */
+  @NotNull @NotBlank private String name;
 
-  @Column (name = "type", nullable = false)
+  /** Type field. */
+  @NotNull
+  @NotBlank
+  @Column(length = 100)
   private String type;
 
-  @OneToMany (mappedBy = "store_area", fetch = FetchType.LAZY)
-  private Set<Area> areas = new HashSet<> ();
+  /** Areas relation field. */
+  @Size(min = 1)
+  @OneToMany(cascade = CascadeType.PERSIST)
+  @JoinTable(
+      name = "store_area",
+      joinColumns = {@JoinColumn(name = "store_id")},
+      inverseJoinColumns = {@JoinColumn(name = "area_zip_code")})
+  private Set<Area> areas = new HashSet<>();
 
-  @OneToMany(mappedBy = "store_order", fetch = FetchType.LAZY)
-  private Set<Order> orders = new HashSet<>();
+  /** Products relation field. */
+  @ManyToMany(cascade = CascadeType.ALL)
+  @JoinTable(
+      name = "store_product",
+      joinColumns = {@JoinColumn(name = "store_id")},
+      inverseJoinColumns = {@JoinColumn(name = "product_id")})
+  private Set<Product> products = new HashSet<>();
 
-  public int getId() {
+  /** Orders relation field. */
+  @OneToMany(mappedBy = "store")
+  private List<Order> orders;
+
+  public Long getId() {
     return id;
   }
 
@@ -41,11 +71,57 @@ class Store implements Serializable {
     return name;
   }
 
+  public Store setName(String name) {
+    this.name = name;
+    return this;
+  }
+
   public String getType() {
     return type;
   }
 
-  public Set<Order> getOrders() {
+  public Store setType(String type) {
+    this.type = type;
+    return this;
+  }
+
+  public Set<Area> getAreas() {
+    return areas;
+  }
+
+  public Store setAreas(Set<Area> areas) {
+    this.areas = areas;
+    return this;
+  }
+
+  public Set<Product> getProducts() {
+    return products;
+  }
+
+  public Store setProducts(Set<Product> products) {
+    this.products = products;
+    return this;
+  }
+
+  public List<Order> getOrders() {
     return orders;
+  }
+
+  /**
+   * Add an area to the store.
+   *
+   * @param area the area to be added.
+   */
+  public void addArea(Area area) {
+    areas.add(area);
+  }
+
+  /**
+   * Add a product to the store.
+   *
+   * @param product the product to be added.
+   */
+  public void addProduct(Product product) {
+    products.add(product);
   }
 }
