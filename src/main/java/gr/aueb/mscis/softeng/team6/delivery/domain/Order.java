@@ -64,7 +64,7 @@ public class Order implements Serializable {
   private Long estimatedWait;
 
   @ManyToOne (fetch = FetchType.LAZY)
-  private Store store;
+  private Store store_order;
 
   @OneToOne (mappedBy = "order", fetch = FetchType.LAZY)
   private OrderReview orderReview;

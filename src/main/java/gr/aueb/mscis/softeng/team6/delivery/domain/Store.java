@@ -27,9 +27,10 @@ class Store implements Serializable {
   @Column (name = "type", nullable = false)
   private String type;
 
-  //TODO add Area field
+  @OneToMany (mappedBy = "store_area", fetch = FetchType.LAZY)
+  private Set<Area> areas = new HashSet<> ();
 
-  @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "store_order", fetch = FetchType.LAZY)
   private Set<Order> orders = new HashSet<>();
 
   public int getId() {
