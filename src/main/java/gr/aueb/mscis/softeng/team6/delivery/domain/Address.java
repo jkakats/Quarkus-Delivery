@@ -1,10 +1,11 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Embedded;
+import jakarta.validation.Valid;
 import java.io.Serializable;
 
 /**
@@ -23,8 +24,14 @@ public class Address implements Serializable {
   private String apartment;
 
   /** Area field. */
-  @OneToOne(cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "address_zip_code")
+  @Embedded
+  @Valid
+  @AttributeOverrides({
+    @AttributeOverride(name = "zipCode", column = @Column(name = "address_zip_code")),
+    @AttributeOverride(name = "city", column = @Column(name = "address_city")),
+    @AttributeOverride(name = "state", column = @Column(name = "address_state")),
+    @AttributeOverride(name = "street", column = @Column(name = "address_street")),
+  })
   private Area area;
 
   public String getStreet() {

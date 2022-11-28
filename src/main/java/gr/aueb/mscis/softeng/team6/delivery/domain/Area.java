@@ -1,8 +1,7 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -15,11 +14,10 @@ import java.io.Serializable;
  *
  * @since 0.1.0
  */
-@Entity
+@Embeddable
 @Table(name = "area")
 public class Area implements Serializable {
   /** Zip code field. */
-  @Id
   @Min(10000)
   @Max(89999)
   @Column(name = "zip_code")
