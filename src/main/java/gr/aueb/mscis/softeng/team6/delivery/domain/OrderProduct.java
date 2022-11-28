@@ -49,7 +49,7 @@ public class OrderProduct implements Serializable {
   private Integer quantity;
 
   /** Product review relation field. */
-  @OneToOne(fetch = FetchType.LAZY, mappedBy = "product", orphanRemoval = true)
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "product")
   private ProductReview review;
 
   public Long getId() {

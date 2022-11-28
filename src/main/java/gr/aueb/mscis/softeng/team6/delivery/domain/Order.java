@@ -66,7 +66,8 @@ public class Order implements Serializable {
   @Column(name = "estimated_wait", updatable = false)
   private Long estimatedWait;
 
-  @OneToOne(fetch = FetchType.LAZY, mappedBy = "order", orphanRemoval = true)
+  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "order")
+  @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(insertable = false)
   private OrderReview review;
 

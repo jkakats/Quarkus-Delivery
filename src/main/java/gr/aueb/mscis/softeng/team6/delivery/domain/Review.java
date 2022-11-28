@@ -34,14 +34,11 @@ abstract class Review implements Serializable {
     return id;
   }
 
-  public short getRating() {
+  public Short getRating() {
     return rating;
   }
 
-  public Review setRating(Short rating) {
-    this.rating = rating;
-    return this;
-  }
+  public abstract Review setRating(Short rating);
 
   @Override
   public abstract String toString();
