@@ -4,5 +4,6 @@
 *.xml source
 *.md source
 
-*.puml source linguist-detectable
 *.svg source linguist-generated
+
+docs/uml/*.puml source linguist-detectable

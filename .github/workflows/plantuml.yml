@@ -1,4 +1,4 @@
-name: Generate UML Diagrams
+name: Diagrams
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
           skip_checkout: true
           file_pattern: docs/uml/*.svg
           commit_message: |-
-            chore: auto-generate diagrams [no ci]
+            chore: auto-generate diagrams
           commit_author: >-
             github-actions[bot]
             <github-actions[bot]@users.noreply.github.com>

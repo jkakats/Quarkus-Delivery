@@ -1,7 +1,7 @@
-name: Build & test project
+name: Build
 
 on:
-  pull_request:
+  push:
     branches: [main]
     paths:
       - src/main/**
@@ -9,8 +9,8 @@ on:
       - pom.xml
 
 jobs:
-  test:
-    name: Build & run tests
+  build:
+    name: Build & run coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,32 +24,25 @@ jobs:
       - name: Run tests
         run: mvn -B test
         continue-on-error: true
-      - name: Publish CheckStyle report
-        uses: jwgmeligmeyling/checkstyle-github-action@v1.2
+      - name: Generate coverage badges
+        uses: cicirello/jacoco-badge-generator@v2
         continue-on-error: true
         with:
-          name: CheckStyle report
-          path: target/checkstyle-result.xml
-      - name: Publish SpotBugs report
-        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
-        continue-on-error: true
+          jacoco-csv-file: target/site/jacoco/jacoco.csv
+          coverage-badge-filename: coverage.svg
+          fail-if-coverage-less-than: 75
+          coverage-label: Coverage
+          intervals: 90 75 50 0
+          colors: >-
+            #97ca00 #dfb317 #fe7d37 #e05d44
+      - name: Commit & push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          name: SpotBugs report
-          path: target/spotbugsXml.xml
-      - name: Publish JUnit report
-        uses: mikepenz/action-junit-report@v3
-        continue-on-error: true
-        with:
-          check_name: JUnit report
-          exclude_sources: target,docs,.idea
-          report_paths: target/surefire-reports/TEST-*.xml
-      - name: Publish JaCoCo report
-        uses: madrapps/jacoco-report@v1.3
-        continue-on-error: true
-        with:
-          title: JaCoCo report
-          update-comment: true
-          min-coverage-overall: 75
-          min-coverage-changed-files: 75
-          paths: target/site/jacoco/jacoco.xml
-          token: ${{github.token}}
+          skip_fetch: true
+          skip_checkout: true
+          file_pattern: .github/badges/*.svg
+          commit_message: |-
+            chore: generate coverage badges
+          commit_author: >-
+            github-actions[bot]
+            <github-actions[bot]@users.noreply.github.com>
