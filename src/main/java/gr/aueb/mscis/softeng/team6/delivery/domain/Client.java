@@ -30,7 +30,17 @@ import org.hibernate.validator.constraints.Length;
       name = "findClientByUsername",
       query = "from Client where username like :username",
       readOnly = true,
-      fetchSize = 1)
+      fetchSize = 1),
+  @NamedQuery(
+      name = "findFrequentClients",
+      query =
+          """
+        from Client c join c.orders o
+          where o.store = :store
+          and (o.orderedTime between :start and :end)
+        order by count(o) desc
+        """,
+      readOnly = true)
 })
 @Entity
 @Table(name = "client")

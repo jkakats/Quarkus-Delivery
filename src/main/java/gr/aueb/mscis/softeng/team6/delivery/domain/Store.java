@@ -35,9 +35,31 @@ import org.hibernate.annotations.NamedQuery;
 @NamedQueries({
   @NamedQuery(
       name = "findStoresByArea",
-      query = "from Store s where :area in elements(s.areas)",
+      query = "from Store where :area in elements(areas)",
+      readOnly = true),
+  // TODO(ObserverOfTime): fix HQL datediff
+  // select avg(datediff(minute, o.orderedTime, o.deliveredTime))
+  @NamedQuery(
+      name = "findOrdersByZipCode",
+      query =
+          """
+        from Order o join o.client c
+          where c.address.area.zipCode = :area and o.store = :store
+        """,
+      readOnly = true,
+      fetchSize = 1),
+  @NamedQuery(
+      name = "getRushHours",
+      query =
+          """
+        select extract(hour from o.orderedTime)
+        from Order o
+          where o.store = :store and count(o) >= :limit
+          and date_trunc(week, o.orderedTime) = :week
+        """,
       readOnly = true)
 })
+@SuppressWarnings("JpaQlInspection") // IJ doesn't like datediff & date_trunc
 public class Store implements Serializable {
   /** Auto-generated ID field. */
   @Id

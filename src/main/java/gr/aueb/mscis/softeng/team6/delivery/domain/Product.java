@@ -22,7 +22,10 @@ import org.hibernate.annotations.NamedQuery;
  * @since 0.1.0
  */
 @NamedQueries({
-  @NamedQuery(name = "getAllProducts", query = "from Product join fetch Store", readOnly = true)
+  @NamedQuery(
+      name = "getAllProducts",
+      query = "from Product p join fetch p.stores",
+      readOnly = true)
 })
 @Entity
 @Table(name = "product")
