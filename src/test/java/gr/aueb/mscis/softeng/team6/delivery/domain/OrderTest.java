@@ -83,8 +83,8 @@ class OrderTest {
                     assertThat(op.getId()).isNotNull();
                     assertThat(op)
                         .returns(TEST_QUANTITY, OrderProduct::getQuantity)
-                        .returns(product, OrderProduct::getProduct)
-                        .returns(order, OrderProduct::getOrder);
+                        .returns(order, OrderProduct::getOrder)
+                        .returns(product.getName(), o -> o.getProduct().getName());
                   });
           em.remove(order);
           em.remove(order.getClient());

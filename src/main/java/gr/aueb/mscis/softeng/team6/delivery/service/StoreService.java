@@ -4,6 +4,7 @@ import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Product;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,7 +26,7 @@ public class StoreService extends BaseService {
    * @param products the products offered by the store.
    * @return a new {@link Store} object or {@code null} on error.
    */
-  public Store registerStore(String name, String type, Set<Area> areas, Set<Product> products) {
+  public Store registerStore(String name, String type, Set<Area> areas, List<Product> products) {
     return persistObject(
         new Store().setName(name).setType(type).setProducts(products).setAreas(areas));
   }

@@ -10,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -52,7 +53,7 @@ class StoreServiceTest {
   @Test
   @Order(1)
   void testRegisterStore() {
-    var store = service.registerStore(TEST_NAME, TEST_TYPE, Set.of(area), Set.of(product));
+    var store = service.registerStore(TEST_NAME, TEST_TYPE, Set.of(area), List.of(product));
     assertThat(store)
         .isNotNull()
         .returns(TEST_NAME, Store::getName)
@@ -63,7 +64,7 @@ class StoreServiceTest {
 
   @Test
   void testRegisterStoreDuplicate() {
-    var store = service.registerStore(TEST_NAME, TEST_TYPE, Set.of(area), Set.of(product));
+    var store = service.registerStore(TEST_NAME, TEST_TYPE, Set.of(area), List.of(product));
     assertThat(store).isNull();
     assertThat(output.toString()).isEqualTo("could not execute statement\n");
   }

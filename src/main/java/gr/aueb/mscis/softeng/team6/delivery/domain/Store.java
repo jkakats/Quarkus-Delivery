@@ -18,6 +18,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,7 +70,7 @@ public class Store implements Serializable {
       name = "store_product",
       joinColumns = {@JoinColumn(name = "store_id")},
       inverseJoinColumns = {@JoinColumn(name = "product_id")})
-  private Set<Product> products = new HashSet<>();
+  private List<Product> products = new ArrayList<>();
 
   /** Orders relation field. */
   @OneToMany(mappedBy = "store")
@@ -106,11 +107,11 @@ public class Store implements Serializable {
     return this;
   }
 
-  public Set<Product> getProducts() {
+  public List<Product> getProducts() {
     return products;
   }
 
-  public Store setProducts(Set<Product> products) {
+  public Store setProducts(List<Product> products) {
     this.products = products;
     return this;
   }

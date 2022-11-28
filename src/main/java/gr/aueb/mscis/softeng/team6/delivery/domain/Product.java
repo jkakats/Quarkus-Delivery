@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.hibernate.annotations.NaturalId;
 
 /**
  * Product entity.
@@ -34,11 +33,7 @@ public class Product implements Serializable {
   private Long id;
 
   /** Name field. */
-  @NotNull
-  @NotBlank
-  @NaturalId
-  @Column(unique = true)
-  private String name;
+  @NotNull @NotBlank private String name;
 
   /** Price field. */
   @NotNull
@@ -86,16 +81,6 @@ public class Product implements Serializable {
 
   public List<Store> getStores() {
     return stores;
-  }
-
-  @Override
-  public boolean equals(Object that) {
-    return this == that || (that instanceof Product other && name.equals(other.name));
-  }
-
-  @Override
-  public int hashCode() {
-    return name.hashCode();
   }
 
   @Override

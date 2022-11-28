@@ -48,14 +48,6 @@ class ProductTest {
   }
 
   @Test
-  void testEquals() {
-    var product2 = new Product().setName(TEST_NAME);
-    assertThat(product).hasSameHashCodeAs(product2);
-    product2.setName("other-name");
-    assertThat(product).isNotEqualTo(product2);
-  }
-
-  @Test
   void testToString() {
     assertThat(product)
         .hasToString("Product{name=\"foobar\", price=10.00, comment=\"hello world\"}");
