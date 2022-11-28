@@ -12,8 +12,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.annotations.NaturalId;
 
 /**
@@ -21,6 +22,9 @@ import org.hibernate.annotations.NaturalId;
  *
  * @since 0.1.0
  */
+@NamedQueries({
+  @NamedQuery(name = "getAllProducts", query = "from Product join fetch Store", readOnly = true)
+})
 @Entity
 @Table(name = "product")
 public class Product implements Serializable {
@@ -47,7 +51,7 @@ public class Product implements Serializable {
 
   /** Stores relation field. */
   @ManyToMany(mappedBy = "products")
-  private List<Store> stores = new ArrayList<>();
+  private List<Store> stores;
 
   public Long getId() {
     return id;

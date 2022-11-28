@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import gr.aueb.mscis.softeng.team6.delivery.util.EntityManagerUtil;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
-import java.util.Collections;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -32,8 +31,7 @@ class ClientTest {
             .setName(TEST_NAME)
             .setEmail(new EmailAddress(TEST_EMAIL))
             .setPassword(new Password(TEST_PASSWORD))
-            .setPhone(new PhoneNumber(TEST_PHONE_NUMBER))
-            .setOrders(Collections.emptyList());
+            .setPhone(new PhoneNumber(TEST_PHONE_NUMBER));
   }
 
   @Test

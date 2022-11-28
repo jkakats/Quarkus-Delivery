@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.UUID;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UuidGenerator;
 
 /**
@@ -69,18 +71,19 @@ public class Order implements Serializable {
   private OrderReview review;
 
   /** Client relation field. */
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(updatable = false)
   private Client client;
 
   /** Store relation field. */
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(updatable = false)
   private Store store;
 
   /** Order products relation field. */
   @Size(min = 1)
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Set<OrderProduct> products = new HashSet<>();
 
   /** Actual waiting time field (in minutes). */

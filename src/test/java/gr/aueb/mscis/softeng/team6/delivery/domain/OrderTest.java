@@ -20,6 +20,7 @@ class OrderTest {
   private static final LocalDateTime TEST_TIME = LocalDateTime.of(2015, 3, 14, 9, 26, 53);
 
   private Client client;
+  private Store store;
   private Product product;
   private Order order;
 
@@ -32,10 +33,12 @@ class OrderTest {
             .setEmail(new EmailAddress("john@doe.com"))
             .setPassword(new Password("j0hnd0e!"))
             .setPhone(new PhoneNumber("6987654321"));
+    store = new Store().setName("nameless").setType("none");
     product = new Product().setName("foobar").setPrice(TEST_PRICE);
     order =
         new Order()
             .setClient(client)
+            .setStore(store)
             .setEstimatedWait(TEST_WAIT)
             .setProducts(new HashSet<>(1))
             .setConfirmed(false)
@@ -51,6 +54,7 @@ class OrderTest {
     EntityManagerUtil.runTransaction(
         em -> {
           em.persist(client);
+          em.persist(store);
           em.persist(product);
           em.persist(order);
           var softly = new SoftAssertions();
@@ -70,6 +74,7 @@ class OrderTest {
         em -> {
           var order = em.createQuery("from Order", Order.class).getResultList().get(0);
           assertThat(order.getClient()).isEqualTo(client);
+          assertThat(order.getStore()).isEqualTo(store);
           assertThat(order.getProducts())
               .hasSize(1)
               .first()
@@ -83,6 +88,7 @@ class OrderTest {
                   });
           em.remove(order);
           em.remove(order.getClient());
+          em.remove(order.getStore());
           order.getProducts().forEach(p -> em.remove(p.getProduct()));
         });
   }

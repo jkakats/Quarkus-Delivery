@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 
 /**
  * Store entity.
@@ -29,6 +31,12 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "store")
+@NamedQueries({
+  @NamedQuery(
+      name = "findStoresByArea",
+      query = "from Store s where :area in elements(s.areas)",
+      readOnly = true)
+})
 public class Store implements Serializable {
   /** Auto-generated ID field. */
   @Id

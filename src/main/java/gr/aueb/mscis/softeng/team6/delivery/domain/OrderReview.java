@@ -1,7 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import static java.util.stream.Collectors.toList;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,7 +38,7 @@ public class OrderReview extends Review {
 
   /** Get the product reviews associated with this order review. */
   public List<ProductReview> getProductReviews() {
-    return order.getProducts().stream().map(OrderProduct::getReview).collect(toList());
+    return order.getProducts().stream().map(OrderProduct::getReview).toList();
   }
 
   @Override

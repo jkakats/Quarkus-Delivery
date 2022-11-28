@@ -30,7 +30,14 @@ abstract class BaseService {
       }
       tx.rollback();
     } catch (PersistenceException ex) {
-      System.err.println(ex.getCause().getMessage());
+      // NOTE: it's not always caught above ¯\_(ツ)_/¯
+      if (ex.getCause() instanceof ConstraintViolationException cause) {
+        for (var cv : cause.getConstraintViolations()) {
+          System.err.println(cv.getPropertyPath() + " " + cv.getMessage());
+        }
+      } else {
+        System.err.println(ex.getCause().getMessage());
+      }
       tx.rollback();
     }
     return null;

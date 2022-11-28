@@ -129,11 +129,6 @@ public class Client implements Serializable {
     return orders;
   }
 
-  public Client setOrders(List<Order> orders) {
-    this.orders = orders;
-    return this;
-  }
-
   @Override
   public boolean equals(Object that) {
     return this == that || (that instanceof Client other && username.equals(other.username));
