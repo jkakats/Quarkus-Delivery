@@ -20,15 +20,20 @@ class ClientTest {
   private static final String TEST_EMAIL = "john@doe.com";
   private static final String TEST_PASSWORD = "j0hnd0e!";
   private static final String TEST_PHONE_NUMBER = "6987654321";
+  private static final String TEST_STREET = "Lefkados";
+  private static final String TEST_APARTMENT = "47A";
 
   private Client client;
 
   @BeforeEach
   void setUp() {
+    var area = new Area().setCity("Athina").setState("Attica").setZipCode(11362);
+    var address = new Address().setStreet(TEST_STREET).setApartment(TEST_APARTMENT).setArea(area);
     client =
         new Client()
             .setUsername(TEST_USERNAME)
             .setName(TEST_NAME)
+            .setAddress(address)
             .setEmail(new EmailAddress(TEST_EMAIL))
             .setPassword(new Password(TEST_PASSWORD))
             .setPhone(new PhoneNumber(TEST_PHONE_NUMBER));
@@ -59,6 +64,9 @@ class ClientTest {
               .returns(TEST_NAME, Client::getName)
               .returns(TEST_EMAIL, c -> c.getEmail().toString())
               .returns(TEST_PHONE_NUMBER, c -> c.getPhone().toString());
+          assertThat(client.getAddress())
+              .returns(TEST_STREET, Address::getStreet)
+              .returns(TEST_APARTMENT, Address::getApartment);
           assertThat(client.getOrders()).isEmpty();
           em.remove(client);
         });

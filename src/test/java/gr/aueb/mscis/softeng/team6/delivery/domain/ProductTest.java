@@ -43,6 +43,7 @@ class ProductTest {
               .returns(TEST_NAME, Product::getName)
               .returns(TEST_COMMENT, Product::getComment)
               .returns(TEST_PRICE, Product::getPrice);
+          assertThat(product.getStores()).isEmpty();
           em.remove(product);
         });
   }

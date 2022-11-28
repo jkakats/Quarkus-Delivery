@@ -64,7 +64,7 @@ public class Address implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Address{street=\"%s\", apartment=\"%s\", city=\"%s\", state=\"%s\", zipCode=\"%d\"}",
+        "Address{street=\"%s\", apartment=\"%s\", city=\"%s\", state=\"%s\", zipCode=%d}",
         street, apartment, area.getCity(), area.getState(), area.getZipCode());
   }
 }

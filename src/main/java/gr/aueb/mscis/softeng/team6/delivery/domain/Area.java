@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +14,6 @@ import java.io.Serializable;
  * @since 0.1.0
  */
 @Embeddable
-@Table(name = "area")
 public class Area implements Serializable {
   /** Zip code field. */
   @Min(10000)
@@ -42,6 +40,11 @@ public class Area implements Serializable {
   public Area setZipCode(Integer zipCode) {
     this.zipCode = zipCode;
     return this;
+  }
+
+  /** Set the zip code by parsing a string. */
+  public Area setZipCode(String zipCode) {
+    return setZipCode(Integer.valueOf(zipCode.replaceAll(" ", "")));
   }
 
   public String getCity() {
@@ -74,6 +77,6 @@ public class Area implements Serializable {
 
   @Override
   public String toString() {
-    return String.format("Area{city=\"%s\", state=\"%s\", zipCode=\"%d\"}", city, state, zipCode);
+    return String.format("Area{city=\"%s\", state=\"%s\", zipCode=%d}", city, state, zipCode);
   }
 }

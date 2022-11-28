@@ -26,7 +26,7 @@ public class OrderReview extends Review {
 
   /** Order relation field. */
   @OneToOne(fetch = FetchType.LAZY, optional = false)
-  protected Order order;
+  private Order order;
 
   /** Product reviews relation field. */
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true)

@@ -14,10 +14,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(OrderAnnotation.class)
 class OrderTest {
+  private static final LocalDateTime TEST_TIME = LocalDateTime.of(2015, 3, 14, 9, 26, 53);
   private static final BigDecimal TEST_PRICE = BigDecimal.TEN;
   private static final int TEST_QUANTITY = 2;
   private static final long TEST_WAIT = 42L;
-  private static final LocalDateTime TEST_TIME = LocalDateTime.of(2015, 3, 14, 9, 26, 53);
 
   private Client client;
   private Store store;
@@ -73,19 +73,21 @@ class OrderTest {
     EntityManagerUtil.runTransaction(
         em -> {
           var order = em.createQuery("from Order", Order.class).getResultList().get(0);
-          assertThat(order.getClient()).isEqualTo(client);
-          assertThat(order.getStore()).isEqualTo(store);
-          assertThat(order.getProducts())
-              .hasSize(1)
-              .first()
+          var softly = new SoftAssertions();
+          softly.assertThat(order.getClient()).isEqualTo(client);
+          softly.assertThat(order.getStore()).isEqualTo(store);
+          softly
+              .assertThat(order.getProducts())
+              .singleElement()
               .satisfies(
                   op -> {
-                    assertThat(op.getId()).isNotNull();
                     assertThat(op)
+                        .doesNotReturn(null, OrderProduct::getId)
                         .returns(TEST_QUANTITY, OrderProduct::getQuantity)
                         .returns(order, OrderProduct::getOrder)
                         .returns(product.getName(), o -> o.getProduct().getName());
                   });
+          softly.assertAll();
           em.remove(order);
           em.remove(order.getClient());
           em.remove(order.getStore());

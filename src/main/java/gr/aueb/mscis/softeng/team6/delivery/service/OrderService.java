@@ -74,7 +74,7 @@ public class OrderService extends BaseService {
     return em.createNamedQuery("findStoresByArea", Store.class)
         .setParameter("area", client.getAddress().getArea())
         .getResultStream()
-        .filter(s -> s.getProducts().containsAll(products))
+        .filter(s -> new HashSet<>(s.getProducts()).containsAll(products))
         .toList();
   }
 
