@@ -31,7 +31,6 @@ class StatisticsServiceTest {
   private static LocalDateTime now;
   private static List<Client> clients;
   private static List<Store> stores;
-  private static List<Order> orders;
   private static List<Area> areas;
 
   private StatisticsService service;
@@ -80,15 +79,26 @@ class StatisticsServiceTest {
     stores = List.of(store1, store2);
 
     var order1 =
-        new Order().setClient(client1).setStore(store1).setDeliveredTime(now.plusMinutes(30));
+        new Order()
+            .setClient(client1)
+            .setStore(store1)
+            .setDelivered(true)
+            .setDeliveredTime(now.plusMinutes(30));
     order1.addProduct(product, 2);
     var order2 =
-        new Order().setClient(client1).setStore(store1).setDeliveredTime(now.plusMinutes(20));
+        new Order()
+            .setClient(client1)
+            .setStore(store1)
+            .setDelivered(true)
+            .setDeliveredTime(now.plusMinutes(20));
     order2.addProduct(product, 3);
     var order3 =
-        new Order().setClient(client2).setStore(store2).setDeliveredTime(now.plusMinutes(20));
+        new Order()
+            .setClient(client2)
+            .setStore(store2)
+            .setDelivered(true)
+            .setDeliveredTime(now.plusMinutes(20));
     order3.addProduct(product, 1);
-    orders = List.of(order1, order2, order3);
 
     var tx = em.getTransaction();
     tx.begin();
@@ -120,14 +130,15 @@ class StatisticsServiceTest {
 
   @ParameterizedTest
   @MethodSource("averageDeliveryTimeProvider")
-  void testGetAverageDeliveryTime(Store store, Area area, long average) {
+  void testGetAverageDeliveryTime(Store store, Area area, Long average) {
     assertThat(service.getAverageDeliveryTime(store, area)).isEqualTo(average);
   }
 
   @Test
   void testGetRushHours() {
     var week = StatisticsService.truncateToWeek(now);
-    assertThat(service.getRushHours(stores.get(0), week, 0)).allMatch(h -> h == now.getHour());
+    var hour = Integer.valueOf(now.getHour());
+    assertThat(service.getRushHours(stores.get(0), week, 0)).allMatch(hour::equals);
   }
 
   @AfterAll
@@ -153,7 +164,8 @@ class StatisticsServiceTest {
 
   private static Stream<Arguments> averageDeliveryTimeProvider() {
     return Stream.of(
-        Arguments.of(stores.get(0), areas.get(0), 24L),
-        Arguments.of(stores.get(1), areas.get(1), 19L));
+        Arguments.of(stores.get(0), areas.get(0), 25L),
+        Arguments.of(stores.get(1), areas.get(0), 20L),
+        Arguments.of(stores.get(1), areas.get(1), null));
   }
 }

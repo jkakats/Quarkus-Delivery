@@ -5,6 +5,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SqlResultSetMapping;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.annotations.NamedNativeQueries;
+import org.hibernate.annotations.NamedNativeQuery;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 
@@ -29,37 +33,62 @@ import org.hibernate.annotations.NamedQuery;
  * Store entity.
  *
  * @since 0.1.0
+ * @version 0.1.1
  */
-@Entity
-@Table(name = "store")
+@SqlResultSetMapping(
+    name = "ScalarResult",
+    columns = {@ColumnResult(name = "result")})
 @NamedQueries({
   @NamedQuery(
-      name = "findStoresByArea",
-      query = "from Store where :area in elements(areas)",
-      readOnly = true),
-  // TODO(ObserverOfTime): fix HQL datediff
-  // select avg(datediff(minute, o.orderedTime, o.deliveredTime))
-  @NamedQuery(
-      name = "findOrdersByZipCode",
+      name = "findNearbyStores",
       query =
           """
-        from Order o join o.client c
-          where c.address.area.zipCode = :area and o.store = :store
+        from Store s
+        join s.areas a
+        where :area = a.zipCode
+          and :count = (
+            select
+              count(distinct p.id)
+            from s.products p
+            where p.id in :products)
         """,
+      readOnly = true),
+})
+// NOTE: these queries have issues in HQL
+@NamedNativeQueries({
+  @NamedNativeQuery(
+      name = "getAverageDeliveryTime",
+      query =
+          """
+        SELECT
+          ROUND(AVG(DATEDIFF(MINUTE, `ordered_time`, `delivered_time`))) `result`
+        FROM `order` o
+        JOIN `store_area` a
+          ON o.`store_id` = a.`store_id`
+        WHERE o.`delivered` = true
+          AND a.`zip_code` = :area
+          AND o.`store_id` = :store
+        """,
+      resultSetMapping = "ScalarResult",
       readOnly = true,
       fetchSize = 1),
-  @NamedQuery(
+  @NamedNativeQuery(
       name = "getRushHours",
       query =
           """
-        select extract(hour from o.orderedTime)
-        from Order o
-          where o.store = :store and count(o) >= :limit
-          and date_trunc(week, o.orderedTime) = :week
+        SELECT
+          EXTRACT(HOUR FROM `ordered_time`) `result`
+        FROM `order`
+        WHERE `store_id` = :store
+          AND DATE_TRUNC(WEEK, `ordered_time`) = :week
+        GROUP BY `result`
+        HAVING COUNT(`result`) > :limit
         """,
+      resultSetMapping = "ScalarResult",
       readOnly = true)
 })
-@SuppressWarnings("JpaQlInspection") // IJ doesn't like datediff & date_trunc
+@Entity
+@Table(name = "store")
 public class Store implements Serializable {
   /** Auto-generated ID field. */
   @Id
@@ -96,7 +125,7 @@ public class Store implements Serializable {
 
   /** Orders relation field. */
   @OneToMany(mappedBy = "store")
-  private List<Order> orders;
+  private List<Order> orders = new ArrayList<>();
 
   public Long getId() {
     return id;

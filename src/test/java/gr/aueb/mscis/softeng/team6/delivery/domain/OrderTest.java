@@ -1,6 +1,8 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 import gr.aueb.mscis.softeng.team6.delivery.util.EntityManagerUtil;
 import java.math.BigDecimal;
@@ -60,7 +62,7 @@ class OrderTest {
           var softly = new SoftAssertions();
           softly.assertThat(order.getUuid()).isNotNull();
           softly.assertThat(order.getEstimatedWait()).isEqualTo(TEST_WAIT);
-          softly.assertThat(order.getOrderedTime()).isEqualToIgnoringSeconds(now);
+          softly.assertThat(order.getOrderedTime()).isCloseTo(now, within(1, MINUTES));
           softly.assertThat(order.isConfirmed()).isFalse();
           softly.assertThat(order.isDelivered()).isFalse();
           softly.assertAll();

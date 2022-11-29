@@ -4,9 +4,9 @@ import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
-import gr.aueb.mscis.softeng.team6.delivery.domain.Order;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
 import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,6 +14,7 @@ import java.util.List;
  * Service that handles statistics.
  *
  * @since 0.1.0
+ * @version 0.1.1
  */
 public class StatisticsService extends BaseService {
   public StatisticsService(EntityManager em) {
@@ -48,14 +49,11 @@ public class StatisticsService extends BaseService {
    */
   public Long getAverageDeliveryTime(Store store, Area area) {
     var result =
-        em.createNamedQuery("findOrdersByZipCode", Order.class)
-            .setParameter("store", store)
+        em.createNamedQuery("getAverageDeliveryTime", BigDecimal.class)
+            .setParameter("store", store.getId())
             .setParameter("area", area.getZipCode())
-            .getResultStream()
-            .mapToLong(Order::getActualWait)
-            .average()
-            .orElse(0.0);
-    return Math.round(result);
+            .getSingleResult();
+    return result == null ? null : result.longValue();
   }
 
   /**
@@ -68,7 +66,7 @@ public class StatisticsService extends BaseService {
    */
   public List<Integer> getRushHours(Store store, LocalDateTime week, int limit) {
     return em.createNamedQuery("getRushHours", Integer.class)
-        .setParameter("store", store)
+        .setParameter("store", store.getId())
         .setParameter("week", week)
         .setParameter("limit", limit)
         .getResultList();

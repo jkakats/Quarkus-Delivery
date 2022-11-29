@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.service;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Order;
-import gr.aueb.mscis.softeng.team6.delivery.domain.OrderProduct;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Product;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
 import jakarta.persistence.EntityManager;
@@ -14,6 +13,7 @@ import java.util.List;
  * Service that handles orders.
  *
  * @since 0.1.0
+ * @version 0.1.1
  */
 public class OrderService extends BaseService {
   /** The confirmation message format. */
@@ -70,12 +70,12 @@ public class OrderService extends BaseService {
    * @return a list of {@link Store} objects.
    */
   public List<Store> findNearbyStores(Client client, Order order) {
-    var products = order.getProducts().stream().map(OrderProduct::getProduct).toList();
-    return em.createNamedQuery("findStoresByArea", Store.class)
-        .setParameter("area", client.getAddress().getArea())
-        .getResultStream()
-        .filter(s -> new HashSet<>(s.getProducts()).containsAll(products))
-        .toList();
+    var products = order.getProducts().stream().map(o -> o.getProduct().getId()).toList();
+    return em.createNamedQuery("findNearbyStores", Store.class)
+        .setParameter("area", client.getAddress().getArea().getZipCode())
+        .setParameter("count", products.size())
+        .setParameter("products", products)
+        .getResultList();
   }
 
   /**

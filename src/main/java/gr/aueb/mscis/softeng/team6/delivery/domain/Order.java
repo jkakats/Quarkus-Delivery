@@ -31,6 +31,7 @@ import org.hibernate.annotations.UuidGenerator;
  * Order entity.
  *
  * @since 0.1.0
+ * @version 0.1.1
  */
 @Entity
 @Table(name = "`order`")
@@ -43,13 +44,13 @@ public class Order implements Serializable {
   private UUID uuid;
 
   /** Order confirmation field. */
-  @ColumnDefault("FALSE")
-  @Column(insertable = false, nullable = false)
+  @ColumnDefault("false")
+  @Column(nullable = false)
   private Boolean confirmed = false;
 
   /** Delivery completion field. */
-  @ColumnDefault("FALSE")
-  @Column(insertable = false, nullable = false)
+  @ColumnDefault("false")
+  @Column(nullable = false)
   private Boolean delivered = false;
 
   /** Order time field. */
@@ -59,7 +60,7 @@ public class Order implements Serializable {
   private LocalDateTime orderedTime;
 
   /** Delivery time field. */
-  @Column(name = "delivered_time", insertable = false, columnDefinition = "TIMESTAMP(0)")
+  @Column(name = "delivered_time", columnDefinition = "TIMESTAMP(0)")
   private LocalDateTime deliveredTime;
 
   /** Estimated waiting time field (in minutes). */

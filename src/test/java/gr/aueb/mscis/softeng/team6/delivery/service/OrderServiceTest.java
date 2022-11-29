@@ -1,7 +1,9 @@
 package gr.aueb.mscis.softeng.team6.delivery.service;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.within;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Address;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
@@ -116,8 +118,8 @@ class OrderServiceTest {
   @Test
   @org.junit.jupiter.api.Order(3)
   void testFindNearbyStores() {
-    var stores = service.findNearbyStores(client, order);
-    assertThat(stores).hasSize(1).first().isEqualTo(stores.get(0));
+    var nearby = service.findNearbyStores(client, order);
+    assertThat(nearby).hasSize(1).first().isEqualTo(stores.get(0));
   }
 
   @Test
@@ -151,7 +153,7 @@ class OrderServiceTest {
     var now = LocalDateTime.now();
     var softly = new SoftAssertions();
     softly.assertThat(order.isDelivered()).isTrue();
-    softly.assertThat(order.getDeliveredTime()).isEqualToIgnoringSeconds(now);
+    softly.assertThat(order.getDeliveredTime()).isCloseTo(now, within(1, MINUTES));
     softly.assertThat(order.getActualWait()).isNotNull();
     softly.assertAll();
   }
