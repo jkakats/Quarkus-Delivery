@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -34,7 +35,9 @@ import org.hibernate.annotations.UuidGenerator;
  * @version 0.1.1
  */
 @Entity
-@Table(name = "`order`")
+@Table(
+    name = "`order`",
+    indexes = {@Index(columnList = "ordered_time")})
 public class Order implements Serializable {
   /** Auto-generated UUID field. */
   @Id

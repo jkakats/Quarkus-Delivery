@@ -7,6 +7,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ import org.hibernate.validator.constraints.Length;
  * Client entity.
  *
  * @since 0.1.0
+ * @version 0.1.1
  */
 @NamedQueries({
   @NamedQuery(
@@ -43,7 +45,9 @@ import org.hibernate.validator.constraints.Length;
       readOnly = true)
 })
 @Entity
-@Table(name = "client")
+@Table(
+    name = "client",
+    indexes = {@Index(columnList = "address_zip_code")})
 public class Client implements Serializable {
   /** Auto-generated ID field. */
   @Id

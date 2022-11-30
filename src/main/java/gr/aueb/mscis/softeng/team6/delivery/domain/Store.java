@@ -10,6 +10,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -88,7 +89,9 @@ import org.hibernate.annotations.NamedQuery;
       readOnly = true)
 })
 @Entity
-@Table(name = "store")
+@Table(
+    name = "store",
+    indexes = {@Index(columnList = "type")})
 public class Store implements Serializable {
   /** Auto-generated ID field. */
   @Id
