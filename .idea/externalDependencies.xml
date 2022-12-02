@@ -3,11 +3,12 @@
   <component name="ExternalDependencies">
     <plugin id="CheckStyle-IDEA" />
     <plugin id="Coverage" />
-    <plugin id="GenerateSerialVersionUID" />
     <plugin id="JUnit" />
     <plugin id="PlantUML integration" />
     <plugin id="com.github.lppedd.idea-conventional-commit" />
     <plugin id="com.intellij.beanValidation" />
+    <plugin id="com.intellij.cdi" />
+    <plugin id="com.intellij.database" />
     <plugin id="com.intellij.hibernate" />
     <plugin id="com.intellij.javaee.el" />
     <plugin id="com.intellij.quarkus" />
@@ -19,5 +20,6 @@
     <plugin id="org.intellij.plugins.markdown" />
     <plugin id="org.jetbrains.idea.maven" />
     <plugin id="org.jetbrains.plugins.spotbugs" />
+    <plugin id="org.mapstruct.intellij" />
   </component>
 </project>

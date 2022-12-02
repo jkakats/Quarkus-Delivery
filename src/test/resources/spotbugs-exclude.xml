@@ -1,8 +1,15 @@
 <FindBugsFilter>
   <Match>
     <Bug pattern="EI_EXPOSE_REP"/>
+    <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
+    <Method name="~get.*"/>
   </Match>
   <Match>
     <Bug pattern="EI_EXPOSE_REP2"/>
+    <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
+    <Method name="~set.*"/>
+  </Match>
+  <Match>
+    <Method name="~\$\$_hibernate_.*"/>
   </Match>
 </FindBugsFilter>

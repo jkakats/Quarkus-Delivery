@@ -3,45 +3,58 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gr.aueb.mscis.softeng.team6</groupId>
   <artifactId>delivery</artifactId>
-  <version>0.1.1</version>
+  <version>1.0.0</version>
   <name>Food delivery system</name>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hibernate.core.version>6.1.5.Final</hibernate.core.version>
-    <hibernate.validator.version>8.0.0.Final</hibernate.validator.version>
-    <jakarta.el.version>5.0.0-M1</jakarta.el.version>
-    <h2database.version>2.1.214</h2database.version>
+    <quarkus.version>2.15.0.CR1</quarkus.version>
+    <mapstruct.version>1.5.3.Final</mapstruct.version>
     <libphonenumber.version>8.13.1</libphonenumber.version>
     <argon2.version>2.11</argon2.version>
     <junit.version>5.9.1</junit.version>
     <assertj.version>3.23.1</assertj.version>
-    <mockito.version>4.8.1</mockito.version>
     <jacoco.version>0.8.8</jacoco.version>
+    <rest-assured.version>5.3.0</rest-assured.version>
     <checkstyle.version>3.2.0</checkstyle.version>
     <spotbugs.version>4.7.3.0</spotbugs.version>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-bom</artifactId>
+        <version>${quarkus.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.hibernate.orm</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>${hibernate.core.version}</version>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-orm-panache</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>${hibernate.validator.version}</version>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-validator</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>jakarta.el</artifactId>
-      <version>${jakarta.el.version}</version>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-h2</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${h2database.version}</version>
-      <scope>runtime</scope>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
     </dependency>
     <dependency>
       <groupId>com.googlecode.libphonenumber</groupId>
@@ -54,9 +67,18 @@
       <version>${argon2.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>${junit.version}</version>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-junit5-mockito</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jacoco</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -66,15 +88,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj.version}</version>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>${rest-assured.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>${mockito.version}</version>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -88,6 +110,19 @@
           <optimize>true</optimize>
           <release>17</release>
           <enablePreview>true</enablePreview>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-parameters</arg>
+            <arg>-Amapstruct.defaultComponentModel=cdi</arg>
+            <arg>-Amapstruct.defaultInjectionStrategy=constructor</arg>
+            <arg>-Amapstruct.disableBuilders=true</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -103,6 +138,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.0.0-M7</version>
+        <configuration>
+          <systemPropertyVariables>
+            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+          </systemPropertyVariables>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -118,6 +158,35 @@
             <phase>validate</phase>
             <goals>
               <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-maven-plugin</artifactId>
+        <version>${quarkus.version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>quarkus-generate</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-code</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>quarkus-generate-tests</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-code-tests</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>quarkus-build</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>build</goal>
             </goals>
           </execution>
         </executions>
@@ -163,6 +232,10 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco.version}</version>
         <configuration>
+          <exclClassLoaders>*QuarkusClassLoader</exclClassLoaders>
+          <destFile>${project.build.directory}/jacoco-quarkus.exec</destFile>
+          <dataFile>${project.build.directory}/jacoco-quarkus.exec</dataFile>
+          <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
           <haltOnFailure>false</haltOnFailure>
           <rules>
             <rule>
@@ -197,14 +270,14 @@
           </execution>
           <execution>
             <id>jacoco-check</id>
-            <phase>test</phase>
+            <phase>post-integration-test</phase>
             <goals>
               <goal>check</goal>
             </goals>
           </execution>
           <execution>
             <id>jacoco-report</id>
-            <phase>test</phase>
+            <phase>post-integration-test</phase>
             <goals>
               <goal>report</goal>
             </goals>

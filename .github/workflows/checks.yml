@@ -2,7 +2,6 @@ name: Checks
 
 on:
   pull_request:
-    branches: [main]
     paths:
       - src/main/**
       - src/test/**
@@ -51,7 +50,9 @@ jobs:
         with:
           title: JaCoCo report
           update-comment: true
-          min-coverage-overall: 75
-          min-coverage-changed-files: 75
-          paths: target/site/jacoco/jacoco.xml
+          min-coverage-overall: >-
+            ${{ (github.base_ref == 'main' && 75) || 0 }}
+          min-coverage-changed-files: >-
+            ${{ (github.base_ref == 'main' && 75) || 0 }}
+          paths: target/jacoco-report/jacoco.xml
           token: ${{github.token}}
