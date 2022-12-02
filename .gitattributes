@@ -3,7 +3,6 @@
 *.java source
 *.xml source
 *.md source
+*.puml source
 
 *.svg source linguist-generated
-
-docs/uml/*.puml source linguist-detectable
