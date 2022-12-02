@@ -3,20 +3,19 @@ package gr.aueb.mscis.softeng.team6.delivery.service;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Product;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
-import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Set;
+import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
  * Service that handles stores.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
+@RequestScoped
 public class StoreService extends BaseService {
-  public StoreService(EntityManager em) {
-    super(em);
-  }
-
   /**
    * Register a new store.
    *
@@ -26,6 +25,7 @@ public class StoreService extends BaseService {
    * @param products the products offered by the store.
    * @return a new {@link Store} object or {@code null} on error.
    */
+  @Transactional
   public Store registerStore(String name, String type, Set<Area> areas, List<Product> products) {
     return persistObject(
         new Store().setName(name).setType(type).setProducts(products).setAreas(areas));

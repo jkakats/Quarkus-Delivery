@@ -2,31 +2,31 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.UuidGenerator;
 
 /**
  * Order entity.
@@ -41,9 +41,9 @@ import org.hibernate.annotations.UuidGenerator;
 public class Order implements Serializable {
   /** Auto-generated UUID field. */
   @Id
-  @GeneratedValue
-  @UuidGenerator
-  @ColumnDefault("RANDOM_UUID()")
+  @GeneratedValue(generator = "UUID")
+  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  @ColumnDefault("random_uuid()")
   private UUID uuid;
 
   /** Order confirmation field. */
@@ -58,12 +58,12 @@ public class Order implements Serializable {
 
   /** Order time field. */
   @CreationTimestamp
-  @ColumnDefault("CURRENT_TIMESTAMP(0)")
-  @Column(name = "ordered_time", updatable = false, columnDefinition = "TIMESTAMP(0)")
+  @ColumnDefault("current_timestamp(0)")
+  @Column(name = "ordered_time", updatable = false, columnDefinition = "timestamp(0)")
   private LocalDateTime orderedTime;
 
   /** Delivery time field. */
-  @Column(name = "delivered_time", columnDefinition = "TIMESTAMP(0)")
+  @Column(name = "delivered_time", columnDefinition = "timestamp(0)")
   private LocalDateTime deliveredTime;
 
   /** Estimated waiting time field (in minutes). */

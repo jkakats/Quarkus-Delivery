@@ -1,11 +1,15 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 /**
  * Product review entity.
@@ -15,6 +19,10 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "product_review")
 public class ProductReview extends Review {
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
+  private Long id;
+
   /** Product relation field. */
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   private OrderProduct product;
@@ -23,6 +31,10 @@ public class ProductReview extends Review {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "parent")
   private OrderReview parent;
+
+  public Long getId() {
+    return id;
+  }
 
   public OrderProduct getProduct() {
     return product;

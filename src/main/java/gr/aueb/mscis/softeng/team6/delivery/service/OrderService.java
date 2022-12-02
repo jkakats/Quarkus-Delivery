@@ -4,37 +4,33 @@ import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Order;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Product;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
-import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 /**
  * Service that handles orders.
  *
  * @since 0.1.0
- * @version 0.1.1
+ * @version 1.0.0
  */
+@RequestScoped
 public class OrderService extends BaseService {
   /** The confirmation message format. */
   static final String CONFIRM_MESSAGE =
       "Order ID: %s%nTotal cost: %.2f%nEstimated waiting time: %d minutes";
 
-  private MessageProvider messageProvider;
-
-  public OrderService(EntityManager em) {
-    super(em);
-  }
-
-  public void setMessageProvider(MessageProvider messageProvider) {
-    this.messageProvider = messageProvider;
-  }
+  @Inject protected MessageProvider messageProvider;
 
   /**
    * Get all the products in the catalogue.
    *
    * @return a list of {@link Product} objects.
    */
+  @Transactional
   public List<Product> getAllProducts() {
     return em.createNamedQuery("getAllProducts", Product.class).getResultList();
   }
@@ -69,6 +65,7 @@ public class OrderService extends BaseService {
    * @param order an {@link Order} object.
    * @return a list of {@link Store} objects.
    */
+  @Transactional
   public List<Store> findNearbyStores(Client client, Order order) {
     var products = order.getProducts().stream().map(o -> o.getProduct().getId()).toList();
     return em.createNamedQuery("findNearbyStores", Store.class)
@@ -86,6 +83,7 @@ public class OrderService extends BaseService {
    * @param order the order to be submitted.
    * @return the updated {@link Order} object or {@code null} on error.
    */
+  @Transactional
   public Order submitOrder(Client client, Store store, Order order) {
     return persistObject(order.setClient(client).setStore(store));
   }
@@ -97,6 +95,7 @@ public class OrderService extends BaseService {
    * @param waitingTime the estimated waiting time.
    * @return the updated {@link Order} object or {@code null} on error.
    */
+  @Transactional
   public Order confirmOrder(Order order, Long waitingTime) {
     var result = persistObject(order.setConfirmed(true).setEstimatedWait(waitingTime));
     if (result != null) {
@@ -112,6 +111,7 @@ public class OrderService extends BaseService {
    * @param order the original {@link Order} object.
    * @return the updated {@link Order} object or {@code null} on error.
    */
+  @Transactional
   public Order deliverOrder(Order order) {
     return persistObject(order.setDelivered(true).setDeliveredTime(LocalDateTime.now()));
   }

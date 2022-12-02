@@ -5,22 +5,20 @@ import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
-import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
  * Service that handles statistics.
  *
  * @since 0.1.0
- * @version 0.1.1
+ * @version 1.0.0
  */
+@RequestScoped
 public class StatisticsService extends BaseService {
-  public StatisticsService(EntityManager em) {
-    super(em);
-  }
-
   /**
    * Find the most frequent clients of a store during a certain time period.
    *
@@ -30,6 +28,7 @@ public class StatisticsService extends BaseService {
    * @param max the maximum number of clients returned.
    * @return a list of clients sorted by the number of orders.
    */
+  @Transactional
   public List<Client> findFrequentClients(
       Store store, LocalDateTime start, LocalDateTime end, int max) {
     return em.createNamedQuery("findFrequentClients", Client.class)
@@ -47,6 +46,7 @@ public class StatisticsService extends BaseService {
    * @param area an {@link Area} object.
    * @return the average delivery time in minutes.
    */
+  @Transactional
   public Long getAverageDeliveryTime(Store store, Area area) {
     var result =
         em.createNamedQuery("getAverageDeliveryTime", BigDecimal.class)
@@ -64,6 +64,7 @@ public class StatisticsService extends BaseService {
    * @param limit the minimum number of orders.
    * @return a list of rush hours.
    */
+  @Transactional
   public List<Integer> getRushHours(Store store, LocalDateTime week, int limit) {
     return em.createNamedQuery("getRushHours", Integer.class)
         .setParameter("store", store.getId())

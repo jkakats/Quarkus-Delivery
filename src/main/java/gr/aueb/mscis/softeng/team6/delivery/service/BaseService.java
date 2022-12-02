@@ -1,20 +1,18 @@
 package gr.aueb.mscis.softeng.team6.delivery.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
-import jakarta.validation.ConstraintViolationException;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
+import javax.validation.ConstraintViolationException;
 
 /**
  * Base service class.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
 abstract class BaseService {
-  protected final EntityManager em;
-
-  protected BaseService(EntityManager em) {
-    this.em = em;
-  }
+  @Inject protected EntityManager em;
 
   /** Persist the given object and handle exceptions. */
   protected <T> T persistObject(T object) {

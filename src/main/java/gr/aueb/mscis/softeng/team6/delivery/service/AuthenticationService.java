@@ -4,23 +4,22 @@ import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.domain.EmailAddress;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Password;
 import gr.aueb.mscis.softeng.team6.delivery.domain.PhoneNumber;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceException;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
+import javax.enterprise.context.RequestScoped;
+import javax.persistence.EntityExistsException;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 /**
  * Service that handles client authentication.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
+@RequestScoped
 public class AuthenticationService extends BaseService {
-  public AuthenticationService(EntityManager em) {
-    super(em);
-  }
-
   /**
    * Register a new client.
    *
@@ -31,6 +30,7 @@ public class AuthenticationService extends BaseService {
    * @param phone the client's phone number.
    * @return a new {@link Client} object or {@code null} on error.
    */
+  @Transactional
   public Client registerClient(
       String username, String password, String name, String email, String phone) {
     var client =
@@ -50,6 +50,7 @@ public class AuthenticationService extends BaseService {
    * @param password the client's password.
    * @return a {@link Client} object or {@code null} if the login failed.
    */
+  @Transactional
   public Client loginClient(String username, String password) {
     Client client = null;
     try {

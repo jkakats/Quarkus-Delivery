@@ -2,19 +2,18 @@ package gr.aueb.mscis.softeng.team6.delivery.service;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Order;
 import gr.aueb.mscis.softeng.team6.delivery.domain.OrderReview;
-import jakarta.persistence.EntityManager;
 import java.util.List;
+import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 
 /**
  * Service that handles reviews.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
+@RequestScoped
 public class ReviewService extends BaseService {
-  public ReviewService(EntityManager em) {
-    super(em);
-  }
-
   /**
    * Submit a review for a given order.
    *
@@ -25,6 +24,7 @@ public class ReviewService extends BaseService {
    * @return a new {@link OrderReview} object or {@code null} on error.
    * @throws IllegalArgumentException if the product ratings array has the wrong size.
    */
+  @Transactional
   public OrderReview reviewOrder(
       Order order, short rating, String comment, Short[] productRatings) {
     var review = new OrderReview().setOrder(order).setRating(rating).setComment(comment);

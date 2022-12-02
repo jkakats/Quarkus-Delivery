@@ -1,21 +1,21 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
+import static javax.persistence.GenerationType.IDENTITY;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.annotations.NaturalId;
@@ -29,17 +29,13 @@ import org.hibernate.validator.constraints.Length;
  */
 @NamedQueries({
   @NamedQuery(
-      name = "findClientByUsername",
-      query = "from Client where username like :username",
-      readOnly = true,
-      fetchSize = 1),
-  @NamedQuery(
       name = "findFrequentClients",
       query =
           """
-        from Client c join c.orders o
+        select c from Client c join c.orders o
           where o.store = :store
           and (o.orderedTime between :start and :end)
+        group by c
         order by count(o) desc
         """,
       readOnly = true)
