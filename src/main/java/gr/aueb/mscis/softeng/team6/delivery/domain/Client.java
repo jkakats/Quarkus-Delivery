@@ -1,9 +1,9 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -16,6 +16,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.annotations.NaturalId;
@@ -25,7 +27,7 @@ import org.hibernate.validator.constraints.Length;
  * Client entity.
  *
  * @since 0.1.0
- * @version 0.1.1
+ * @version 1.0.0
  */
 @NamedQueries({
   @NamedQuery(
@@ -45,10 +47,12 @@ import org.hibernate.validator.constraints.Length;
     name = "client",
     indexes = {@Index(columnList = "address_zip_code")})
 public class Client implements Serializable {
-  /** Auto-generated ID field. */
+  /** Auto-generated UUID field. */
   @Id
-  @GeneratedValue(strategy = IDENTITY)
-  private Long id;
+  @GeneratedValue(generator = "UUID")
+  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  @ColumnDefault("random_uuid()")
+  private UUID uuid;
 
   /** Username field. */
   @NotNull
@@ -75,10 +79,10 @@ public class Client implements Serializable {
 
   /** Orders relation field. */
   @OneToMany(mappedBy = "client")
-  private List<Order> orders;
+  private List<Order> orders = new ArrayList<>();
 
-  public Long getId() {
-    return id;
+  public UUID getUuid() {
+    return uuid;
   }
 
   public String getUsername() {
