@@ -1,100 +1,34 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
 
-import gr.aueb.mscis.softeng.team6.delivery.util.EntityManagerUtil;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(OrderAnnotation.class)
 class OrderTest {
   private static final LocalDateTime TEST_TIME = LocalDateTime.of(2015, 3, 14, 9, 26, 53);
   private static final BigDecimal TEST_PRICE = BigDecimal.TEN;
   private static final int TEST_QUANTITY = 2;
   private static final long TEST_WAIT = 42L;
 
-  private Client client;
-  private Store store;
   private Product product;
   private Order order;
 
   @BeforeEach
   void setUp() {
-    client =
-        new Client()
-            .setUsername("johndoe")
-            .setName("John Doe")
-            .setEmail(new EmailAddress("john@doe.com"))
-            .setPassword(new Password("j0hnd0e!"))
-            .setPhone(new PhoneNumber("6987654321"));
-    store = new Store().setName("nameless").setType("none");
     product = new Product().setName("foobar").setPrice(TEST_PRICE);
     order =
         new Order()
-            .setClient(client)
-            .setStore(store)
+            .setClient(null)
+            .setStore(null)
             .setEstimatedWait(TEST_WAIT)
             .setProducts(new HashSet<>(1))
             .setConfirmed(false)
             .setDelivered(false)
             .setDeliveredTime(null);
-  }
-
-  @Test
-  @org.junit.jupiter.api.Order(1)
-  void testPersist() {
-    order.addProduct(product, TEST_QUANTITY);
-    var now = LocalDateTime.now();
-    EntityManagerUtil.runTransaction(
-        em -> {
-          em.persist(client);
-          em.persist(store);
-          em.persist(product);
-          em.persist(order);
-          var softly = new SoftAssertions();
-          softly.assertThat(order.getUuid()).isNotNull();
-          softly.assertThat(order.getEstimatedWait()).isEqualTo(TEST_WAIT);
-          softly.assertThat(order.getOrderedTime()).isCloseTo(now, within(1, MINUTES));
-          softly.assertThat(order.isConfirmed()).isFalse();
-          softly.assertThat(order.isDelivered()).isFalse();
-          softly.assertAll();
-        });
-  }
-
-  @Test
-  @org.junit.jupiter.api.Order(2)
-  void testQuery() {
-    EntityManagerUtil.runTransaction(
-        em -> {
-          var order = em.createQuery("from Order", Order.class).getResultList().get(0);
-          var softly = new SoftAssertions();
-          softly.assertThat(order.getClient()).isEqualTo(client);
-          softly.assertThat(order.getStore()).isEqualTo(store);
-          softly
-              .assertThat(order.getProducts())
-              .singleElement()
-              .satisfies(
-                  op -> {
-                    assertThat(op)
-                        .doesNotReturn(null, OrderProduct::getId)
-                        .returns(TEST_QUANTITY, OrderProduct::getQuantity)
-                        .returns(order, OrderProduct::getOrder)
-                        .returns(product.getName(), o -> o.getProduct().getName());
-                  });
-          softly.assertAll();
-          em.remove(order);
-          em.remove(order.getClient());
-          em.remove(order.getStore());
-          order.getProducts().forEach(p -> em.remove(p.getProduct()));
-        });
   }
 
   @Test

@@ -1,7 +1,6 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,10 +27,5 @@ class StoreTest {
   @Test
   void testToString() {
     assertThat(store).hasToString("Store{name=\"The Store\", type=\"supermarket\"}");
-  }
-
-  @Test
-  void checkIfNull() {
-    assertNotNull(store);
   }
 }

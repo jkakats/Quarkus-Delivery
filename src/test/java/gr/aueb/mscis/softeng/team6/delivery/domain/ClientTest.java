@@ -1,19 +1,10 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import gr.aueb.mscis.softeng.team6.delivery.util.EntityManagerUtil;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-@TestMethodOrder(OrderAnnotation.class)
 class ClientTest {
   private static final String TEST_USERNAME = "johndoe";
   private static final String TEST_NAME = "John Doe";
@@ -37,59 +28,6 @@ class ClientTest {
             .setEmail(new EmailAddress(TEST_EMAIL))
             .setPassword(new Password(TEST_PASSWORD))
             .setPhone(new PhoneNumber(TEST_PHONE_NUMBER));
-  }
-
-  @Test
-  @Order(1)
-  void testPersist() {
-    EntityManagerUtil.runTransaction(
-        em -> {
-          em.persist(client);
-          var softly = new SoftAssertions();
-          softly.assertThat(client.getId()).isNotNull();
-          softly.assertThat(client.getPassword().getPassword()).isNotEqualTo(TEST_PASSWORD);
-          softly.assertThat(client.getPassword().verify(TEST_PASSWORD)).isTrue();
-          softly.assertAll();
-        });
-  }
-
-  @Test
-  @Order(2)
-  void testQuery() {
-    EntityManagerUtil.runTransaction(
-        em -> {
-          var client = em.createQuery("from Client", Client.class).getResultList().get(0);
-          assertThat(client)
-              .returns(TEST_USERNAME, Client::getUsername)
-              .returns(TEST_NAME, Client::getName)
-              .returns(TEST_EMAIL, c -> c.getEmail().toString())
-              .returns(TEST_PHONE_NUMBER, c -> c.getPhone().toString());
-          assertThat(client.getAddress())
-              .returns(TEST_STREET, Address::getStreet)
-              .returns(TEST_APARTMENT, Address::getApartment);
-          assertThat(client.getOrders()).isEmpty();
-          em.remove(client);
-        });
-  }
-
-  @Test
-  void testPasswordLength() {
-    EntityManagerUtil.runTransaction(
-        em -> {
-          assertThatExceptionOfType(ValidationException.class)
-              .isThrownBy(() -> em.persist(client.setPassword(new Password("short"))))
-              .withMessageContaining("length must be");
-        });
-  }
-
-  @Test
-  void testPhoneValid() {
-    EntityManagerUtil.runTransaction(
-        em -> {
-          assertThatExceptionOfType(ConstraintViolationException.class)
-              .isThrownBy(() -> em.persist(client.setPhone(new PhoneNumber("invalid"))))
-              .withMessageContaining("must be a valid phone number");
-        });
   }
 
   @Test
