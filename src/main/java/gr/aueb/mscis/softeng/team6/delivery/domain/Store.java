@@ -16,8 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
@@ -100,13 +98,13 @@ public class Store {
   /** Name field. */
   @NotNull
   @NotBlank
-  @Column(unique = true, columnDefinition = "VARCHAR_IGNORECASE(255) NOT NULL")
+  @Column(unique = true, columnDefinition = "varchar_ignorecase(255) not null")
   private String name;
 
   /** Type field. */
   @NotNull
   @NotBlank
-  @Column(length = 100, columnDefinition = "VARCHAR_IGNORECASE(100) NOT NULL")
+  @Column(length = 100, columnDefinition = "varchar_ignorecase(100) not null")
   private String type;
 
   /** Areas relation field. */
@@ -118,11 +116,7 @@ public class Store {
   private Set<Area> areas = new HashSet<>();
 
   /** Products relation field. */
-  @ManyToMany(cascade = CascadeType.ALL)
-  @JoinTable(
-      name = "store_product",
-      joinColumns = {@JoinColumn(name = "store_id")},
-      inverseJoinColumns = {@JoinColumn(name = "product_id")})
+  @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
   private List<Product> products = new ArrayList<>();
 
   /** Orders relation field. */

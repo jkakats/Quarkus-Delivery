@@ -19,7 +19,7 @@ public class ProductRepository implements PanacheRepositoryBase<Product, Long> {
    * @return a list of {@link Product} objects.
    */
   public List<Product> search(String name) {
-    var query = "from Product p join fetch p.stores";
+    var query = "from Product p join fetch p.store";
     return name == null ? list(query) : list(query + " where p.name like ?1", name);
   }
 }

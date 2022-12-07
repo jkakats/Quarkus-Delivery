@@ -91,7 +91,7 @@ Order "*" o-- "1..*      " Product
 (Order, Product) .. OrderProduct
 
 Store "~*    " -- "1..*" Area
-Store "~*" -- "~*    " Product
+Store "1" -- "~*    " Product
 
 Address "*" o-- "1   " Area
 

@@ -3,19 +3,17 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.Index;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 
 /**
  * Product entity.
@@ -24,7 +22,10 @@ import org.hibernate.annotations.NamedQuery;
  * @version 1.0.0
  */
 @Entity
-@Table(name = "product")
+@Table(
+    name = "product",
+    indexes = {@Index(columnList = "name")},
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "store_id"})})
 public class Product {
   /** Auto-generated ID field. */
   @Id
@@ -32,7 +33,10 @@ public class Product {
   private Long id;
 
   /** Name field. */
-  @NotNull @NotBlank private String name;
+  @NotNull
+  @NotBlank
+  @Column(columnDefinition = "varchar_ignorecase(255) not null")
+  private String name;
 
   /** Price field. */
   @NotNull
@@ -43,9 +47,9 @@ public class Product {
   @Column(length = 2000)
   private String comment;
 
-  /** Stores relation field. */
-  @ManyToMany(mappedBy = "products")
-  private List<Store> stores = new ArrayList<>();
+  /** Store relation field. */
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Store store;
 
   public Long getId() {
     return id;
@@ -78,8 +82,13 @@ public class Product {
     return this;
   }
 
-  public List<Store> getStores() {
-    return stores;
+  public Store getStore() {
+    return store;
+  }
+
+  public Product setStore(Store store) {
+    this.store = store;
+    return this;
   }
 
   @Override
