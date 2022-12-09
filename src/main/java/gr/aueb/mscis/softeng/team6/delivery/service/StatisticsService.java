@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 /**
@@ -18,7 +20,9 @@ import javax.transaction.Transactional;
  * @version 1.0.0
  */
 @RequestScoped
-public class StatisticsService extends BaseService {
+public class StatisticsService {
+  @Inject protected EntityManager em;
+
   /**
    * Find the most frequent clients of a store during a certain time period.
    *

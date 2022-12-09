@@ -34,7 +34,7 @@ import org.hibernate.annotations.NamedQuery;
  * Store entity.
  *
  * @since 0.1.0
- * @version 0.1.1
+ * @version 1.0.0
  */
 @SqlResultSetMapping(
     name = "ScalarResult",
@@ -101,13 +101,13 @@ public class Store implements Serializable {
   /** Name field. */
   @NotNull
   @NotBlank
-  @Column(unique = true)
+  @Column(unique = true, columnDefinition = "VARCHAR_IGNORECASE(255) NOT NULL")
   private String name;
 
   /** Type field. */
   @NotNull
   @NotBlank
-  @Column(length = 100)
+  @Column(length = 100, columnDefinition = "VARCHAR_IGNORECASE(100) NOT NULL")
   private String type;
 
   /** Areas relation field. */

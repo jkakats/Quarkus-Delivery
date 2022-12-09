@@ -2,8 +2,10 @@ package gr.aueb.mscis.softeng.team6.delivery.service;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Order;
 import gr.aueb.mscis.softeng.team6.delivery.domain.OrderReview;
+import gr.aueb.mscis.softeng.team6.delivery.persistence.OrderReviewRepository;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
@@ -13,7 +15,9 @@ import javax.transaction.Transactional;
  * @version 1.0.0
  */
 @RequestScoped
-public class ReviewService extends BaseService {
+public class ReviewService {
+  @Inject protected OrderReviewRepository repository;
+
   /**
    * Submit a review for a given order.
    *
@@ -38,6 +42,7 @@ public class ReviewService extends BaseService {
         review.addProductReview(products.get(i), productRatings[i]);
       }
     }
-    return persistObject(review);
+    repository.persist(review);
+    return review;
   }
 }

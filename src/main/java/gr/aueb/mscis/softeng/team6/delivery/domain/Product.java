@@ -4,7 +4,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,13 +22,8 @@ import org.hibernate.annotations.NamedQuery;
  * Product entity.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
-@NamedQueries({
-  @NamedQuery(
-      name = "getAllProducts",
-      query = "from Product p join fetch p.stores",
-      readOnly = true)
-})
 @Entity
 @Table(name = "product")
 public class Product implements Serializable {
@@ -49,7 +46,7 @@ public class Product implements Serializable {
 
   /** Stores relation field. */
   @ManyToMany(mappedBy = "products")
-  private List<Store> stores;
+  private List<Store> stores = new ArrayList<>();
 
   public Long getId() {
     return id;

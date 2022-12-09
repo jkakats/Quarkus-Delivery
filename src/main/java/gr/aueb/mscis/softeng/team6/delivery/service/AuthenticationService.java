@@ -4,12 +4,10 @@ import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.domain.EmailAddress;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Password;
 import gr.aueb.mscis.softeng.team6.delivery.domain.PhoneNumber;
+import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import javax.enterprise.context.RequestScoped;
-import javax.persistence.EntityExistsException;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
 /**
@@ -19,7 +17,9 @@ import javax.validation.ValidationException;
  * @version 1.0.0
  */
 @RequestScoped
-public class AuthenticationService extends BaseService {
+public class AuthenticationService {
+  @Inject protected ClientRepository repository;
+
   /**
    * Register a new client.
    *
@@ -28,7 +28,7 @@ public class AuthenticationService extends BaseService {
    * @param name the client's real name.
    * @param email the client's email address.
    * @param phone the client's phone number.
-   * @return a new {@link Client} object or {@code null} on error.
+   * @return a new {@link Client} object.
    */
   @Transactional
   public Client registerClient(
@@ -40,7 +40,8 @@ public class AuthenticationService extends BaseService {
             .setPassword(new Password(password))
             .setEmail(new EmailAddress(email))
             .setPhone(new PhoneNumber(phone));
-    return persistObject(client);
+    repository.persistAndFlush(client);
+    return client;
   }
 
   /**
@@ -48,48 +49,15 @@ public class AuthenticationService extends BaseService {
    *
    * @param username the client's username.
    * @param password the client's password.
-   * @return a {@link Client} object or {@code null} if the login failed.
+   * @return a new {@link Client} object.
+   * @throws ValidationException if the login failed.
    */
   @Transactional
   public Client loginClient(String username, String password) {
-    Client client = null;
-    try {
-      client =
-          em.createNamedQuery("findClientByUsername", Client.class)
-              .setParameter("username", username)
-              .getSingleResult();
-      if (!(client.getPassword().verify(password))) {
-        System.err.println("incorrect username or password");
-        client = null;
-      }
-    } catch (NoResultException ex) {
-      System.err.println("incorrect username or password");
-    } catch (PersistenceException ex) {
-      System.err.println(ex.getMessage());
+    var client = repository.findByUsername(username);
+    if (client.isEmpty() || !client.get().getPassword().verify(password)) {
+      throw new ValidationException("incorrect username or password");
     }
-    return client;
-  }
-
-  @Override
-  protected <T> T persistObject(T object) {
-    var tx = em.getTransaction();
-    try {
-      tx.begin();
-      em.persist(object);
-      tx.commit();
-      return object;
-    } catch (ConstraintViolationException ex) {
-      for (var cv : ex.getConstraintViolations()) {
-        System.err.println(cv.getPropertyPath() + " " + cv.getMessage());
-      }
-      tx.rollback();
-    } catch (EntityExistsException | ValidationException ex) {
-      System.err.println(ex.getMessage());
-      tx.rollback();
-    } catch (PersistenceException ex) {
-      System.err.println(ex.getCause().getMessage());
-      tx.rollback();
-    }
-    return null;
+    return client.get();
   }
 }

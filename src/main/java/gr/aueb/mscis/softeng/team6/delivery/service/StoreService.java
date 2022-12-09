@@ -3,9 +3,11 @@ package gr.aueb.mscis.softeng.team6.delivery.service;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Product;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
+import gr.aueb.mscis.softeng.team6.delivery.persistence.StoreRepository;
 import java.util.List;
 import java.util.Set;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 /**
@@ -15,7 +17,9 @@ import javax.transaction.Transactional;
  * @version 1.0.0
  */
 @RequestScoped
-public class StoreService extends BaseService {
+public class StoreService {
+  @Inject protected StoreRepository repository;
+
   /**
    * Register a new store.
    *
@@ -27,7 +31,8 @@ public class StoreService extends BaseService {
    */
   @Transactional
   public Store registerStore(String name, String type, Set<Area> areas, List<Product> products) {
-    return persistObject(
-        new Store().setName(name).setType(type).setProducts(products).setAreas(areas));
+    var store = new Store().setName(name).setType(type).setProducts(products).setAreas(areas);
+    repository.persist(store);
+    return store;
   }
 }
