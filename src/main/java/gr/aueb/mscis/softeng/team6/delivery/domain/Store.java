@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -92,7 +91,7 @@ import org.hibernate.annotations.NamedQuery;
 @Table(
     name = "store",
     indexes = {@Index(columnList = "type")})
-public class Store implements Serializable {
+public class Store {
   /** Auto-generated ID field. */
   @Id
   @GeneratedValue(strategy = IDENTITY)

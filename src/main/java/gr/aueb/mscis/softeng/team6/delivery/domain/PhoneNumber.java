@@ -1,7 +1,6 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import gr.aueb.mscis.softeng.team6.delivery.validation.Phone;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
@@ -13,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * @since 0.1.0
  */
 @Embeddable
-public class PhoneNumber implements Serializable {
+public class PhoneNumber {
   /** Phone number field. */
   @Phone
   @NotNull

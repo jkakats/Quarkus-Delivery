@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +26,7 @@ import javax.validation.constraints.NotNull;
 @Table(
     name = "order_product",
     uniqueConstraints = {@UniqueConstraint(columnNames = {"order_id", "product_id"})})
-public class OrderProduct implements Serializable {
+public class OrderProduct {
   /** Auto-generated ID field. */
   @Id
   @GeneratedValue(strategy = IDENTITY)

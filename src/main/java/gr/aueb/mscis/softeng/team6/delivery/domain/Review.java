@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,7 +16,7 @@ import javax.validation.constraints.NotNull;
  * @since 0.1.0
  */
 @MappedSuperclass
-abstract class Review implements Serializable {
+abstract class Review {
   /** Auto-generated ID field. */
   @Id
   @GeneratedValue(strategy = IDENTITY)

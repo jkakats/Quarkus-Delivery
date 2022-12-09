@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -38,7 +37,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(
     name = "`order`",
     indexes = {@Index(columnList = "ordered_time")})
-public class Order implements Serializable {
+public class Order {
   /** Auto-generated UUID field. */
   @Id
   @GeneratedValue(generator = "UUID")

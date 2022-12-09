@@ -1,6 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -46,7 +45,7 @@ import org.hibernate.validator.constraints.Length;
 @Table(
     name = "client",
     indexes = {@Index(columnList = "address_zip_code")})
-public class Client implements Serializable {
+public class Client {
   /** Auto-generated UUID field. */
   @Id
   @GeneratedValue(generator = "UUID")

@@ -1,6 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Email;
@@ -13,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * @since 0.1.0
  */
 @Embeddable
-public class EmailAddress implements Serializable {
+public class EmailAddress {
   /** Email address field. */
   @Email
   @NotNull

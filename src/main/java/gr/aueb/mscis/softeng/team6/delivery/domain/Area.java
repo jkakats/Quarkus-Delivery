@@ -1,6 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Max;
@@ -14,7 +13,7 @@ import javax.validation.constraints.NotNull;
  * @since 0.1.0
  */
 @Embeddable
-public class Area implements Serializable {
+public class Area {
   /** Zip code field. */
   @Min(10000)
   @Max(89999)

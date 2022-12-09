@@ -1,6 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import java.io.Serializable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -14,7 +13,7 @@ import javax.validation.Valid;
  * @since 0.1.0
  */
 @Embeddable
-public class Address implements Serializable {
+public class Address {
   /** Street field. */
   @Column(name = "address_street", length = 100)
   private String street;

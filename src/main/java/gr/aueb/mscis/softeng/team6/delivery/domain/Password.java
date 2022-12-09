@@ -2,7 +2,6 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.PrePersist;
@@ -15,7 +14,7 @@ import javax.validation.ValidationException;
  * @since 0.1.0
  */
 @Embeddable
-public class Password implements Serializable {
+public class Password {
   /** Argon2 password hashing function. */
   private static final Argon2 ARGON2 = Argon2Factory.create();
 
