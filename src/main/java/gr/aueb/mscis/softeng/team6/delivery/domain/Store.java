@@ -24,8 +24,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.NamedNativeQueries;
 import org.hibernate.annotations.NamedNativeQuery;
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 
 /**
  * Store entity.
@@ -36,22 +34,6 @@ import org.hibernate.annotations.NamedQuery;
 @SqlResultSetMapping(
     name = "ScalarResult",
     columns = {@ColumnResult(name = "result")})
-@NamedQueries({
-  @NamedQuery(
-      name = "findNearbyStores",
-      query =
-          """
-        from Store s
-        join s.areas a
-        where :area = a.zipCode
-          and :count = (
-            select
-              count(distinct p.id)
-            from s.products p
-            where p.id in :products)
-        """,
-      readOnly = true),
-})
 // NOTE: these queries have issues in HQL
 @NamedNativeQueries({
   @NamedNativeQuery(
@@ -98,13 +80,15 @@ public class Store {
   /** Name field. */
   @NotNull
   @NotBlank
-  @Column(unique = true, columnDefinition = "varchar_ignorecase(255) not null")
+  // language=H2 prefix="call cast(null as " suffix=")"
+  @Column(unique = true, columnDefinition = "varchar_ignorecase(255)")
   private String name;
 
   /** Type field. */
   @NotNull
   @NotBlank
-  @Column(length = 100, columnDefinition = "varchar_ignorecase(100) not null")
+  // language=H2 prefix="call cast(null as " suffix=")"
+  @Column(length = 100, columnDefinition = "varchar_ignorecase(100)")
   private String type;
 
   /** Areas relation field. */

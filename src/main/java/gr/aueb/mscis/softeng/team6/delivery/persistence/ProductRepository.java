@@ -13,13 +13,13 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ProductRepository implements PanacheRepositoryBase<Product, Long> {
   /**
-   * Search for products in the catalogue.
+   * Show all products in the catalogue.
    *
-   * @param name a product name.
-   * @return a list of {@link Product} objects.
+   * @return a list of distinct product names.
    */
-  public List<Product> search(String name) {
-    var query = "from Product p join fetch p.store";
-    return name == null ? list(query) : list(query + " where p.name like ?1", name);
+  public List<String> listNames() {
+    // language=HQL
+    var query = "select distinct p.name from Product p order by p.name";
+    return find(query).project(String.class).list();
   }
 }

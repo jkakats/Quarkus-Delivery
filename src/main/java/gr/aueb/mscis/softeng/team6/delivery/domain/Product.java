@@ -35,7 +35,8 @@ public class Product {
   /** Name field. */
   @NotNull
   @NotBlank
-  @Column(columnDefinition = "varchar_ignorecase(255) not null")
+  // language=H2 prefix="call cast(null as " suffix=")"
+  @Column(columnDefinition = "varchar_ignorecase(255)")
   private String name;
 
   /** Price field. */

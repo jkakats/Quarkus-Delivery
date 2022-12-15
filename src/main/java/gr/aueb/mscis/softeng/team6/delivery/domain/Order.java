@@ -20,7 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -31,7 +30,7 @@ import org.hibernate.annotations.OnDeleteAction;
  * Order entity.
  *
  * @since 0.1.0
- * @version 0.1.1
+ * @version 1.0.0
  */
 @Entity
 @Table(
@@ -42,27 +41,40 @@ public class Order {
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  // language=H2 prefix="call "
   @ColumnDefault("random_uuid()")
+  // language=H2 prefix="call cast(null as " suffix=")"
+  @Column(columnDefinition = "uuid")
   private UUID uuid;
 
   /** Order confirmation field. */
+  // language=H2 prefix="call " suffix=""
   @ColumnDefault("false")
   @Column(nullable = false)
   private Boolean confirmed = false;
 
   /** Delivery completion field. */
+  // language=H2 prefix="call " suffix=""
   @ColumnDefault("false")
   @Column(nullable = false)
   private Boolean delivered = false;
 
   /** Order time field. */
   @CreationTimestamp
+  // language=H2 prefix="call " suffix=""
   @ColumnDefault("current_timestamp(0)")
-  @Column(name = "ordered_time", updatable = false, columnDefinition = "timestamp(0)")
+  @Column(
+      name = "ordered_time",
+      updatable = false,
+      // language=H2 prefix="call cast(null as " suffix=")"
+      columnDefinition = "timestamp(0)")
   private LocalDateTime orderedTime;
 
   /** Delivery time field. */
-  @Column(name = "delivered_time", columnDefinition = "timestamp(0)")
+  @Column(
+      name = "delivered_time",
+      // language=H2 prefix="call cast(null as " suffix=")"
+      columnDefinition = "timestamp(0)")
   private LocalDateTime deliveredTime;
 
   /** Estimated waiting time field (in minutes). */
@@ -85,7 +97,6 @@ public class Order {
   private Store store;
 
   /** Order products relation field. */
-  @Size(min = 1)
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Set<OrderProduct> products = new HashSet<>();

@@ -50,7 +50,10 @@ public class Client {
   @Id
   @GeneratedValue(generator = "UUID")
   @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  // language=H2 prefix="call "
   @ColumnDefault("random_uuid()")
+  // language=H2 prefix="call cast(null as " suffix=")"
+  @Column(columnDefinition = "uuid")
   private UUID uuid;
 
   /** Username field. */
