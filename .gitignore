@@ -26,6 +26,7 @@ out/
 *.ipr
 
 !.idea/codeStyles/
+!.idea/runConfigurations/
 !.idea/inspectionProfiles/
 !.idea/externalDependencies.xml
 !.idea/findbugs-idea.xml
