@@ -23,8 +23,14 @@ public class OrderService {
   static final String CONFIRM_MESSAGE =
       "Order ID: %s%nTotal cost: %.2f%nEstimated waiting time: %d minutes";
 
+  // TODO(ObserverOfTime): use injection if possible
+  private MessageProvider messageProvider;
+
   @Inject protected OrderRepository repository;
-  @Inject protected MessageProvider messageProvider;
+
+  public void setMessageProvider(MessageProvider messageProvider) {
+    this.messageProvider = messageProvider;
+  }
 
   /**
    * Submit an order.
