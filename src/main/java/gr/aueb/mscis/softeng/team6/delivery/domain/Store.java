@@ -111,6 +111,11 @@ public class Store {
     return id;
   }
 
+  public Store setId(Long id) {
+    this.id = id;
+    return this;
+  }
+
   public String getName() {
     return name;
   }

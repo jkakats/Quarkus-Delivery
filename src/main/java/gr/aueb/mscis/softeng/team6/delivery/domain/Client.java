@@ -87,6 +87,11 @@ public class Client {
     return uuid;
   }
 
+  public Client setUuid(UUID uuid) {
+    this.uuid = uuid;
+    return this;
+  }
+
   public String getUsername() {
     return username;
   }

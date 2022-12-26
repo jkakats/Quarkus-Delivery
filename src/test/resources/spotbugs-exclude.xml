@@ -1,13 +1,23 @@
 <FindBugsFilter>
   <Match>
     <Bug pattern="EI_EXPOSE_REP"/>
-    <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
-    <Method name="~get.*"/>
+    <Or>
+      <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.serialization\.dto\..*"/>
+      <And>
+        <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
+        <Method name="~get.*"/>
+      </And>
+    </Or>
   </Match>
   <Match>
     <Bug pattern="EI_EXPOSE_REP2"/>
-    <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
-    <Method name="~set.*"/>
+    <Or>
+      <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.serialization\.dto\..*"/>
+      <And>
+        <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
+        <Method name="~set.*"/>
+      </And>
+    </Or>
   </Match>
   <Match>
     <Method name="~\$\$_hibernate_.*"/>

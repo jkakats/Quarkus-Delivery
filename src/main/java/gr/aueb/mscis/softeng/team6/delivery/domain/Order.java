@@ -108,6 +108,11 @@ public class Order {
     return uuid;
   }
 
+  public Order setUuid(UUID uuid) {
+    this.uuid = uuid;
+    return this;
+  }
+
   public Boolean isConfirmed() {
     return confirmed;
   }
