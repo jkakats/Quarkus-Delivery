@@ -26,20 +26,14 @@ import org.mapstruct.MappingTarget;
       OrderMapper.OrderProductMapper.class
     })
 public abstract class OrderMapper {
-  @Mapping(target = "store.orders", ignore = true)
   @Mapping(target = "store.products", ignore = true)
-  @Mapping(target = "review.order", ignore = true)
-  @Mapping(target = "review.productReviews", ignore = true)
   public abstract Order deserialize(OrderDto orderDto);
 
   @Mapping(target = "store.products", ignore = true)
   public abstract OrderDto serialize(Order order);
 
   @Mapping(target = "uuid", ignore = true)
-  @Mapping(target = "store.orders", ignore = true)
   @Mapping(target = "store.products", ignore = true)
-  @Mapping(target = "review.order", ignore = true)
-  @Mapping(target = "review.productReviews", ignore = true)
   public abstract void update(@MappingTarget Order order, OrderDto orderDto);
 
   @AfterMapping
@@ -53,11 +47,9 @@ public abstract class OrderMapper {
    *
    * @since 1.0.0
    */
-  @Mapper
+  @Mapper(componentModel = "cdi", injectionStrategy = CONSTRUCTOR)
   abstract static class OrderProductMapper {
     @Mapping(target = "order", ignore = true)
-    @Mapping(target = "review.product", ignore = true)
-    @Mapping(target = "review.parent", ignore = true)
     @Mapping(target = "product.store", ignore = true)
     protected abstract OrderProduct deserialize(OrderProductDto productDto);
 
