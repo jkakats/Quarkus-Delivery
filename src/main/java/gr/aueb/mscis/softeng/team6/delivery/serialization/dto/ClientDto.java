@@ -17,6 +17,7 @@ import org.hibernate.validator.constraints.Length;
 public record ClientDto(
     UUID uuid,
     @NotNull @Length(min = 1, max = 20) @Pattern(regexp = "[a-zA-Z0-9_-]+") String username,
+    @NotNull @Length(min = 8) String password,
     @NotNull @NotBlank String name,
     @Email @NotNull @NotBlank String email,
     @NotNull @NotBlank @Phone String phoneNumber,

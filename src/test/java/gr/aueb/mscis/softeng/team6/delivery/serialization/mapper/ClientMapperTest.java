@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.domain.EmailAddress;
+import gr.aueb.mscis.softeng.team6.delivery.domain.Password;
 import gr.aueb.mscis.softeng.team6.delivery.domain.PhoneNumber;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AddressDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AreaDto;
@@ -27,7 +28,8 @@ class ClientMapperTest {
   void testDeserialize() {
     var address = new AddressDto("Lefkados", "47A", new AreaDto(11362, "Athina", "Attica"));
     var dto =
-        new ClientDto(TEST_UUID, TEST_USERNAME, TEST_NAME, TEST_EMAIL, TEST_PHONE_NUMBER, address);
+        new ClientDto(
+            TEST_UUID, TEST_USERNAME, null, TEST_NAME, TEST_EMAIL, TEST_PHONE_NUMBER, address);
     assertThat(mapper.deserialize(dto))
         .returns(dto.uuid(), Client::getUuid)
         .returns(dto.email(), c -> c.getEmail().toString())
@@ -43,10 +45,22 @@ class ClientMapperTest {
             .setName(TEST_NAME)
             .setEmail(new EmailAddress(TEST_EMAIL))
             .setPhone(new PhoneNumber(TEST_PHONE_NUMBER))
+            .setPassword(new Password())
             .setAddress(null);
     assertThat(mapper.serialize(client))
         .returns(TEST_UUID, ClientDto::uuid)
         .returns(TEST_EMAIL, ClientDto::email)
         .returns(TEST_PHONE_NUMBER, ClientDto::phoneNumber);
+  }
+
+  @Test
+  void testUpdate() {
+    var client = new Client().setUuid(TEST_UUID).setUsername(TEST_USERNAME);
+    var dto =
+        new ClientDto(
+            TEST_UUID, TEST_USERNAME, null, TEST_NAME, TEST_EMAIL, TEST_PHONE_NUMBER, null);
+    assertThat(client.getName()).isNull();
+    mapper.update(client, dto);
+    assertThat(client.getName()).isEqualTo(TEST_NAME);
   }
 }
