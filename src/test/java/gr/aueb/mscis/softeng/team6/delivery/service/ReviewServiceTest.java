@@ -9,6 +9,7 @@ import gr.aueb.mscis.softeng.team6.delivery.domain.ProductReview;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.OrderRepository;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
@@ -34,7 +35,7 @@ class ReviewServiceTest {
   @Test
   @TestTransaction
   void testReviewOrder() {
-    var review = service.reviewOrder(order, TEST_RATING, "hello", new Short[] {TEST_RATING});
+    var review = service.reviewOrder(order, TEST_RATING, "hello", List.of(TEST_RATING));
     assertThat(review)
         .isNotNull()
         .returns(order, OrderReview::getOrder)
@@ -51,7 +52,7 @@ class ReviewServiceTest {
     assertThatExceptionOfType(IllegalArgumentException.class)
         .isThrownBy(
             () -> {
-              service.reviewOrder(order, TEST_RATING, null, new Short[] {});
+              service.reviewOrder(order, TEST_RATING, null, List.of());
             })
         .withMessage("Order products and ratings must have the same size");
   }
@@ -62,7 +63,7 @@ class ReviewServiceTest {
     assertThatExceptionOfType(ConstraintViolationException.class)
         .isThrownBy(
             () -> {
-              service.reviewOrder(order, (short) 6, null, new Short[] {1});
+              service.reviewOrder(order, (short) 6, null, List.of((short) 1));
             })
         .withMessageContaining("must be less than or equal to 5");
   }

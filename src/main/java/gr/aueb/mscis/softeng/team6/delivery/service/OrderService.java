@@ -19,10 +19,6 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class OrderService {
-  /** The confirmation message format. */
-  static final String CONFIRM_MESSAGE =
-      "Order ID: %s%nTotal cost: %.2f%nEstimated waiting time: %d minutes";
-
   // TODO(ObserverOfTime): use injection if possible
   private MessageProvider messageProvider;
 
@@ -54,13 +50,12 @@ public class OrderService {
    * Send an SMS confirmation for an order.
    *
    * @param order the order to be confirmed.
-   * @param waitingTime the estimated waiting time.
+   * @param estimatedWait the estimated waiting time.
    */
   @Transactional
-  public void confirmOrder(Order order, Long waitingTime) {
-    repository.persistAndFlush(order.setConfirmed(true).setEstimatedWait(waitingTime));
-    var message = CONFIRM_MESSAGE.formatted(order.getUuid(), order.getCost(), waitingTime);
-    messageProvider.sendMessage(order.getClient(), message);
+  public void confirmOrder(Order order, Long estimatedWait) {
+    repository.persistAndFlush(order.setConfirmed(true).setEstimatedWait(estimatedWait));
+    messageProvider.sendMessage(order.getClient(), order.getUuid(), order.getCost(), estimatedWait);
   }
 
   /**

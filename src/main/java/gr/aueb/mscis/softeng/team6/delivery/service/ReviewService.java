@@ -30,16 +30,17 @@ public class ReviewService {
    */
   @Transactional
   public OrderReview reviewOrder(
-      Order order, short rating, String comment, Short[] productRatings) {
+      Order order, short rating, String comment, List<Short> productRatings) {
     var review = new OrderReview().setOrder(order).setRating(rating).setComment(comment);
     var products = List.copyOf(order.getProducts());
     var size = products.size();
-    if (size != productRatings.length) {
-      throw new IllegalArgumentException("Order products and ratings must have the same size");
+    if (size != productRatings.size()) {
+      throw new IllegalArgumentException(
+          String.format("Order products and ratings must have the same size (%d)", size));
     }
     for (int i = 0; i < size; ++i) {
-      if (productRatings[i] != null) {
-        review.addProductReview(products.get(i), productRatings[i]);
+      if (productRatings.get(i) != null) {
+        review.addProductReview(products.get(i), productRatings.get(i));
       }
     }
     repository.persist(review);

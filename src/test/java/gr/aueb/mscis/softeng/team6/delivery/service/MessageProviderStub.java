@@ -1,11 +1,14 @@
 package gr.aueb.mscis.softeng.team6.delivery.service;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
+import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Message provider stub.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
 public class MessageProviderStub implements MessageProvider {
   /** The stored message. */
@@ -21,7 +24,7 @@ public class MessageProviderStub implements MessageProvider {
    * @implNote This stores the {@link #message} without actually sending an SMS to the client.
    */
   @Override
-  public void sendMessage(Client client, String message) {
-    this.message = message;
+  public void sendMessage(Client client, UUID uuid, BigDecimal cost, Long wait) {
+    message = CONFIRM_MESSAGE.formatted(uuid, cost, wait);
   }
 }

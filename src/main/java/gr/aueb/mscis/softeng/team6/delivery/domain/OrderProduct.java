@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
  * <p>The intermediate table between {@link Order} & {@link Product}.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
 @Entity
 @Table(
@@ -82,8 +83,13 @@ public class OrderProduct {
     return this;
   }
 
-  protected ProductReview getReview() {
+  public ProductReview getReview() {
     return review;
+  }
+
+  public OrderProduct setReview(ProductReview review) {
+    this.review = review;
+    return this;
   }
 
   @Override

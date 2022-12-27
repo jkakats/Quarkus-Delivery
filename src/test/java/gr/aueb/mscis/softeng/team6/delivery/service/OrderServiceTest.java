@@ -64,7 +64,7 @@ public class OrderServiceTest {
         .returns(TEST_WAIT_TIME, Order::getEstimatedWait);
     assertThat(provider.getMessage())
         .isEqualTo(
-            OrderService.CONFIRM_MESSAGE.formatted(
+            MessageProvider.CONFIRM_MESSAGE.formatted(
                 order.getUuid(), new BigDecimal("14.50"), TEST_WAIT_TIME));
   }
 
