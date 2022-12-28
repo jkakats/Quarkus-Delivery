@@ -36,7 +36,7 @@ public class StatisticsService {
   public List<Client> findFrequentClients(
       Store store, LocalDateTime start, LocalDateTime end, int max) {
     return em.createNamedQuery("findFrequentClients", Client.class)
-        .setParameter("store", store)
+        .setParameter("store", store.getId())
         .setParameter("start", start)
         .setParameter("end", end)
         .setMaxResults(max)

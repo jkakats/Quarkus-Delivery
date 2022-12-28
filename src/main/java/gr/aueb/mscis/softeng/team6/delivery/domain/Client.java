@@ -34,7 +34,7 @@ import org.hibernate.validator.constraints.Length;
       query =
           """
         select c from Client c join c.orders o
-          where o.store = :store
+          where o.store.id = :store
           and (o.orderedTime between :start and :end)
         group by c
         order by count(o) desc
