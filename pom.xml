@@ -10,7 +10,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <quarkus.version>2.15.0.CR1</quarkus.version>
     <mapstruct.version>1.5.3.Final</mapstruct.version>
-    <libphonenumber.version>8.13.2</libphonenumber.version>
+    <libphonenumber.version>8.13.3</libphonenumber.version>
     <argon2.version>2.11</argon2.version>
     <junit.version>5.9.1</junit.version>
     <assertj.version>3.23.1</assertj.version>
@@ -52,6 +52,14 @@
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-jwt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-jwt-build</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
@@ -79,6 +87,11 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jacoco</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-test-security-jwt</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -117,6 +130,7 @@
               <version>${mapstruct.version}</version>
             </path>
           </annotationProcessorPaths>
+          <showWarnings>true</showWarnings>
         </configuration>
       </plugin>
       <plugin>
