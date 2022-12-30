@@ -4,7 +4,6 @@ import static org.mapstruct.InjectionStrategy.CONSTRUCTOR;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
-import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -16,14 +15,15 @@ import org.mapstruct.MappingTarget;
  */
 @Mapper(componentModel = "cdi", injectionStrategy = CONSTRUCTOR)
 public abstract class ClientMapper {
-  @SuppressWarnings("UnmappedTargetProperties")
   @Mapping(target = "orders", ignore = true)
-  @Mapping(source = "email", target = "email.email")
-  @Mapping(source = "phoneNumber", target = "phone.number")
   @Mapping(source = "password", target = "password.password")
+  @Mapping(target = "email", expression = "java(new EmailAddress(clientDto.email()))")
+  @Mapping(target = "phone", expression = "java(new PhoneNumber(clientDto.phoneNumber()))")
   public abstract Client deserialize(ClientDto clientDto);
 
-  @InheritInverseConfiguration(name = "deserialize")
+  @Mapping(target = "password", ignore = true)
+  @Mapping(source = "email.email", target = "email")
+  @Mapping(source = "phone.number", target = "phoneNumber")
   public abstract ClientDto serialize(Client client);
 
   @Mapping(target = "uuid", ignore = true)

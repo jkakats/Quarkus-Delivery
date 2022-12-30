@@ -21,8 +21,8 @@ public class LocalDateTimeConverter implements ParamConverterProvider {
         ? null
         : new ParamConverter<>() {
           @Override
+          @SuppressWarnings("unchecked")
           public T fromString(String value) {
-            //noinspection unchecked
             return (T) LocalDateTime.parse(value);
           }
 

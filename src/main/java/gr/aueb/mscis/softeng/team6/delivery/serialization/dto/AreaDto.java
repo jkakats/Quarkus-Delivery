@@ -15,4 +15,9 @@ public record AreaDto(
     @Min(10000) @Max(89999) Integer zipCode,
     @NotNull @NotBlank String city,
     @NotNull @NotBlank String state)
-    implements Serializable {}
+    implements Serializable {
+  @Override
+  public String toString() {
+    return String.format("%s %d, %s", city, zipCode, state);
+  }
+}

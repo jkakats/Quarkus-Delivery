@@ -6,6 +6,7 @@ import gr.aueb.mscis.softeng.team6.delivery.persistence.ProductRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ProductMapper;
 import java.util.NoSuchElementException;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
@@ -22,6 +23,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
@@ -35,6 +37,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 public class ProductResource {
   @Inject protected ProductRepository repository;
   @Inject protected ProductMapper mapper;
+  @Inject protected JsonWebToken jwt;
 
   /** Get all the products. */
   @GET
@@ -64,12 +67,14 @@ public class ProductResource {
    */
   @POST
   @Transactional
+  @RolesAllowed({"admin", "manager"})
   @APIResponses({
     @APIResponse(responseCode = "201", description = "Created"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
   public Response create(@Context UriInfo uriInfo, @Valid ProductDto dto)
       throws PersistenceException {
+    JwtUtil.checkManager(jwt, dto.store().id());
     var product = mapper.deserialize(dto);
     // NOTE: persistAndFlush doesn't work here
     product = repository.getEntityManager().merge(product);
@@ -86,12 +91,14 @@ public class ProductResource {
   @PUT
   @Transactional
   @Path("{id}")
+  @RolesAllowed({"admin", "manager"})
   @APIResponses({
     @APIResponse(responseCode = "200", description = "Updated"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
   public Response update(@PathParam("id") Long id, @Valid ProductDto dto)
       throws NoSuchElementException, PersistenceException {
+    JwtUtil.checkManager(jwt, dto.store().id());
     var product = repository.findByIdOptional(id, PESSIMISTIC_WRITE).orElseThrow();
     mapper.update(product, dto);
     repository.persistAndFlush(product);
@@ -106,11 +113,12 @@ public class ProductResource {
   @DELETE
   @Transactional
   @Path("{id}")
+  @RolesAllowed({"admin", "manager"})
   @APIResponse(responseCode = "204", description = "Deleted")
   public Response delete(@PathParam("id") Long id) throws NoSuchElementException {
-    if (!repository.deleteById(id)) {
-      throw new NoSuchElementException();
-    }
+    var product = repository.findByIdOptional(id).orElseThrow();
+    JwtUtil.checkManager(jwt, product.getStore().getId());
+    repository.delete(product);
     return Response.noContent().build();
   }
 
@@ -131,7 +139,8 @@ public class ProductResource {
   @Transactional
   @Path("search")
   public Response search(@QueryParam("q") @NotBlank String name) {
-    var products = repository.find("name", name).stream().map(mapper::serialize).toList();
+    Object[] params = {name};
+    var products = repository.stream("name", params).map(mapper::serialize).toList();
     return Response.ok(products).build();
   }
 }

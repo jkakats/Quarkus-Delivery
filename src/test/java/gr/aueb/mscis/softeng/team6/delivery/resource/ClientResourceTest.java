@@ -11,17 +11,20 @@ import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
 @TestHTTPEndpoint(ClientResource.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ClientResourceTest {
   private static final String TEST_USERNAME = "johndoe3";
   private static final String TEST_NAME = "Johnny Doe";
@@ -31,10 +34,13 @@ class ClientResourceTest {
   private static final String TEST_STREET = "Lefkados";
   private static final String TEST_APARTMENT = "47A";
 
-  private static UUID uuid;
+  private UUID uuid = null;
 
   @Test
   @Order(1)
+  @TestSecurity(
+      user = "root",
+      roles = {"admin"})
   void testList() {
     var clients =
         when().get().then().statusCode(200).extract().as(new TypeRef<List<ClientDto>>() {});
@@ -60,12 +66,15 @@ class ClientResourceTest {
             .statusCode(201)
             .extract()
             .header("Location");
-    assertThat(location).contains("/client/");
+    assertThat(location).contains("/clients/");
     uuid = UUID.fromString(location.split("/")[4]);
   }
 
   @Test
   @Order(3)
+  @TestSecurity(
+      user = "root",
+      roles = {"admin"})
   void testRead() {
     var client = when().get("{uuid}", uuid).then().statusCode(200).extract().as(ClientDto.class);
     assertThat(client.uuid()).isEqualTo(uuid);
@@ -86,9 +95,11 @@ class ClientResourceTest {
             TEST_EMAIL,
             TEST_PHONE_NUMBER,
             address);
+    var token = JwtUtil.clientToken(body).token();
     var client =
         with()
             .body(body)
+            .header("Authorization", "Bearer " + token)
             .contentType(JSON)
             .when()
             .put("{uuid}", uuid)
@@ -102,6 +113,9 @@ class ClientResourceTest {
   @Test
   @Order(5)
   @TestTransaction
+  @TestSecurity(
+      user = "root",
+      roles = {"admin"})
   void testDelete() {
     when().delete("{uuid}", uuid).then().statusCode(204);
   }

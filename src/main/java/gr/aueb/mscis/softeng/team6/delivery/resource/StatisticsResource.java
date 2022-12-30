@@ -6,6 +6,7 @@ import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
 import gr.aueb.mscis.softeng.team6.delivery.service.StatisticsService;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -16,6 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 /**
@@ -28,6 +30,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 public class StatisticsResource {
   @Inject protected StatisticsService service;
   @Inject protected ClientMapper clientMapper;
+  @Inject protected JsonWebToken jwt;
 
   /**
    * List the most frequent clients of a store during a certain time period.
@@ -40,12 +43,14 @@ public class StatisticsResource {
   @GET
   @Transactional
   @Path("clients")
+  @RolesAllowed({"admin", "manager"})
   @Operation(description = "Frequent clients")
   public Response clients(
       @PathParam("store") Long id,
       @QueryParam("start") @NotNull LocalDateTime start,
       @QueryParam("end") @NotNull LocalDateTime end,
       @QueryParam("max") @DefaultValue("10") Integer max) {
+    JwtUtil.checkManager(jwt, id);
     var clients = service.findFrequentClients(new Store().setId(id), start, end, max);
     var result = new Result<>(clients.stream().map(clientMapper::serialize).toList());
     return Response.ok(result).build();
@@ -60,9 +65,11 @@ public class StatisticsResource {
   @GET
   @Transactional
   @Path("delivery")
+  @RolesAllowed({"admin", "manager"})
   @Operation(description = "Average delivery time")
   public Response delivery(
       @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
+    JwtUtil.checkManager(jwt, id);
     var average =
         service.getAverageDeliveryTime(new Store().setId(id), new Area().setZipCode(zipCode));
     return Response.ok(new Result<>(average)).build();
@@ -78,11 +85,13 @@ public class StatisticsResource {
   @GET
   @Transactional
   @Path("rush")
+  @RolesAllowed({"admin", "manager"})
   @Operation(description = "Rush hours")
   public Response rush(
       @PathParam("store") Long id,
       @QueryParam("week") @NotNull LocalDateTime week,
-      @QueryParam("limit") @DefaultValue("2") Integer limit) {
+      @QueryParam("limit") @DefaultValue("5") Integer limit) {
+    JwtUtil.checkManager(jwt, id);
     week = StatisticsService.truncateToWeek(week);
     var hours = service.getRushHours(new Store().setId(id), week, limit);
     return Response.ok(new Result<>(hours)).build();

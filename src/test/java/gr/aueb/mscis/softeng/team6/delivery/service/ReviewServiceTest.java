@@ -29,7 +29,7 @@ class ReviewServiceTest {
   void setUp() {
     // language=HQL
     var query = "from Order o join fetch o.products where o.client.username like :username";
-    order = orderRepository.find(query, Map.of("username", "elpap")).firstResult();
+    order = orderRepository.stream(query, Map.of("username", "elpap")).findFirst().orElseThrow();
   }
 
   @Test
@@ -54,7 +54,7 @@ class ReviewServiceTest {
             () -> {
               service.reviewOrder(order, TEST_RATING, null, List.of());
             })
-        .withMessage("Order products and ratings must have the same size");
+        .withMessage("Order products and ratings must have the same size (1)");
   }
 
   @Test
