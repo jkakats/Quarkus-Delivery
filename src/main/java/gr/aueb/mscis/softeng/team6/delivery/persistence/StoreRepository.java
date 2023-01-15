@@ -31,13 +31,13 @@ public class StoreRepository implements PanacheRepositoryBase<Store, Long> {
         """
         from Store s
         join s.areas a
-        join fetch s.products p
         where a.zipCode = :area
           and :count = (
             select
               count(distinct p.name)
-            from p
-            where p.name in :products)
+            from Product p
+            where p.name in :products
+              and p.store.id = s.id)
         """;
     return list(query, params);
   }
