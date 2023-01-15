@@ -113,12 +113,58 @@ class ClientResourceTest {
   @Test
   @Order(5)
   @TestTransaction
+  void testLogin() {
+    with()
+        .formParam("username", TEST_USERNAME)
+        .formParam("password", TEST_PASSWORD)
+        .when()
+        .post("login")
+        .then()
+        .statusCode(200);
+  }
+
+  @Test
+  @Order(6)
+  @TestTransaction
+  void testCreateDuplicate() {
+    var address =
+        new AddressDto(TEST_STREET, TEST_APARTMENT, new AreaDto(11362, "Athina", "Attica"));
+    var body =
+        new ClientDto(
+            null, TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_EMAIL, TEST_PHONE_NUMBER, address);
+    with().body(body).contentType(JSON).when().post().then().statusCode(409);
+  }
+
+  @Test
+  @Order(7)
+  @TestTransaction
+  @TestSecurity(
+      user = "root",
+      roles = {"admin"})
+  void testReadNotFound() {
+    when().get("{uuid}", UUID.randomUUID()).then().statusCode(404);
+  }
+
+  @Test
+  @Order(8)
+  @TestTransaction
+  void testLoginInvalid() {
+    with()
+        .formParam("username", TEST_USERNAME)
+        .formParam("password", "wrong password")
+        .when()
+        .post("login")
+        .then()
+        .statusCode(401);
+  }
+
+  @Test
+  @Order(9)
+  @TestTransaction
   @TestSecurity(
       user = "root",
       roles = {"admin"})
   void testDelete() {
     when().delete("{uuid}", uuid).then().statusCode(204);
   }
-
-  // TODO: add exception tests
 }
