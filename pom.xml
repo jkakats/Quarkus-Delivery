@@ -117,12 +117,6 @@
               <version>${mapstruct.version}</version>
             </path>
           </annotationProcessorPaths>
-          <compilerArgs>
-            <arg>-parameters</arg>
-            <arg>-Amapstruct.defaultComponentModel=cdi</arg>
-            <arg>-Amapstruct.defaultInjectionStrategy=constructor</arg>
-            <arg>-Amapstruct.disableBuilders=true</arg>
-          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>

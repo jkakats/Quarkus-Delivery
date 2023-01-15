@@ -135,7 +135,7 @@ public class Order {
     return orderedTime;
   }
 
-  protected Order setOrderedTime(LocalDateTime orderedTime) {
+  public Order setOrderedTime(LocalDateTime orderedTime) {
     this.orderedTime = orderedTime;
     return this;
   }
