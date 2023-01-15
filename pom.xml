@@ -10,9 +10,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <quarkus.version>2.15.0.CR1</quarkus.version>
     <mapstruct.version>1.5.3.Final</mapstruct.version>
-    <libphonenumber.version>8.13.3</libphonenumber.version>
+    <libphonenumber.version>8.13.4</libphonenumber.version>
     <argon2.version>2.11</argon2.version>
-    <junit.version>5.9.1</junit.version>
+    <junit.version>5.9.2</junit.version>
     <assertj.version>3.23.1</assertj.version>
     <jacoco.version>0.8.8</jacoco.version>
     <rest-assured.version>5.3.0</rest-assured.version>
@@ -131,6 +131,9 @@
             </path>
           </annotationProcessorPaths>
           <showWarnings>true</showWarnings>
+          <compilerArgs>
+            <arg>-implicit:none</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -245,6 +248,9 @@
           <dataFile>${project.build.directory}/jacoco-quarkus.exec</dataFile>
           <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
           <haltOnFailure>false</haltOnFailure>
+          <excludes>
+            <exclude>**/OrderMapper.class</exclude>
+          </excludes>
           <rules>
             <rule>
               <element>BUNDLE</element>

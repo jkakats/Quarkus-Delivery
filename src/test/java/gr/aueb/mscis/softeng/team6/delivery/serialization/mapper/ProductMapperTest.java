@@ -14,7 +14,7 @@ class ProductMapperTest {
   private static final Long TEST_ID = 12L;
   private static final String TEST_NAME = "souvlaki";
   private static final BigDecimal TEST_PRICE = new BigDecimal("3.00");
-  private static final String TEST_COMMENT = "It needs more sauce";
+  private static final String TEST_COMMENT = "With plenty of sauce";
 
   @Inject protected ProductMapper mapper;
 
