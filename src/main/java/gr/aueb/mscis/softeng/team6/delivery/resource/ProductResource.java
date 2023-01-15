@@ -78,6 +78,7 @@ public class ProductResource {
     var product = mapper.deserialize(dto);
     // NOTE: persistAndFlush doesn't work here
     product = repository.getEntityManager().merge(product);
+    repository.flush();
     var uri = uriInfo.getRequestUriBuilder().path("{id}").build(product.getId());
     return Response.created(uri).build();
   }

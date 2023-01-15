@@ -86,6 +86,7 @@ public class StoreResource {
     var store = storeMapper.deserialize(dto);
     // NOTE: persistAndFlush doesn't work here
     store = storeRepository.getEntityManager().merge(store);
+    storeRepository.flush();
     var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(store.getId());
     return Response.created(uri).build();
   }

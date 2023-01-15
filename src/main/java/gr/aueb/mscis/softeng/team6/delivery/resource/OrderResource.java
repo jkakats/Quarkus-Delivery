@@ -98,6 +98,7 @@ public class OrderResource {
     var order = mapper.deserialize(dto);
     // NOTE: persistAndFlush doesn't work here
     order = repository.getEntityManager().merge(order);
+    repository.flush();
     var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(order.getUuid());
     return Response.created(uri).build();
   }

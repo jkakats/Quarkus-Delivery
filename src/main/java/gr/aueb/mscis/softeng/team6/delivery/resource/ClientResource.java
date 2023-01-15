@@ -83,6 +83,7 @@ public class ClientResource {
     var client = mapper.deserialize(dto);
     // NOTE: persistAndFlush doesn't work here
     client = repository.getEntityManager().merge(client);
+    repository.flush();
     var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(client.getUuid());
     return Response.created(uri).build();
   }
