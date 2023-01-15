@@ -36,6 +36,7 @@ class ReviewServiceTest {
   void testReviewOrder() {
     var review = service.reviewOrder(order, TEST_RATING, "hello", new Short[] {TEST_RATING});
     assertThat(review)
+        .isNotNull()
         .returns(order, OrderReview::getOrder)
         .returns(TEST_RATING, OrderReview::getRating)
         .returns("hello", OrderReview::getComment);
