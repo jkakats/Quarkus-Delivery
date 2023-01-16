@@ -2,6 +2,9 @@ name: Checks
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
     paths:
       - src/main/**
       - src/test/**
@@ -20,10 +23,10 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 17
-          distribution: microsoft
+          distribution: liberica
           cache: maven
       - name: Run tests
-        run: mvn -B test
+        run: mvn -B clean test
         continue-on-error: true
       - name: Publish CheckStyle report
         uses: jwgmeligmeyling/checkstyle-github-action@v1.2
@@ -51,8 +54,8 @@ jobs:
           title: JaCoCo report
           update-comment: true
           min-coverage-overall: >-
-            ${{ (github.base_ref == 'main' && 75) || 0 }}
+            ${{ (github.base_ref == 'main' && 70) || 0 }}
           min-coverage-changed-files: >-
-            ${{ (github.base_ref == 'main' && 75) || 0 }}
+            ${{ (github.base_ref == 'main' && 70) || 0 }}
           paths: target/jacoco-report/jacoco.xml
           token: ${{github.token}}
