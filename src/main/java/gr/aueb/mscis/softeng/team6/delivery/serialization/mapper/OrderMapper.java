@@ -44,8 +44,12 @@ public abstract class OrderMapper {
 
   @AfterMapping
   protected void setForeignKeys(@MappingTarget Order order) {
-    order.getReview().setOrder(order);
-    order.getProducts().forEach(p -> p.setOrder(order));
+    if (order.getReview() != null) {
+      order.getReview().setOrder(order);
+    }
+    if (order.getProducts() != null) {
+      order.getProducts().forEach(p -> p.setOrder(order));
+    }
   }
 
   /**

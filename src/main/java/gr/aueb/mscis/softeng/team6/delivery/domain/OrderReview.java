@@ -16,6 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
  * Order review entity.
  *
  * @since 0.1.0
+ * @version 1.0.0
  */
 @Entity
 @Table(name = "order_review")
@@ -29,7 +30,7 @@ public class OrderReview extends Review {
   private Order order;
 
   /** Product reviews relation field. */
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", orphanRemoval = true)
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private List<ProductReview> productReviews = new ArrayList<>();
 

@@ -249,7 +249,7 @@
           <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
           <haltOnFailure>false</haltOnFailure>
           <excludes>
-            <exclude>**/OrderMapper.class</exclude>
+            <exclude>**/*Mapper.class</exclude>
           </excludes>
           <rules>
             <rule>

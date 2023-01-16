@@ -5,6 +5,7 @@ import static org.mapstruct.InjectionStrategy.CONSTRUCTOR;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.StoreDto;
 import java.util.List;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -36,4 +37,11 @@ public abstract class StoreMapper {
   @Named("serializeSimple")
   @Mapping(target = "products", qualifiedByName = "serializeSimple")
   abstract StoreDto serializeSimple(Store store);
+
+  @AfterMapping
+  protected void setForeignKeys(@MappingTarget Store store) {
+    if (store.getProducts() != null) {
+      store.getProducts().forEach(p -> p.setStore(store));
+    }
+  }
 }

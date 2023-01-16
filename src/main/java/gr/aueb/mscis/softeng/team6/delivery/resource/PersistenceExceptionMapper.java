@@ -1,5 +1,7 @@
 package gr.aueb.mscis.softeng.team6.delivery.resource;
 
+import static org.jboss.logging.Logger.getLogger;
+
 import java.sql.SQLIntegrityConstraintViolationException;
 import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Response;
@@ -19,7 +21,7 @@ public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceEx
           .entity(new ErrorMessage("Unique constraint violation"))
           .build();
     } else {
-      exception.printStackTrace();
+      getLogger("delivery").error(cause.getMessage(), exception);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
           .entity(new ErrorMessage(cause))
           .build();

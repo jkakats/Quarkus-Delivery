@@ -216,7 +216,12 @@ public class OrderResource {
     }
   }
 
+  /**
+   * Order confirmation class.
+   *
+   * @since 1.0.0
+   */
   @Schema
-  private record Confirmation(UUID uuid, BigDecimal cost, Long estimatedWait)
+  protected record Confirmation(UUID uuid, BigDecimal cost, Long estimatedWait)
       implements Serializable {}
 }

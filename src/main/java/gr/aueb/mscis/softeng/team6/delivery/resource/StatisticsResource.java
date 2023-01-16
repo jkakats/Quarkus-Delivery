@@ -97,5 +97,10 @@ public class StatisticsResource {
     return Response.ok(new Result<>(hours)).build();
   }
 
-  private record Result<T>(T result) implements Serializable {}
+  /**
+   * Generic result wrapper.
+   *
+   * @since 1.0.0
+   */
+  protected record Result<T>(T result) implements Serializable {}
 }
