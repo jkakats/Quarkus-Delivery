@@ -11,10 +11,10 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.common.mapper.TypeRef;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.TimeZone;
 import javax.ws.rs.ext.ParamConverter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 @QuarkusTest
 @TestHTTPEndpoint(StatisticsResource.class)
@@ -74,9 +74,9 @@ class StatisticsResourceTest {
   @TestSecurity(
       user = "root",
       roles = {"admin"})
-  // NOTE: this works locally but fails in GitHub CI
-  @DisabledIfEnvironmentVariable(named = "CI", matches = "true")
   void testRush() {
+    // NOTE: setting the time zone here is necessary
+    TimeZone.setDefault(TimeZone.getTimeZone("Europe/Athens"));
     var date = converter.toString(LocalDateTime.of(2022, 12, 7, 0, 0));
     var hours =
         with()

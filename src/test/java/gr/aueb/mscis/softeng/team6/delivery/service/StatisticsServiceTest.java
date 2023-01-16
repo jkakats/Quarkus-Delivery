@@ -8,10 +8,10 @@ import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.StoreRepository;
 import io.quarkus.test.junit.QuarkusTest;
 import java.time.LocalDateTime;
+import java.util.TimeZone;
 import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 @QuarkusTest
 public class StatisticsServiceTest {
@@ -40,9 +40,9 @@ public class StatisticsServiceTest {
   }
 
   @Test
-  // NOTE: this works locally but fails in GitHub CI
-  @DisabledIfEnvironmentVariable(named = "CI", matches = "true")
   void testGetRushHours() {
+    // NOTE: setting the time zone here is necessary
+    TimeZone.setDefault(TimeZone.getTimeZone("Europe/Athens"));
     var week = StatisticsService.truncateToWeek(LocalDateTime.of(2022, 12, 7, 0, 0));
     assertThat(service.getRushHours(store, week, 1)).first().isEqualTo(12);
   }
