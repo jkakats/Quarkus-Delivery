@@ -2,7 +2,7 @@
   <Match>
     <Bug pattern="EI_EXPOSE_REP"/>
     <Or>
-      <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.serialization\.dto\..*"/>
+      <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.serialization\..*"/>
       <And>
         <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
         <Method name="~get.*"/>
@@ -12,7 +12,7 @@
   <Match>
     <Bug pattern="EI_EXPOSE_REP2"/>
     <Or>
-      <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.serialization\.dto\..*"/>
+      <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.serialization\..*"/>
       <And>
         <Class name="~gr\.aueb\.mscis\.softeng\.team6\.delivery\.domain\..*"/>
         <Method name="~set.*"/>

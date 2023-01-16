@@ -2,6 +2,7 @@
 
 --- CLIENTS ---
 
+SET @johndoe2 = '4948b178-f325-4f5f-b8ea-0b4d64cd006c';
 SET @eudim = RANDOM_UUID();
 SET @elpap = RANDOM_UUID();
 SET @iooi = RANDOM_UUID();
@@ -12,7 +13,7 @@ SET @rinoula = RANDOM_UUID();
 INSERT INTO "client" ("uuid", "username", "name", "email", "phone_number", "address_street",
                       "address_apartment", "address_city", "address_state", "address_zip_code",
                       "password")
-VALUES (RANDOM_UUID(), 'johndoe2', 'John Doe', 'john@doe.com', '6987654321', 'Πατησίων', null,
+VALUES (@johndoe2, 'johndoe2', 'John Doe', 'john@doe.com', '6987654321', 'Πατησίων', null,
         'Αθήνα', 'Αττική', 10434,
         '$argon2i$v=19$m=65536,t=4,p=2$U2NzQ0s3RlJ0cnhPU0d2aw$k3PoIYNTxEK3KekidDDq7g'),
        (@eudim, 'eudim', 'Ευαγγελία Δημητρίου', 'eu.dimitriou@gmail.com', '6986105289',

@@ -77,7 +77,7 @@ class ClientResourceTest {
       roles = {"admin"})
   void testRead() {
     var client = when().get("{uuid}", uuid).then().statusCode(200).extract().as(ClientDto.class);
-    assertThat(client.uuid()).isEqualTo(uuid);
+    assertThat(client).returns(uuid, ClientDto::uuid).returns(TEST_USERNAME, ClientDto::username);
   }
 
   @Test

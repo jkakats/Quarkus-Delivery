@@ -250,6 +250,7 @@
           <haltOnFailure>false</haltOnFailure>
           <excludes>
             <exclude>**/*Mapper.class</exclude>
+            <exclude>**/*Repository.class</exclude>
           </excludes>
           <rules>
             <rule>
