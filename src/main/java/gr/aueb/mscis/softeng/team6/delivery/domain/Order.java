@@ -78,7 +78,7 @@ public class Order {
   private LocalDateTime deliveredTime;
 
   /** Estimated waiting time field (in minutes). */
-  @Column(name = "estimated_wait", updatable = false)
+  @Column(name = "estimated_wait")
   private Long estimatedWait;
 
   @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "order")

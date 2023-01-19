@@ -24,6 +24,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
  * Statistics resource class.
  *
  * @since 1.0.0
+ * @version 1.0.1
  */
 @RequestScoped
 @Path("/stats/{store}")
@@ -52,8 +53,8 @@ public class StatisticsResource {
       @QueryParam("max") @DefaultValue("10") Integer max) {
     JwtUtil.checkManager(jwt, id);
     var clients = service.findFrequentClients(new Store().setId(id), start, end, max);
-    var result = new Result<>(clients.stream().map(clientMapper::serialize).toList());
-    return Response.ok(result).build();
+    var result = clients.stream().map(clientMapper::serialize).toList();
+    return Response.ok(new Result<>(result)).build();
   }
 
   /**

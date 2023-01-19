@@ -19,7 +19,6 @@ import javax.transaction.Transactional;
  */
 @RequestScoped
 public class OrderService {
-  // TODO(ObserverOfTime): use injection if possible
   private MessageProvider messageProvider;
 
   @Inject protected OrderRepository repository;

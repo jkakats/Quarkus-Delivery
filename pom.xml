@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gr.aueb.mscis.softeng.team6</groupId>
   <artifactId>delivery</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <name>Food delivery system</name>
   <packaging>jar</packaging>
   <properties>

@@ -6,7 +6,11 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
-/** Response mapper for {@link NoSuchElementException}. */
+/**
+ * Response mapper for {@link NoSuchElementException}.
+ *
+ * @since 1.0.0
+ */
 @Provider
 public class NoSuchElementExceptionMapper implements ExceptionMapper<NoSuchElementException> {
   @Override
