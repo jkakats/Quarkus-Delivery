@@ -26,6 +26,7 @@ out/
 *.ipr
 
 !.idea/codeStyles/
+!.idea/httpRequests/
 !.idea/runConfigurations/
 !.idea/inspectionProfiles/
 !.idea/externalDependencies.xml
@@ -37,6 +38,7 @@ out/
 ## H2
 *.mv.db
 *.trace.db
+*.lock.db
 
 ## VSCode
 .vscode/

@@ -38,8 +38,6 @@ jobs:
       - name: Commit & push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          skip_fetch: true
-          skip_checkout: true
           file_pattern: .github/badges/*.svg
           commit_message: |-
             chore: generate coverage badges
