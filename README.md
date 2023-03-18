@@ -139,3 +139,5 @@
 ## Μοντέλο πεδίου
 
 ![domain model](docs/uml/domain-model.svg)
+
+## Η αναφορά για τα microservices βρίσκεται [εδώ](docs/report.pdf)
