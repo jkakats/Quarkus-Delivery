@@ -1,0 +1,61 @@
+name: Checks
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - src/main/**
+      - src/test/**
+      - pom.xml
+
+jobs:
+  checks:
+    name: Build & check pull request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{github.event.pull_request.head.sha}}
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: liberica
+          cache: maven
+      - name: Run tests
+        run: mvn -B clean test
+        continue-on-error: true
+      - name: Publish CheckStyle report
+        uses: jwgmeligmeyling/checkstyle-github-action@v1.2
+        continue-on-error: true
+        with:
+          name: CheckStyle report
+          path: target/checkstyle-result.xml
+      - name: Publish SpotBugs report
+        uses: jwgmeligmeyling/spotbugs-github-action@v1.2
+        continue-on-error: true
+        with:
+          name: SpotBugs report
+          path: target/spotbugsXml.xml
+      - name: Publish JUnit report
+        uses: mikepenz/action-junit-report@v3
+        continue-on-error: true
+        with:
+          check_name: JUnit report
+          exclude_sources: target,docs,.idea
+          report_paths: target/surefire-reports/TEST-*.xml
+      - name: Publish JaCoCo report
+        uses: madrapps/jacoco-report@v1.3
+        continue-on-error: true
+        with:
+          title: JaCoCo report
+          update-comment: true
+          min-coverage-overall: >-
+            ${{ (github.base_ref == 'main' && 70) || 0 }}
+          min-coverage-changed-files: >-
+            ${{ (github.base_ref == 'main' && 70) || 0 }}
+          paths: target/jacoco-report/jacoco.xml
+          token: ${{github.token}}

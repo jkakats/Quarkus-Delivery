@@ -1,0 +1,30 @@
+name: Diagrams
+
+on:
+  push:
+    paths: [docs/uml/*.puml]
+    branches: [main]
+
+jobs:
+  plantuml:
+    name: Run PlantUML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Convert diagrams to SVG
+        uses: Timmy/plantuml-action@v1
+        with:
+          version: 1.2022.12
+          args: -nometadata -tsvg docs/uml/*.puml
+      - name: Commit & push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          skip_fetch: true
+          skip_checkout: true
+          file_pattern: docs/uml/*.svg
+          commit_message: |-
+            chore: auto-generate diagrams
+          commit_author: >-
+            github-actions[bot]
+            <github-actions[bot]@users.noreply.github.com>

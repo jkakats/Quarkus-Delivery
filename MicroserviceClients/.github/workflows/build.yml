@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/main/**
+      - src/test/**
+      - pom.xml
+
+jobs:
+  build:
+    name: Build & run coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: liberica
+          cache: maven
+      - name: Run tests
+        run: mvn -B clean test
+        continue-on-error: true
+      - name: Generate coverage badges
+        uses: cicirello/jacoco-badge-generator@v2
+        continue-on-error: true
+        with:
+          jacoco-csv-file: target/jacoco-report/jacoco.csv
+          coverage-badge-filename: coverage.svg
+          fail-if-coverage-less-than: 70
+          coverage-label: Coverage
+          intervals: 90 70 50 0
+          colors: >-
+            #97ca00 #dfb317 #fe7d37 #e05d44
+      - name: Commit & push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: .github/badges/*.svg
+          commit_message: |-
+            chore: generate coverage badges
+          commit_author: >-
+            github-actions[bot]
+            <github-actions[bot]@users.noreply.github.com>
