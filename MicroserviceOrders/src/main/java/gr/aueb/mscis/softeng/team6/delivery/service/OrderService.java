@@ -1,12 +1,11 @@
 package gr.aueb.mscis.softeng.team6.delivery.service;
 
-import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Order;
 import gr.aueb.mscis.softeng.team6.delivery.domain.OrderProduct;
-import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.OrderRepository;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -30,13 +29,13 @@ public class OrderService {
   /**
    * Submit an order.
    *
-   * @param client the client of the order.
-   * @param store the store of the order.
+   * @param client_uuid the client of the order.
+   * @param store_id the store of the order.
    * @param products the products of the order.
    */
   @Transactional
-  public Order submitOrder(Client client, Store store, Set<OrderProduct> products) {
-    var order = new Order().setClient(client).setStore(store);
+  public Order submitOrder(UUID client_uuid, long store_id, Set<OrderProduct> products) {
+    var order = new Order().setClient_uuid(client_uuid).setStore_id(store_id);
     repository.persistAndFlush(order);
     // NOTE: we have to manually set the order and persist the
     //  products afterwards because Hibernate is a great ORM :)
@@ -54,7 +53,7 @@ public class OrderService {
   @Transactional
   public void confirmOrder(Order order, Long estimatedWait) {
     repository.persistAndFlush(order.setConfirmed(true).setEstimatedWait(estimatedWait));
-    messageProvider.sendMessage(order.getClient(), order.getUuid(), order.getCost(), estimatedWait);
+    messageProvider.sendMessage(order.getClient_uuid(), order.getUuid(), order.getCost(), estimatedWait);
   }
 
   /**

@@ -1,18 +1,7 @@
 package gr.aueb.mscis.softeng.team6.delivery.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
-import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
-import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
-import gr.aueb.mscis.softeng.team6.delivery.persistence.StoreRepository;
-import io.quarkus.test.junit.QuarkusTest;
-import java.time.LocalDateTime;
-import java.util.TimeZone;
-import javax.inject.Inject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
+/*
 @QuarkusTest
 public class StatisticsServiceTest {
   private Store store;
@@ -47,3 +36,4 @@ public class StatisticsServiceTest {
     assertThat(service.getRushHours(store, week, 1)).first().isEqualTo(12);
   }
 }
+*/

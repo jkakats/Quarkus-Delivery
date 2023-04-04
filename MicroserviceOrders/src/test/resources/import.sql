@@ -10,7 +10,7 @@ SET @nikg = RANDOM_UUID();
 SET @kpappas = RANDOM_UUID();
 SET @rinoula = RANDOM_UUID();
 
-INSERT INTO "client" ("uuid", "username", "name", "email", "phone_number", "address_street",
+/*INSERT INTO "client" ("uuid", "username", "name", "email", "phone_number", "address_street",
                       "address_apartment", "address_city", "address_state", "address_zip_code",
                       "password")
 VALUES (@johndoe2, 'johndoe2', 'John Doe', 'john@doe.com', '6987654321', 'Πατησίων', null,
@@ -80,7 +80,7 @@ VALUES (1, 4, 'Πίτα Γύρο Χοιρινό', 3.50, 'Απ'' όλα'),
        (12, 3, 'Pizza Margarita', 7.50, null),
        (13, 1, 'Mexican Pizza', 7.50, null),
        (14, 2, 'Mexican Pizza', 8.00, null),
-       (15, 3, 'Mexican Pizza', 8.50, null);
+       (15, 3, 'Mexican Pizza', 8.50, null);*/
 
 --- ORDERS ---
 
@@ -98,14 +98,14 @@ VALUES (@o1, @eudim, 4, true, true, '2022-12-09 20:39:28', '2022-12-09 21:00:36'
        (@o4, @iooi, 1, true, true, '2022-12-15 13:04:38', '2022-12-15 13:50:10', 40),
        (@o5, @nikg, 1, false, false, '2022-12-17 16:28:10', null, null);
 
-INSERT INTO "order_product" ("id", "order_id", "product_id", "quantity")
-VALUES (1, @o1, 1, 2),
-       (2, @o1, 4, 2),
-       (3, @o2, 1, 3),
-       (4, @o3, 6, 1),
-       (5, @o4, 7, 2),
-       (6, @o5, 10, 1),
-       (7, @o5, 13, 1);
+INSERT INTO "order_product" ("id", "order_id", "product_id", "price", "quantity")
+VALUES (1, @o1, 1, 3.50, 2),
+       (2, @o1, 4, 3.50, 2),
+       (3, @o2, 1, 3.50, 3),
+       (4, @o3, 6, 5.00, 1),
+       (5, @o4, 7, 5.50, 2),
+       (6, @o5, 10, 7.00, 1),
+       (7, @o5, 13, 7.50, 1);
 
 --- REVIEWS ---
 
@@ -120,10 +120,10 @@ VALUES (1, 1, 1, 5),
 
 --- Fix ID sequences ---
 
-ALTER TABLE "store"
+/*ALTER TABLE "store"
   ALTER COLUMN "id" RESTART WITH 8;
 ALTER TABLE "product"
-  ALTER COLUMN "id" RESTART WITH 16;
+  ALTER COLUMN "id" RESTART WITH 16;*/
 ALTER TABLE "order_product"
   ALTER COLUMN "id" RESTART WITH 8;
 ALTER TABLE "order_review"

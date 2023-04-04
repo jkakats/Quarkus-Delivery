@@ -9,8 +9,6 @@ import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderReviewDto;
-import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductDto;
-import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.StoreDto;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -42,6 +40,8 @@ class OrderResourceTest {
 
   private static UUID uuid = null;
 
+  private Long id = 4L;
+
   @Test
   @Order(1)
   @TestSecurity(
@@ -49,7 +49,7 @@ class OrderResourceTest {
       roles = {"admin"})
   void testList() {
     var orders = when().get().then().statusCode(200).extract().as(new TypeRef<List<OrderDto>>() {});
-    assertThat(orders).hasSize(5).first().returns("eudim", o -> o.client().username());
+    assertThat(orders).hasSize(5).first().returns(4L, o -> o.store_id());
   }
 
   @Test
@@ -57,13 +57,11 @@ class OrderResourceTest {
   @TestTransaction
   void testCreate() {
     var client =
-        new ClientDto(
-            TEST_CLIENT_UUID, "jonhndoe2", null, "John Doe", "john@doe.com", "6987654321", null);
-    var store = new StoreDto(2L, "Domino's Pizza", "Pizza", Set.of(), List.of());
-    var product = new ProductDto(11L, "Pizza Margarita", TEST_COST, null, store);
-    var orderProducts = Set.of(new OrderProductDto(product, TEST_QUANTITY, null));
+      new ClientDto(
+        TEST_CLIENT_UUID, "jonhndoe2", null, "John Doe", "john@doe.com", "6987654321", null);
+    var orderProducts = Set.of(new OrderProductDto(11L, TEST_COST, TEST_QUANTITY, null));
     var body =
-        new OrderDto(null, false, false, null, null, null, null, client, store, orderProducts);
+        new OrderDto(null, false, false, null, null, null, null, TEST_CLIENT_UUID, 2L, orderProducts);
     var token = JwtUtil.clientToken(client).token();
     var location =
         with()
@@ -89,7 +87,7 @@ class OrderResourceTest {
     var order = when().get("{uuid}", uuid).then().statusCode(200).extract().as(OrderDto.class);
     assertThat(order)
         .returns(uuid, OrderDto::uuid)
-        .returns(TEST_CLIENT_UUID, o -> o.client().uuid());
+        .returns(TEST_CLIENT_UUID, o -> o.client_uuid());
   }
 
   @Test
@@ -99,18 +97,8 @@ class OrderResourceTest {
       user = "root",
       roles = {"admin"})
   void testUpdate() {
-    var client =
-        new ClientDto(
-            TEST_CLIENT_UUID,
-            "jonhndoe2",
-            "j0hnd0e!",
-            "John Doe",
-            "john@doe.com",
-            "6987654321",
-            null);
-    var store = new StoreDto(2L, "Domino's Pizza", "Pizza", Set.of(), List.of());
     var date = LocalDateTime.now().minusMinutes(15L);
-    var body = new OrderDto(uuid, false, false, date, null, null, null, client, store, null);
+    var body = new OrderDto(uuid, false, false, date, null, null, null, TEST_CLIENT_UUID, 2L, null);
     var order =
         with()
             .body(body)
@@ -205,6 +193,17 @@ class OrderResourceTest {
 
   @Test
   @Order(9)
+  @TestSecurity(
+    user = "root",
+    roles = {"admin"})
+  @SuppressWarnings("unchecked")
+  void testStoreOrders() {
+    var result = when().get("store/{id}", id).then().statusCode(200).extract().as(List.class);
+    assertThat(result).size().isEqualTo(3);
+  }
+
+  @Test
+  @Order(10)
   @TestTransaction
   @TestSecurity(
       user = "root",

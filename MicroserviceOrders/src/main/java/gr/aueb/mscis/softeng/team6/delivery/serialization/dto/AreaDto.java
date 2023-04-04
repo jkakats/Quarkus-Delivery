@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * A DTO for the {@link gr.aueb.mscis.softeng.team6.delivery.domain.Area Area} entity.
+ * A DTO for the Area entity.
  *
  * @since 1.0.0
  */

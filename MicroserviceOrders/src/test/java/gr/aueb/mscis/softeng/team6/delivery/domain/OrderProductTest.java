@@ -16,21 +16,20 @@ class OrderProductTest {
   @Test
   void testEquals() {
     var order = new Order();
-    var product = new Product().setName("foobar");
-    var orderProduct2 = new OrderProduct().setOrder(order).setProduct(product);
-    orderProduct.setOrder(order).setProduct(product);
+    var orderProduct2 = new OrderProduct().setOrder(order).setProduct_id(11);
+    orderProduct.setOrder(order).setProduct_id(11);
 
     assertThat(orderProduct).isEqualTo(orderProduct);
     assertThat(orderProduct).isNotEqualTo(new Object());
     assertThat(orderProduct).hasSameHashCodeAs(orderProduct2);
-    orderProduct2.setProduct(new Product().setName("barfoo"));
+    orderProduct2.setProduct_id(12);
     assertThat(orderProduct).isNotEqualTo(orderProduct2);
   }
 
   @Test
   void testToString() {
-    orderProduct.setOrder(new Order()).setProduct(new Product());
+    orderProduct.setOrder(new Order());
     assertThat(orderProduct)
-        .hasToString("OrderProduct{order=\"null\", product=\"null\", quantity=1}");
+        .hasToString("OrderProduct{order=\"null\", product=\"0\", quantity=1}");
   }
 }

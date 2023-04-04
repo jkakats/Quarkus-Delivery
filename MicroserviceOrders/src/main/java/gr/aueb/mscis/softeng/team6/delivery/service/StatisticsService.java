@@ -2,12 +2,10 @@ package gr.aueb.mscis.softeng.team6.delivery.service;
 
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 
-import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
-import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
-import gr.aueb.mscis.softeng.team6.delivery.domain.Store;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -26,17 +24,17 @@ public class StatisticsService {
   /**
    * Find the most frequent clients of a store during a certain time period.
    *
-   * @param store a {@link Store} object.
+   * @param store_id object.
    * @param start the period's start date.
    * @param end the period's end date.
    * @param max the maximum number of clients returned.
    * @return a list of clients sorted by the number of orders.
    */
   @Transactional
-  public List<Client> findFrequentClients(
-      Store store, LocalDateTime start, LocalDateTime end, int max) {
-    return em.createNamedQuery("findFrequentClients", Client.class)
-        .setParameter("store", store.getId())
+  public List<UUID> findFrequentClients(
+      long store_id, LocalDateTime start, LocalDateTime end, int max) {
+    return em.createNamedQuery("findFrequentClients", UUID.class)
+        .setParameter("store", store_id)
         .setParameter("start", start)
         .setParameter("end", end)
         .setMaxResults(max)
@@ -46,16 +44,16 @@ public class StatisticsService {
   /**
    * Calculate the average delivery time of a store for a certain area.
    *
-   * @param store a {@link Store} object.
-   * @param area an {@link Area} object.
+   * @param store_id object.
+   * @param area an Area integer.
    * @return the average delivery time in minutes.
    */
   @Transactional
-  public Long getAverageDeliveryTime(Store store, Area area) {
+  public Long getAverageDeliveryTime(long store_id, int area) {
     var result =
         em.createNamedQuery("getAverageDeliveryTime", BigDecimal.class)
-            .setParameter("store", store.getId())
-            .setParameter("area", area.getZipCode())
+            .setParameter("store", store_id)
+            .setParameter("area", area)
             .getSingleResult();
     return result == null ? null : result.longValue();
   }
@@ -63,15 +61,15 @@ public class StatisticsService {
   /**
    * Find the store's rush hours for a given week.
    *
-   * @param store a {@link Store} object.
+   * @param store_id object.
    * @param week the week to check.
    * @param limit the minimum number of orders.
    * @return a list of rush hours.
    */
   @Transactional
-  public List<Integer> getRushHours(Store store, LocalDateTime week, int limit) {
+  public List<Integer> getRushHours(long store_id, LocalDateTime week, int limit) {
     return em.createNamedQuery("getRushHours", Integer.class)
-        .setParameter("store", store.getId())
+        .setParameter("store", store_id)
         .setParameter("week", week)
         .setParameter("limit", limit)
         .getResultList();

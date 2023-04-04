@@ -20,9 +20,6 @@ import org.mapstruct.MappingTarget;
     componentModel = "cdi",
     injectionStrategy = CONSTRUCTOR,
     uses = {
-      ClientMapper.class,
-      ProductMapper.class,
-      StoreMapper.class,
       OrderMapper.OrderProductMapper.class
     })
 public abstract class OrderMapper {

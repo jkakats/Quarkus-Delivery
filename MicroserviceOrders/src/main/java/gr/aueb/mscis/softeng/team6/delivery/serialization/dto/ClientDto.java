@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 /**
- * A DTO for the {@link gr.aueb.mscis.softeng.team6.delivery.domain.Client Client} entity.
+ * A DTO for the Client entity.
  *
  * @since 1.0.0
  */

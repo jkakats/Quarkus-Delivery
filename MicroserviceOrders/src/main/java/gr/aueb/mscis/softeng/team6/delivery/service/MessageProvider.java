@@ -1,6 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.service;
 
-import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -17,10 +16,10 @@ public interface MessageProvider {
   /**
    * Send a text message to a client.
    *
-   * @param client the client that will receive the message.
+   * @param client_uuid the client that will receive the message.
    * @param uuid the UUID of the order.
    * @param cost the total cost of the order.
    * @param wait the estimated waiting time.
    */
-  void sendMessage(Client client, UUID uuid, BigDecimal cost, Long wait);
+  void sendMessage(UUID client_uuid, UUID uuid, BigDecimal cost, Long wait);
 }

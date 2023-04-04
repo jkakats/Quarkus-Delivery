@@ -6,7 +6,6 @@ import gr.aueb.mscis.softeng.team6.delivery.domain.Order;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderReviewDto;
-import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductReviewDto;
 import io.quarkus.test.junit.QuarkusTest;
 import java.math.BigDecimal;
@@ -26,13 +25,15 @@ public class OrderMapperTest {
   private static final Long TEST_ESTIMATED_WAIT = 1869L;
   private static final short TEST_RATING = 3;
 
+  private static final BigDecimal TEST_PRICE = new BigDecimal("6.50");
+
   @Inject protected OrderMapper mapper;
 
   @Test
   void testDeserialize() {
     var orderReview = new OrderReviewDto(TEST_RATING, "");
-    var product = new ProductDto(12L, "souvlaki", new BigDecimal("3.0"), "", null);
-    var orderProducts = Set.of(new OrderProductDto(product, 2, new ProductReviewDto((short) 4)));
+    long id= 6;
+    var orderProducts = Set.of(new OrderProductDto(id, TEST_PRICE,2, new ProductReviewDto((short) 4)));
     var dto =
         new OrderDto(
             TEST_UUID,

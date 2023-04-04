@@ -2,8 +2,10 @@ package gr.aueb.mscis.softeng.team6.delivery.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,7 +23,7 @@ import org.hibernate.annotations.OnDeleteAction;
 /**
  * Order product entity.
  *
- * <p>The intermediate table between {@link Order} & {@link Product}.
+ *
  *
  * @since 0.1.0
  * @version 1.0.0
@@ -41,10 +43,12 @@ public class OrderProduct {
   @JoinColumn(name = "order_id")
   private Order order;
 
-  /** Product relation field. */
-  @ManyToOne(fetch = FetchType.EAGER, optional = false)
-  @JoinColumn(name = "product_id")
-  private Product product;
+  @Column(name="product_id")
+  private long product_id;
+
+  @Column(name="price")
+  private BigDecimal price;
+
 
   /** Quantity field. */
   @NotNull
@@ -69,12 +73,21 @@ public class OrderProduct {
     return this;
   }
 
-  public Product getProduct() {
-    return product;
+  public long getProduct_id() {
+    return product_id;
   }
 
-  public OrderProduct setProduct(Product product) {
-    this.product = product;
+  public OrderProduct setProduct_id(long product_id) {
+    this.product_id = product_id;
+    return this;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public OrderProduct setPrice(BigDecimal price) {
+    this.price = price;
     return this;
   }
 
@@ -104,18 +117,19 @@ public class OrderProduct {
     if (!(that instanceof OrderProduct other)) {
       return false;
     }
-    return order.equals(other.order) && product.equals(other.product);
+    return order.equals(other.order) && (product_id==other.product_id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(order, product);
+    return Objects.hash(order, product_id);
   }
 
   @Override
   public String toString() {
     return String.format(
         "OrderProduct{order=\"%s\", product=\"%s\", quantity=%d}",
-        order.getUuid(), product.getName(), quantity);
+        order.getUuid(), product_id, quantity);
   }
+
 }

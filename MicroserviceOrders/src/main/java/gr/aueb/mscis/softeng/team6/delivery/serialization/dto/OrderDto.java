@@ -18,7 +18,7 @@ public record OrderDto(
     LocalDateTime deliveredTime,
     Long estimatedWait,
     OrderReviewDto review,
-    ClientDto client,
-    StoreDto store,
+    UUID client_uuid,
+    Long store_id,
     Set<OrderProductDto> products)
     implements Serializable {}

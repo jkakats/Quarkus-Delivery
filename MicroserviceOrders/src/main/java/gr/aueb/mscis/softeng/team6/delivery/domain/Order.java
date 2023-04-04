@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,8 +17,13 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.annotations.ColumnDefault;
@@ -26,6 +32,37 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+@SqlResultSetMapping(
+  name = "ScalarResult",
+  columns = {@ColumnResult(name = "result")})
+@NamedQueries({
+  @NamedQuery(
+    name = "findFrequentClients",
+    query =
+      """
+    select o.client_uuid from Order o
+      where o.store_id = :store
+      and (o.orderedTime between :start and :end)
+    group by o.client_uuid
+    order by count(o) desc
+    """
+    )})
+@NamedNativeQueries({
+  @NamedNativeQuery(
+    name = "getRushHours",
+    query =
+      """
+    SELECT
+      EXTRACT(HOUR FROM `ordered_time`) `result`
+    FROM `order`
+    WHERE `store_id` = :store
+      AND DATE_TRUNC(WEEK, `ordered_time`) = :week
+    GROUP BY `result`
+    HAVING COUNT(`result`) > :limit
+    """,
+    resultSetMapping = "ScalarResult"
+    )
+})
 /**
  * Order entity.
  *
@@ -87,16 +124,13 @@ public class Order {
   private OrderReview review;
 
   /** Client relation field. */
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(updatable = false)
-  private Client client;
+  @Column(name="client_uuid")
+  private UUID client_uuid;
 
   /** Store relation field. */
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(updatable = false)
-  private Store store;
+  @Column(name="store_id")
+  private Long store_id;
 
-  /** Order products relation field. */
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Set<OrderProduct> products = new HashSet<>();
@@ -170,30 +204,30 @@ public class Order {
     return actualWait;
   }
 
-  public Client getClient() {
-    return client;
-  }
-
-  public Order setClient(Client client) {
-    this.client = client;
-    return this;
-  }
-
-  public Store getStore() {
-    return store;
-  }
-
-  public Order setStore(Store store) {
-    this.store = store;
-    return this;
-  }
-
   public OrderReview getReview() {
     return review;
   }
 
   public Order setReview(OrderReview review) {
     this.review = review;
+    return this;
+  }
+
+  public UUID getClient_uuid() {
+    return client_uuid;
+  }
+
+  public Order setClient_uuid(UUID client_uuid) {
+    this.client_uuid = client_uuid;
+    return this;
+  }
+
+  public Long getStore_id() {
+    return store_id;
+  }
+
+  public Order setStore_id(Long store_id) {
+    this.store_id = store_id;
     return this;
   }
 
@@ -206,21 +240,21 @@ public class Order {
     return this;
   }
 
-  /**
-   * Add a product to the order.
-   *
-   * @param product the product to be added.
-   * @param quantity the quantity of the product.
-   */
-  public void addProduct(Product product, int quantity) {
-    var orderProduct = new OrderProduct().setOrder(this).setProduct(product).setQuantity(quantity);
+    /**
+     * Add a product to the order.
+     *
+     //* @param product_id the product to be added.
+     //* @param quantity the quantity of the product.
+     */
+  public void addProduct(long product_id,BigDecimal price, int quantity) {
+    var orderProduct = new OrderProduct().setOrder(this).setProduct_id(product_id).setPrice(price).setQuantity(quantity);
     this.products.add(orderProduct);
   }
 
   /** Calculate the total cost of the order. */
   public BigDecimal getCost() {
     return products.stream()
-        .map(p -> new BigDecimal(p.getQuantity()).multiply(p.getProduct().getPrice()))
+        .map(p -> new BigDecimal(p.getQuantity()).multiply(p.getPrice()))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 

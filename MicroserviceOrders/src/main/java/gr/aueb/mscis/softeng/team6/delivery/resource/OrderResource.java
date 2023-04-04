@@ -75,8 +75,8 @@ public class OrderResource {
   @RolesAllowed({"admin", "manager", "client"})
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid).orElseThrow();
-    JwtUtil.checkManager(jwt, order.getStore().getId());
-    JwtUtil.checkClient(jwt, order.getClient().getUuid());
+    JwtUtil.checkManager(jwt, order.getStore_id());
+    JwtUtil.checkClient(jwt, order.getClient_uuid());
     return Response.ok(mapper.serialize(order)).build();
   }
 
@@ -94,7 +94,7 @@ public class OrderResource {
   })
   public Response create(@Context UriInfo uriInfo, @Valid OrderDto dto)
       throws PersistenceException {
-    JwtUtil.checkClient(jwt, dto.client().uuid());
+    JwtUtil.checkClient(jwt, dto.client_uuid());
     var order = mapper.deserialize(dto);
     // NOTE: persistAndFlush doesn't work here
     order = repository.getEntityManager().merge(order);
@@ -120,7 +120,7 @@ public class OrderResource {
   public Response update(@PathParam("uuid") UUID uuid, @Valid OrderDto dto)
       throws NoSuchElementException, PersistenceException {
     var order = repository.findByIdOptional(uuid, PESSIMISTIC_WRITE).orElseThrow();
-    JwtUtil.checkManager(jwt, order.getStore().getId());
+    JwtUtil.checkManager(jwt, order.getStore_id());
     mapper.update(order, dto);
     repository.persistAndFlush(order);
     return Response.ok(mapper.serialize(order)).build();
@@ -138,7 +138,7 @@ public class OrderResource {
   @APIResponse(responseCode = "204", description = "Deleted")
   public Response delete(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid).orElseThrow();
-    JwtUtil.checkManager(jwt, order.getStore().getId());
+    JwtUtil.checkManager(jwt, order.getStore_id());
     repository.delete(order);
     return Response.noContent().build();
   }
@@ -158,7 +158,7 @@ public class OrderResource {
       @PathParam("uuid") UUID uuid, @FormParam("estimated_wait") @NotNull Long estimatedWait)
       throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid, PESSIMISTIC_WRITE).orElseThrow();
-    JwtUtil.checkManager(jwt, order.getStore().getId());
+    JwtUtil.checkManager(jwt, order.getStore_id());
     var response = Response.accepted();
     orderService.setMessageProvider(
         (client, id, cost, wait) -> response.entity(new Confirmation(id, cost, wait)));
@@ -178,7 +178,7 @@ public class OrderResource {
   @APIResponse(responseCode = "202", description = "Accepted")
   public Response deliver(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid, PESSIMISTIC_WRITE).orElseThrow();
-    JwtUtil.checkManager(jwt, order.getStore().getId());
+    JwtUtil.checkManager(jwt, order.getStore_id());
     orderService.deliverOrder(order);
     return Response.accepted().build();
   }
@@ -207,13 +207,24 @@ public class OrderResource {
       @FormParam("product_ratings") @NotEmpty List<@Min(0) @Max(5) Short> productRatings)
       throws NotFoundException, PersistenceException {
     var order = repository.findByIdOptional(uuid, PESSIMISTIC_WRITE).orElseThrow();
-    JwtUtil.checkClient(jwt, order.getClient().getUuid());
+    JwtUtil.checkClient(jwt, order.getClient_uuid());
     try {
       var review = reviewService.reviewOrder(order, rating, comment, productRatings);
       return Response.ok(new OrderReviewDto(review.getRating(), review.getComment())).build();
     } catch (IllegalArgumentException exc) {
       return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage(exc)).build();
     }
+  }
+
+  @GET
+  @Transactional
+  @Path("store/{id}")
+  @RolesAllowed({"admin", "manager"})
+  public Response StoreOrders(@PathParam("id") Long id) throws NoSuchElementException {
+    JwtUtil.checkManager(jwt, id);
+    Object[] params = {id};
+    var orders = repository.stream("store_id", params).map(mapper::serialize).toList();
+    return Response.ok(orders).build();
   }
 
   /**

@@ -3,7 +3,7 @@ package gr.aueb.mscis.softeng.team6.delivery.serialization.dto;
 import java.io.Serializable;
 
 /**
- * A DTO for the {@link gr.aueb.mscis.softeng.team6.delivery.domain.Address Address} entity.
+ * A DTO for the Address entity.
  *
  * @since 1.0.0
  */

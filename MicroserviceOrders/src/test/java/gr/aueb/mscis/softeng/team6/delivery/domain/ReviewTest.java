@@ -30,10 +30,10 @@ class ReviewTest {
   class ProductReviewTest {
     @Test
     void testToString() {
-      var product = new OrderProduct().setProduct(new Product().setName(TEST_PRODUCT));
+      var product = new OrderProduct().setProduct_id(11);
       var review = new ProductReview().setProduct(product).setRating(TEST_RATING);
       assertThat(review.getId()).isNull();
-      assertThat(review).hasToString("ProductReview{product=\"something\", rating=1}");
+      assertThat(review).hasToString("ProductReview{product=\"11\", rating=1}");
     }
   }
 }

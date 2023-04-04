@@ -28,8 +28,8 @@ class ReviewServiceTest {
   @BeforeEach
   void setUp() {
     // language=HQL
-    var query = "from Order o join fetch o.products where o.client.username like :username";
-    order = orderRepository.stream(query, Map.of("username", "elpap")).findFirst().orElseThrow();
+    var query = "from Order o join fetch o.products where o.estimatedWait like :estimatedWait";
+    order = orderRepository.stream(query, Map.of("estimatedWait", 15L)).findFirst().orElseThrow();
   }
 
   @Test

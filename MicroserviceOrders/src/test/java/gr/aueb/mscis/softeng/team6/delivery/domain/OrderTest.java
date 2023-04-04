@@ -14,16 +14,14 @@ class OrderTest {
   private static final int TEST_QUANTITY = 2;
   private static final long TEST_WAIT = 42L;
 
-  private Product product;
   private Order order;
 
   @BeforeEach
   void setUp() {
-    product = new Product().setName("foobar").setPrice(TEST_PRICE);
     order =
         new Order()
-            .setClient(null)
-            .setStore(null)
+            .setClient_uuid(null)
+            .setStore_id(null)
             .setEstimatedWait(TEST_WAIT)
             .setProducts(new HashSet<>(1))
             .setConfirmed(false)
@@ -44,7 +42,7 @@ class OrderTest {
   @Test
   void testCost() {
     var cost = TEST_PRICE.multiply(new BigDecimal(TEST_QUANTITY));
-    order.addProduct(product, TEST_QUANTITY);
+    order.addProduct(2,TEST_PRICE, TEST_QUANTITY);
     assertThat(order.getCost()).isEqualTo(cost);
   }
 

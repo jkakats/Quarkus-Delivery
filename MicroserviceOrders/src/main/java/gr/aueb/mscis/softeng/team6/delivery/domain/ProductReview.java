@@ -52,6 +52,6 @@ public class ProductReview extends Review {
   @Override
   public String toString() {
     return String.format(
-        "ProductReview{product=\"%s\", rating=%d}", product.getProduct().getName(), rating);
+        "ProductReview{product=\"%s\", rating=%d}", product.getProduct_id(), rating);
   }
 }
