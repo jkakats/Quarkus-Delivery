@@ -1,8 +1,11 @@
 package gr.aueb.mscis.softeng.team6.delivery.resource;
 
+import gr.aueb.mscis.softeng.team6.delivery.service.ClientService;
 import gr.aueb.mscis.softeng.team6.delivery.service.StatisticsService;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -16,6 +19,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 /**
  * Statistics resource class.
@@ -28,6 +32,9 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 public class StatisticsResource {
   @Inject protected StatisticsService service;
   @Inject protected JsonWebToken jwt;
+
+  @RestClient
+  ClientService clientService;
 
   /**
    * List the most frequent clients of a store during a certain time period.
@@ -59,18 +66,18 @@ public class StatisticsResource {
    * @param id the store's ID.
    * @param zipCode the area's zip code.
    */
-  /*@GET
+  @GET
   @Transactional
   @Path("delivery")
   @RolesAllowed({"admin", "manager"})
   @Operation(description = "Average delivery time")
-  public Response delivery(
-      @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
+  public Response delivery( @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
     JwtUtil.checkManager(jwt, id);
+    List<String> clientIds = clientService.getClientIds(zipCode);
     var average =
-        service.getAverageDeliveryTime(new Store().setId(id), new Area().setZipCode(zipCode));
+        service.getAverageDeliveryTime(id, clientIds);
     return Response.ok(new Result<>(average)).build();
-  }*/
+  }
 
   /**
    * View the store's rush hours for a given week.

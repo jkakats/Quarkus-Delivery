@@ -5,13 +5,19 @@ import static io.restassured.RestAssured.with;
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AddressDto;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AreaDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderReviewDto;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductDto;
+import gr.aueb.mscis.softeng.team6.delivery.service.ClientService;
+import gr.aueb.mscis.softeng.team6.delivery.service.ProductService;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.common.mapper.TypeRef;
 import java.math.BigDecimal;
@@ -19,11 +25,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mockito;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -35,12 +44,33 @@ class OrderResourceTest {
   private static final short TEST_RATING = 3;
   private static final String TEST_COMMENT = "nice";
   private static final BigDecimal TEST_COST = new BigDecimal("6.50");
+  private static final BigDecimal TEST_PRICE = new BigDecimal("3.50");
   private static final UUID TEST_CLIENT_UUID =
       UUID.fromString("4948b178-f325-4f5f-b8ea-0b4d64cd006c");
 
   private static UUID uuid = null;
 
   private Long id = 4L;
+
+  @InjectMock
+  @RestClient
+  static ClientService clientService;
+
+  @InjectMock
+  @RestClient
+  static ProductService productService;
+
+  @BeforeEach
+  public void setup2(){
+    Mockito.when(clientService.getClient(TEST_CLIENT_UUID)).thenReturn(
+      new ClientDto(
+        TEST_CLIENT_UUID, "jonhndoe2", null, "John Doe", "john@doe.com", "6987654321", null));
+    Boolean correctClient = Boolean.TRUE;
+    Boolean correctProducts = Boolean.TRUE;
+    Mockito.when(clientService.getClientCheck()).thenReturn(correctClient);
+    Mockito.when(productService.getProductCheck()).thenReturn(correctProducts);
+    Mockito.when(productService.getProduct(1L)).thenReturn(new ProductDto(1L,"Πίτα Γύρο Χοιρινό",TEST_PRICE,"Απ'' όλα"));
+  }
 
   @Test
   @Order(1)

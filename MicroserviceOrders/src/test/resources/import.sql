@@ -2,9 +2,9 @@
 
 --- CLIENTS ---
 
-SET @johndoe2 = '4948b178-f325-4f5f-b8ea-0b4d64cd006c';
-SET @eudim = RANDOM_UUID();
-SET @elpap = RANDOM_UUID();
+SET @johndoe2 = '4948b178-f325-4f5f-b8ea-0b4d64cd006d';
+SET @eudim = '4948b178-f325-4f5f-b8ea-0b4d64cd006c';
+SET @elpap = '4948b178-f325-4f5f-b8ea-0b4d64cd006e';
 SET @iooi = RANDOM_UUID();
 SET @nikg = RANDOM_UUID();
 SET @kpappas = RANDOM_UUID();

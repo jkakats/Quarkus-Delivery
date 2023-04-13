@@ -16,8 +16,8 @@ public record AreaDto(
     @NotNull @NotBlank String city,
     @NotNull @NotBlank String state)
     implements Serializable {
-  @Override
+  /*@Override
   public String toString() {
     return String.format("%s %d, %s", city, zipCode, state);
-  }
+  }*/
 }
