@@ -45,15 +45,15 @@ public class StatisticsService {
    * Calculate the average delivery time of a store for a certain area.
    *
    * @param store_id object.
-   * @param area an Area integer.
+   * @param clientUUIDs list.
    * @return the average delivery time in minutes.
    */
   @Transactional
-  public Long getAverageDeliveryTime(long store_id, int area) {
+  public Long getAverageDeliveryTime(long store_id, List<String> clientUUIDs) {
     var result =
         em.createNamedQuery("getAverageDeliveryTime", BigDecimal.class)
             .setParameter("store", store_id)
-            .setParameter("area", area)
+            .setParameter("clientUUIDs", clientUUIDs)
             .getSingleResult();
     return result == null ? null : result.longValue();
   }

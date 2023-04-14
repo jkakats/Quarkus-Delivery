@@ -31,6 +31,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
 
 @SqlResultSetMapping(
   name = "ScalarResult",
@@ -47,7 +48,21 @@ import org.hibernate.annotations.OnDeleteAction;
     order by count(o) desc
     """
     )})
+
 @NamedNativeQueries({
+  @NamedNativeQuery(
+    name = "getAverageDeliveryTime",
+    query =
+      """
+    SELECT
+      ROUND(AVG(DATEDIFF(MINUTE, `ordered_time`, `delivered_time`))) `result`
+    FROM `order`
+    WHERE `delivered` = true
+      AND `store_id` = :store
+      AND `client_uuid` IN :clientUUIDs
+    """,
+    resultSetMapping = "ScalarResult"
+    ),
   @NamedNativeQuery(
     name = "getRushHours",
     query =
@@ -125,6 +140,7 @@ public class Order {
 
   /** Client relation field. */
   @Column(name="client_uuid")
+  @Type(type = "uuid-char")
   private UUID client_uuid;
 
   /** Store relation field. */

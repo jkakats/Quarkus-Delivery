@@ -3,10 +3,14 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
 
 import gr.aueb.mscis.softeng.team6.delivery.persistence.OrderRepository;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderReviewDto;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.OrderMapper;
+import gr.aueb.mscis.softeng.team6.delivery.service.ClientService;
 import gr.aueb.mscis.softeng.team6.delivery.service.OrderService;
+import gr.aueb.mscis.softeng.team6.delivery.service.ProductService;
 import gr.aueb.mscis.softeng.team6.delivery.service.ReviewService;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -40,6 +44,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 /**
  * Order resource class.
@@ -54,6 +59,12 @@ public class OrderResource {
   @Inject protected OrderService orderService;
   @Inject protected ReviewService reviewService;
   @Inject protected JsonWebToken jwt;
+
+  @RestClient
+  ClientService clientService;
+
+  @RestClient
+  ProductService productService;
 
   /** Get all the orders. */
   @GET
@@ -77,6 +88,8 @@ public class OrderResource {
     var order = repository.findByIdOptional(uuid).orElseThrow();
     JwtUtil.checkManager(jwt, order.getStore_id());
     JwtUtil.checkClient(jwt, order.getClient_uuid());
+    ClientDto clientdto = clientService.getClient(order.getClient_uuid());
+    ProductDto productdto = productService.getProduct(order.getProducts().iterator().next().getProduct_id());
     return Response.ok(mapper.serialize(order)).build();
   }
 
@@ -99,8 +112,15 @@ public class OrderResource {
     // NOTE: persistAndFlush doesn't work here
     order = repository.getEntityManager().merge(order);
     repository.flush();
-    var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(order.getUuid());
-    return Response.created(uri).build();
+    Boolean correctClient = clientService.getClientCheck();
+    Boolean correctProducts = productService.getProductCheck();
+    if(correctClient && correctProducts) {
+      var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(order.getUuid());
+      return Response.created(uri).build();
+    }
+    IllegalArgumentException exc= new IllegalArgumentException();
+    return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage(exc)).build();
+
   }
 
   /**

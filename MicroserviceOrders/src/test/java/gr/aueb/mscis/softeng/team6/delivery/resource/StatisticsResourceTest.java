@@ -4,8 +4,11 @@ import static io.restassured.RestAssured.with;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gr.aueb.mscis.softeng.team6.delivery.serialization.LocalDateTimeConverter;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
+import gr.aueb.mscis.softeng.team6.delivery.service.ClientService;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.common.mapper.TypeRef;
 import java.time.LocalDateTime;
@@ -13,8 +16,11 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
 import javax.ws.rs.ext.ParamConverter;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 @QuarkusTest
 @TestHTTPEndpoint(StatisticsResource.class)
@@ -24,11 +30,20 @@ class StatisticsResourceTest {
 
   private static ParamConverter<LocalDateTime> converter;
 
+  @InjectMock
+  @RestClient
+  static ClientService clientService;
+
   @BeforeAll
   static void setUp() {
     // NOTE: quarkus-resteasy doesn't handle this automatically in tests
     //  (see https://github.com/quarkusio/quarkus/issues/24715)
     converter = new LocalDateTimeConverter().getConverter(LocalDateTime.class, null, null);
+  }
+
+  @BeforeEach
+  public void setup2(){
+    Mockito.when(clientService.getClientIds(10434)).thenReturn(List.of("4948b178-f325-4f5f-b8ea-0b4d64cd006c","4948b178-f325-4f5f-b8ea-0b4d64cd006e"));
   }
 
   @Test
@@ -52,7 +67,7 @@ class StatisticsResourceTest {
     assertThat(clients.result()).hasSizeBetween(1, 10);
   }
 
-  /*@Test
+  @Test
   @TestSecurity(
       user = "root",
       roles = {"admin"})
@@ -68,7 +83,7 @@ class StatisticsResourceTest {
             .extract()
             .as(new TypeRef<StatisticsResource.Result<Long>>() {});
     assertThat(average.result()).isEqualTo(22L);
-  }*/
+  }
 
   @Test
   @TestSecurity(

@@ -8,9 +8,9 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 public record AddressDto(String street, String apartment, AreaDto area) implements Serializable {
-  @Override
+  /*@Override
   public String toString() {
     var apt = apartment == null ? "0" : apartment;
     return String.format("%s %s, %s", street, apt, area);
-  }
+  }*/
 }
