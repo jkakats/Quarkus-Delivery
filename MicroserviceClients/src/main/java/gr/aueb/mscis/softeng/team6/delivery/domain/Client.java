@@ -80,8 +80,7 @@ public class Client {
   @Embedded @Valid private Address address;
 
   /** Orders relation field. */
-  @OneToMany(mappedBy = "client")
-  private List<Order> orders = new ArrayList<>();
+  private List<UUID> ordersUUID = new ArrayList<>();
 
   public UUID getUuid() {
     return uuid;
@@ -146,8 +145,8 @@ public class Client {
     return this;
   }
 
-  public List<Order> getOrders() {
-    return orders;
+  public List<UUID> getOrders() {
+    return ordersUUID;
   }
 
   @Override
