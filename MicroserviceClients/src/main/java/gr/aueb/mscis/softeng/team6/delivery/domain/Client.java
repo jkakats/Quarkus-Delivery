@@ -1,7 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -16,8 +14,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.Length;
 
@@ -27,19 +23,7 @@ import org.hibernate.validator.constraints.Length;
  * @since 0.1.0
  * @version 1.0.0
  */
-@NamedQueries({
-  @NamedQuery(
-      name = "findFrequentClients",
-      query =
-          """
-        select c from Client c join c.orders o
-          where o.store.id = :store
-          and (o.orderedTime between :start and :end)
-        group by c
-        order by count(o) desc
-        """,
-      readOnly = true)
-})
+
 @Entity
 @Table(
     name = "client",
@@ -77,9 +61,6 @@ public class Client {
 
   /** Address field. */
   @Embedded @Valid private Address address;
-
-  /** Orders relation field. */
-  private List<UUID> ordersUUID = new ArrayList<>();
 
   public UUID getUuid() {
     return uuid;
@@ -142,10 +123,6 @@ public class Client {
   public Client setAddress(Address address) {
     this.address = address;
     return this;
-  }
-
-  public List<UUID> getOrders() {
-    return ordersUUID;
   }
 
   @Override

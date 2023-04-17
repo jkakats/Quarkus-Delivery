@@ -15,7 +15,7 @@ import org.mapstruct.MappingTarget;
  */
 @Mapper(componentModel = "cdi", injectionStrategy = CONSTRUCTOR)
 public abstract class ClientMapper {
-  @Mapping(target = "orders", ignore = true)
+
   @Mapping(source = "password", target = "password.password")
   @Mapping(target = "email", expression = "java(new EmailAddress(clientDto.email()))")
   @Mapping(target = "phone", expression = "java(new PhoneNumber(clientDto.phoneNumber()))")
@@ -28,7 +28,6 @@ public abstract class ClientMapper {
 
   @Mapping(target = "uuid", ignore = true)
   @Mapping(target = "username", ignore = true)
-  @Mapping(target = "orders", ignore = true)
   @Mapping(target = "email", expression = "java(new EmailAddress(clientDto.email()))")
   @Mapping(target = "phone", expression = "java(new PhoneNumber(clientDto.phoneNumber()))")
   @Mapping(target = "password", expression = "java(new Password(clientDto.password()))")
