@@ -31,42 +31,7 @@ import org.hibernate.annotations.NamedNativeQuery;
  * @since 0.1.0
  * @version 1.0.0
  */
-@SqlResultSetMapping(
-    name = "ScalarResult",
-    columns = {@ColumnResult(name = "result")})
-// NOTE: these queries have issues in HQL
-@NamedNativeQueries({
-  @NamedNativeQuery(
-      name = "getAverageDeliveryTime",
-      query =
-          """
-        SELECT
-          ROUND(AVG(DATEDIFF(MINUTE, `ordered_time`, `delivered_time`))) `result`
-        FROM `order` o
-        JOIN `store_area` a
-          ON o.`store_id` = a.`store_id`
-        WHERE o.`delivered` = true
-          AND a.`zip_code` = :area
-          AND o.`store_id` = :store
-        """,
-      resultSetMapping = "ScalarResult",
-      readOnly = true,
-      fetchSize = 1),
-  @NamedNativeQuery(
-      name = "getRushHours",
-      query =
-          """
-        SELECT
-          EXTRACT(HOUR FROM `ordered_time`) `result`
-        FROM `order`
-        WHERE `store_id` = :store
-          AND DATE_TRUNC(WEEK, `ordered_time`) = :week
-        GROUP BY `result`
-        HAVING COUNT(`result`) > :limit
-        """,
-      resultSetMapping = "ScalarResult",
-      readOnly = true)
-})
+
 @Entity
 @Table(
     name = "store",
@@ -102,10 +67,6 @@ public class Store {
   /** Products relation field. */
   @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
   private List<Product> products = new ArrayList<>();
-
-  /** Orders relation field. */
-  @OneToMany(mappedBy = "store")
-  private List<Order> orders = new ArrayList<>();
 
   public Long getId() {
     return id;
@@ -152,9 +113,6 @@ public class Store {
     return this;
   }
 
-  public List<Order> getOrders() {
-    return orders;
-  }
 
   /**
    * Add an area to the store.

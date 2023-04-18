@@ -14,6 +14,6 @@ class ProductTest {
   void testToString() {
     var product = new Product().setName(TEST_NAME).setPrice(TEST_PRICE).setComment(TEST_COMMENT);
     assertThat(product)
-        .hasToString("Product{name=\"foobar\", price=10.00, comment=\"hello world\"}");
+        .hasToString("Product{name=\"foobar\", price=10,00, comment=\"hello world\"}");
   }
 }
