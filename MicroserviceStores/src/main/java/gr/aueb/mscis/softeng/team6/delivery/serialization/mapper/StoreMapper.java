@@ -22,7 +22,7 @@ import org.mapstruct.Named;
     injectionStrategy = CONSTRUCTOR,
     uses = {ProductMapper.class})
 public abstract class StoreMapper {
-  @Mapping(target = "orders", ignore = true)
+
   public abstract Store deserialize(StoreDto storeDto);
 
   public abstract StoreDto serialize(Store store);
@@ -31,7 +31,6 @@ public abstract class StoreMapper {
   public abstract List<StoreDto> serialize(List<Store> stores);
 
   @Mapping(target = "id", ignore = true)
-  @Mapping(target = "orders", ignore = true)
   public abstract void update(@MappingTarget Store store, StoreDto storeDto);
 
   @Named("serializeSimple")

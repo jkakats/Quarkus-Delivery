@@ -3,10 +3,8 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Area;
-import gr.aueb.mscis.softeng.team6.delivery.persistence.OrderRepository;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.StoreRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.StoreDto;
-import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.OrderMapper;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.StoreMapper;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,9 +41,9 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 @Path("/stores")
 public class StoreResource {
   @Inject protected StoreRepository storeRepository;
-  @Inject protected OrderRepository orderRepository;
+
   @Inject protected StoreMapper storeMapper;
-  @Inject protected OrderMapper orderMapper;
+
   @Inject protected JsonWebToken jwt;
 
   /** Get all the stores. */
@@ -149,19 +147,4 @@ public class StoreResource {
     return Response.ok(storeMapper.serialize(stores)).build();
   }
 
-  /**
-   * List the store's orders.
-   *
-   * @param id the store's ID
-   */
-  @GET
-  @Transactional
-  @Path("{id}/orders")
-  @RolesAllowed({"admin", "manager"})
-  public Response orders(@PathParam("id") Long id) throws NoSuchElementException {
-    JwtUtil.checkManager(jwt, id);
-    Object[] params = {id};
-    var orders = orderRepository.stream("store.id", params).map(orderMapper::serialize).toList();
-    return Response.ok(orders).build();
-  }
 }

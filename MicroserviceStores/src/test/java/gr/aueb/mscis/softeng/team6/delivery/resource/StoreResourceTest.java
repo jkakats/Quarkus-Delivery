@@ -112,19 +112,9 @@ class StoreResourceTest {
     assertThat(stores).singleElement().returns(id, StoreDto::id);
   }
 
-  @Test
-  @Order(6)
-  @TestSecurity(
-      user = "root",
-      roles = {"admin"})
-  @SuppressWarnings("unchecked")
-  void testOrders() {
-    var result = when().get("{id}/orders", id).then().statusCode(200).extract().as(List.class);
-    assertThat(result).isEmpty();
-  }
 
   @Test
-  @Order(7)
+  @Order(6)
   @TestTransaction
   @TestSecurity(
       user = "root",
