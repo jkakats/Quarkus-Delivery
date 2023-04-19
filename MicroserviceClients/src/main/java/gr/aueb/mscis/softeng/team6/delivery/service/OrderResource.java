@@ -1,6 +1,8 @@
-package gr.aueb.mscis.softeng.team6.delivery.resource;
+package gr.aueb.mscis.softeng.team6.delivery.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
@@ -21,10 +23,10 @@ public interface OrderResource {
   @GET
   @Path("/{store}/topClientIDs")
   @Transactional
-  Response getTopClientsOfAStoreForAPeriod (@PathParam("store") Long storeID,
-                                            @QueryParam("start") @NotNull LocalDateTime start,
-                                            @QueryParam("end") @NotNull LocalDateTime end,
-                                            @QueryParam("max") @DefaultValue("10") Integer max);
+  List<UUID> getTopClientsOfAStoreForAPeriod (@PathParam("store") Long storeID,
+                                              @QueryParam("start") @NotNull LocalDateTime start,
+                                              @QueryParam("end") @NotNull LocalDateTime end,
+                                              @QueryParam("max") @DefaultValue("10") Integer max);
 
 
 }

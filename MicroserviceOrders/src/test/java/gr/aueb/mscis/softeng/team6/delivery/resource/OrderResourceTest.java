@@ -69,7 +69,7 @@ class OrderResourceTest {
     Boolean correctProducts = Boolean.TRUE;
     Mockito.when(clientService.getClientCheck()).thenReturn(correctClient);
     Mockito.when(productService.getProductCheck()).thenReturn(correctProducts);
-    Mockito.when(productService.getProduct(1L)).thenReturn(new ProductDto(1L,"Πίτα Γύρο Χοιρινό",TEST_PRICE,"Απ'' όλα"));
+    Mockito.when(productService.getProduct(List.of(1L))).thenReturn(List.of(new ProductDto(1L,"Πίτα Γύρο Χοιρινό",TEST_PRICE,"Απ'' όλα")));
   }
 
   @Test

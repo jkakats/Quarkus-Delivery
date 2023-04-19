@@ -14,6 +14,8 @@ import gr.aueb.mscis.softeng.team6.delivery.service.ProductService;
 import gr.aueb.mscis.softeng.team6.delivery.service.ReviewService;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -89,7 +91,13 @@ public class OrderResource {
     JwtUtil.checkManager(jwt, order.getStore_id());
     JwtUtil.checkClient(jwt, order.getClient_uuid());
     ClientDto clientdto = clientService.getClient(order.getClient_uuid());
-    ProductDto productdto = productService.getProduct(order.getProducts().iterator().next().getProduct_id());
+    List<Long> prod_ids = new ArrayList();
+    Iterator iter = order.getProducts().iterator();
+    while (iter.hasNext()) {
+      prod_ids.add(order.getProducts().iterator().next().getProduct_id());
+      iter.next();
+    }
+    List<ProductDto> productsdto = productService.getProduct(prod_ids);
     return Response.ok(mapper.serialize(order)).build();
   }
 
