@@ -112,6 +112,12 @@
       <version>${assertj.version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.eclipse.microprofile.rest.client/microprofile-rest-client-api -->
+    <dependency>
+      <groupId>org.eclipse.microprofile.rest.client</groupId>
+      <artifactId>microprofile-rest-client-api</artifactId>
+      <version>3.0.1</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
