@@ -120,7 +120,7 @@ public class OrderResource {
     // NOTE: persistAndFlush doesn't work here
     order = repository.getEntityManager().merge(order);
     repository.flush();
-    Boolean correctClient = clientService.getClientCheck();
+    Boolean correctClient = clientService.getClientCheck(order.getClient_uuid());
     Boolean correctProducts = productService.getProductCheck();
     if(correctClient && correctProducts) {
       var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(order.getUuid());

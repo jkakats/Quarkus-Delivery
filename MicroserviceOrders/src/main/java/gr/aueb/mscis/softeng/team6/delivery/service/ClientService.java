@@ -23,7 +23,7 @@ public interface ClientService {
   ClientDto getClient(@PathParam("client_uuid") UUID client_uuid);
 
   @GET
-  @Path("/check")
-  Boolean getClientCheck();
+  @Path("/check/{client_uuid}")
+  Boolean getClientCheck(@PathParam("client_uuid") UUID client_uuid);
 
 }

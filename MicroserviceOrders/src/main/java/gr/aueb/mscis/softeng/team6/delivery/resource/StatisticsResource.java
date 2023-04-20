@@ -33,6 +33,7 @@ public class StatisticsResource {
   @Inject protected StatisticsService service;
   @Inject protected JsonWebToken jwt;
 
+  @Inject
   @RestClient
   ClientService clientService;
 

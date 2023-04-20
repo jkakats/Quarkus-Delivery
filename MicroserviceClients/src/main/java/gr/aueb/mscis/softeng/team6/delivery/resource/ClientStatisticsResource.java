@@ -4,6 +4,7 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
+import gr.aueb.mscis.softeng.team6.delivery.service.OrderService;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Serializable;
@@ -29,9 +30,8 @@ public class ClientStatisticsResource {
 
   @Inject protected ClientMapper clientMapper;
   @Inject protected ClientRepository clientRepository;
-  @Inject
   @RestClient
-  protected OrderResource orderResource;
+  OrderService orderResource;
 
   /**
    * List the most frequent clients of a store during a certain time period.
