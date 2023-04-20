@@ -1,4 +1,4 @@
-package gr.aueb.mscis.softeng.team6.delivery.service;
+package gr.aueb.mscis.softeng.team6.delivery.resource;
 
 import java.time.LocalDateTime;
 import java.util.List;

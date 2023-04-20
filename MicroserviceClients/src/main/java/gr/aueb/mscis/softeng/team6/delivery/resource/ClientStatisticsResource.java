@@ -2,8 +2,8 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
+import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
-import gr.aueb.mscis.softeng.team6.delivery.service.OrderResource;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Serializable;
@@ -28,9 +28,10 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 public class ClientStatisticsResource {
 
   @Inject protected ClientMapper clientMapper;
+  @Inject protected ClientRepository clientRepository;
   @Inject
   @RestClient
-  OrderResource orderResource;
+  protected OrderResource orderResource;
 
   /**
    * List the most frequent clients of a store during a certain time period.
@@ -50,13 +51,12 @@ public class ClientStatisticsResource {
     @QueryParam("end") @NotNull LocalDateTime end,
     @QueryParam("max") @DefaultValue("10") Integer max) {
     List<UUID> clientUUIDs = orderResource.getTopClientsOfAStoreForAPeriod(id, start, end, max);
-    //Εχεις παρει απο το Microservice με τα orders μια λιστα με τα uuids των πιο frequent πελατων
-    //Πρεπει να βρεις τους clients με αυτα τα UUIDs στην βαση σου με καποιο query
-    List<Client> clients = new ArrayList<>(); // Προφανως δεν χρειαζεται να ειναι arraylist απλα το εβαλα για να γινεται initialized προσωρινα
-    //Και τελος να τους μετατρεψεις σε ClientDto για να τους στειλεις ως response (ετοιμο στην επομενη γραμμη)
+    List<Client> clients = new ArrayList<>();
+    for (UUID uuid : clientUUIDs) {
+      clients.add (clientRepository.findById(uuid));
+    }
     var result = clients.stream().map(clientMapper::serialize).toList();
     return Response.ok(new Result<>(result)).build();
-    //Για να τεσταρεις αμα ειναι οκ θα πρεπει να φτιαξεις mock με μια συγκεκριμενη συμπεριφορα οπως σελ 10 των διαφανειων για rest client
   }
 
 
