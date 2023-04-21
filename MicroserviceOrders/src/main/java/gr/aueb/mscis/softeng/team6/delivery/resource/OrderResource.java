@@ -2,9 +2,13 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 
 import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
 
+import gr.aueb.mscis.softeng.team6.delivery.domain.OrderProduct;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.OrderRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.FullOrderDto;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.FullOrderProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderDto;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderReviewDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.OrderMapper;
@@ -15,9 +19,11 @@ import gr.aueb.mscis.softeng.team6.delivery.service.ReviewService;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -84,7 +90,7 @@ public class OrderResource {
    */
   @GET
   @Transactional
-  @Path("{uuid}")
+  @Path("/{uuid}")
   @RolesAllowed({"admin", "manager", "client"})
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid).orElseThrow();
@@ -92,13 +98,24 @@ public class OrderResource {
     JwtUtil.checkClient(jwt, order.getClient_uuid());
     ClientDto clientdto = clientService.getClient(order.getClient_uuid());
     List<Long> prod_ids = new ArrayList();
-    Iterator iter = order.getProducts().iterator();
-    while (iter.hasNext()) {
-      prod_ids.add(order.getProducts().iterator().next().getProduct_id());
-      iter.next();
+    for(OrderProduct prod : order.getProducts()){
+      prod_ids.add(prod.getProduct_id());
     }
     List<ProductDto> productsdto = productService.getProduct(prod_ids);
-    return Response.ok(mapper.serialize(order)).build();
+    OrderDto orderDto = mapper.serialize(order);
+    Set<FullOrderProductDto> fullproducts = new HashSet<>();
+    int i=0;
+    if(productsdto.size()>0) {
+      for (OrderProductDto prodDto : orderDto.products()) {
+        fullproducts.add(
+          new FullOrderProductDto(productsdto.get(i), prodDto.price(), prodDto.quantity(),
+            prodDto.review()));
+        i++;
+      }
+    }
+    FullOrderDto full = new FullOrderDto(orderDto.uuid(),orderDto.confirmed(),orderDto.delivered(),orderDto.orderedTime(),orderDto.deliveredTime(),orderDto.estimatedWait(),orderDto.review(),clientdto,orderDto.store_id(),fullproducts);
+    return Response.ok(full).build();
+    //return Response.ok(mapper.serialize(order)).build();
   }
 
   /**
@@ -121,7 +138,13 @@ public class OrderResource {
     order = repository.getEntityManager().merge(order);
     repository.flush();
     Boolean correctClient = clientService.getClientCheck(order.getClient_uuid());
-    Boolean correctProducts = productService.getProductCheck();
+    List<Long> prod_ids = new ArrayList();
+    Iterator iter = order.getProducts().iterator();
+    while (iter.hasNext()) {
+      prod_ids.add(order.getProducts().iterator().next().getProduct_id());
+      iter.next();
+    }
+    Boolean correctProducts = productService.getProductCheck(prod_ids);
     if(correctClient && correctProducts) {
       var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(order.getUuid());
       return Response.created(uri).build();

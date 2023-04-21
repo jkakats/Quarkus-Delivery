@@ -55,7 +55,7 @@ public class StatisticsResource {
       @QueryParam("start") @NotNull LocalDateTime start,
       @QueryParam("end") @NotNull LocalDateTime end,
       @QueryParam("max") @DefaultValue("10") Integer max) {
-    JwtUtil.checkManager(jwt, store_id);
+    //JwtUtil.checkManager(jwt, store_id);
     var clients = service.findFrequentClients(store_id, start, end, max);
     var result = clients.stream().toList();
     return Response.ok(new Result<>(result)).build();

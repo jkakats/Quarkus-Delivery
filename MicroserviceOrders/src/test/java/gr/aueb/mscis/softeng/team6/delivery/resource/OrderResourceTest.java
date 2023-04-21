@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AddressDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AreaDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
+import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.FullOrderDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderReviewDto;
@@ -68,7 +69,7 @@ class OrderResourceTest {
     Boolean correctClient = Boolean.TRUE;
     Boolean correctProducts = Boolean.TRUE;
     Mockito.when(clientService.getClientCheck(TEST_CLIENT_UUID)).thenReturn(correctClient);
-    Mockito.when(productService.getProductCheck()).thenReturn(correctProducts);
+    Mockito.when(productService.getProductCheck(List.of(11L))).thenReturn(correctProducts);
     Mockito.when(productService.getProduct(List.of(1L))).thenReturn(List.of(new ProductDto(1L,"Πίτα Γύρο Χοιρινό",TEST_PRICE,"Απ'' όλα")));
   }
 
@@ -114,10 +115,10 @@ class OrderResourceTest {
       user = "root",
       roles = {"admin"})
   void testRead() {
-    var order = when().get("{uuid}", uuid).then().statusCode(200).extract().as(OrderDto.class);
+    var order = when().get("{uuid}", uuid).then().statusCode(200).extract().as(FullOrderDto.class);
     assertThat(order)
-        .returns(uuid, OrderDto::uuid)
-        .returns(TEST_CLIENT_UUID, o -> o.client_uuid());
+        .returns(uuid, FullOrderDto::uuid)
+        .returns(TEST_CLIENT_UUID, o -> o.client().uuid());
   }
 
   @Test

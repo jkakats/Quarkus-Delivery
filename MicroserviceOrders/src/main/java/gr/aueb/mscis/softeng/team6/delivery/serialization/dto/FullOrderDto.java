@@ -18,7 +18,7 @@ public record FullOrderDto(
     LocalDateTime deliveredTime,
     Long estimatedWait,
     OrderReviewDto review,
-    ClientDto clientDto,
+    ClientDto client,
     Long store_id,
-    Set<OrderProductDto> products)
+    Set<FullOrderProductDto> products)
     implements Serializable {}

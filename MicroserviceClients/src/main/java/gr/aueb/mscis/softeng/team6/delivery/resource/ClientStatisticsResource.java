@@ -29,6 +29,7 @@ public class ClientStatisticsResource {
 
   @Inject protected ClientMapper clientMapper;
   @Inject protected ClientRepository clientRepository;
+  @Inject
   @RestClient
   OrderService orderResource;
 

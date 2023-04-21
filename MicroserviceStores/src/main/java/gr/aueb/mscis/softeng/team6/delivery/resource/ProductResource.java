@@ -2,9 +2,12 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 
 import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
 
+import gr.aueb.mscis.softeng.team6.delivery.domain.Product;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.ProductRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ProductDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ProductMapper;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -39,13 +42,31 @@ public class ProductResource {
   @Inject protected ProductMapper mapper;
   @Inject protected JsonWebToken jwt;
 
-  /** Get all the products. */
+  /** Get all the products or products with specific id. */
   @GET
   @Transactional
-  public Response list() {
-    var products = repository.streamAll().map(mapper::serialize).toList();
-    return Response.ok(products).build();
+  public Response list(@QueryParam("product_id") List<Long> productIds) {
+    if (productIds == null || productIds.isEmpty()) {
+      // return all products
+      var products = repository.streamAll().map(mapper::serialize).toList();
+      return Response.ok(products).build();
+    } else {
+      // return products by id
+      List<ProductDto> productList = new ArrayList<>();
+      for (Long id : productIds) {
+        Product product = repository.findByIdOptional(id).orElse(null);
+        if (product == null) {
+          return Response.status(Response.Status.NOT_FOUND).build(); // return 404 if product not found
+        } else {
+          productList.add(mapper.serialize(product));
+        }
+      }
+      return Response.ok(productList).build();
+    }
   }
+
+
+
 
   /**
    * Get a single product.
@@ -144,4 +165,23 @@ public class ProductResource {
     var products = repository.stream("name", params).map(mapper::serialize).toList();
     return Response.ok(products).build();
   }
+
+  @GET
+  @Transactional
+  @Path("check")
+  public Response check(@QueryParam("product_id") List<Long> productIds) throws NoSuchElementException
+  {
+      // check if all products exist
+     boolean check=true;
+      for (Long id : productIds)
+      {
+        Product product = repository.findById(id);
+        if (product == null) {
+          check=false;
+          break;
+        }
+      }
+      return Response.ok(check).build();
+    }
+
 }
