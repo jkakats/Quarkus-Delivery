@@ -1,5 +1,6 @@
 package gr.aueb.mscis.softeng.team6.delivery.resource;
 
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static io.restassured.RestAssured.with;
 import static io.restassured.http.ContentType.JSON;
@@ -13,6 +14,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.common.mapper.TypeRef;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.MethodOrderer;
@@ -32,9 +35,12 @@ class ProductResourceTest {
 
   private static Long id = null;
 
+  private static final List<Long> TEST_True_productIds = new ArrayList<Long>(Arrays.asList(1L, 2L, 3L));
+  private static final List<Long> TEST_False_productIds = new ArrayList<Long>(Arrays.asList(100L, 2L, 3L));
+
   @Test
   @Order(1)
-  void testList() {
+  void testListAll() {
     var stores =
         when().get().then().statusCode(200).extract().as(new TypeRef<List<ProductDto>>() {});
     assertThat(stores).hasSize(15).first().returns("Πίτα Γύρο Χοιρινό", ProductDto::name);
@@ -42,6 +48,34 @@ class ProductResourceTest {
 
   @Test
   @Order(2)
+  void testListById() {
+    var products =
+      with()
+        .queryParam("product_id", TEST_True_productIds)
+        .when()
+        .get()
+        .then()
+        .statusCode(200)
+        .extract()
+        .as(new TypeRef<List<ProductDto>>() {});
+    assertThat(products).hasSize(3).first().returns("Πίτα Γύρο Χοιρινό", ProductDto::name);
+  }
+
+  @Test
+  @Order(3)
+  void testListWithInvalidId() {
+    given()
+      .queryParam("product_id", TEST_False_productIds)
+      .when()
+      .get()
+      .then()
+      .assertThat()
+      .statusCode(404);
+  }
+
+
+  @Test
+  @Order(4)
   @TestTransaction
   @TestSecurity(
       user = "root",
@@ -64,14 +98,14 @@ class ProductResourceTest {
   }
 
   @Test
-  @Order(3)
+  @Order(5)
   void testRead() {
     var product = when().get("{id}", id).then().statusCode(200).extract().as(ProductDto.class);
     assertThat(product).returns(id, ProductDto::id).returns(TEST_NAME, ProductDto::name);
   }
 
   @Test
-  @Order(4)
+  @Order(6)
   @TestTransaction
   void testUpdate() {
     var price = TEST_PRICE.subtract(new BigDecimal("1.00"));
@@ -93,7 +127,7 @@ class ProductResourceTest {
   }
 
   @Test
-  @Order(5)
+  @Order(7)
   void testCatalogue() {
     var catalogue =
         List.of(
@@ -109,7 +143,7 @@ class ProductResourceTest {
   }
 
   @Test
-  @Order(6)
+  @Order(8)
   void testSearch() {
     var products =
         with()
@@ -124,7 +158,7 @@ class ProductResourceTest {
   }
 
   @Test
-  @Order(7)
+  @Order(9)
   @TestTransaction
   @TestSecurity(
       user = "root",
@@ -132,4 +166,37 @@ class ProductResourceTest {
   void testDelete() {
     when().delete("{id}", id).then().statusCode(204);
   }
+
+
+  @Test
+  @Order(10)
+  void testCheckTrue() {
+    Boolean result =
+      with()
+        .queryParam("product_id", TEST_True_productIds)
+        .when()
+        .get("check")
+        .then()
+        .statusCode(200)
+        .extract()
+        .as(Boolean.class);
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  @Order(11)
+  void testCheckFalse() {
+    Boolean result =
+      with()
+        .queryParam("product_id", TEST_False_productIds)
+        .when()
+        .get("check")
+        .then()
+        .statusCode(200)
+        .extract()
+        .as(Boolean.class);
+    assertThat(result).isFalse();
+  }
+
+
 }
