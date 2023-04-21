@@ -2,10 +2,12 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 
 import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
 
+import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
 import gr.aueb.mscis.softeng.team6.delivery.service.AuthenticationService;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import javax.annotation.security.RolesAllowed;
@@ -152,4 +154,30 @@ public class ClientResource {
       return Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(exc)).build();
     }
   }
+
+  @GET
+  @Transactional
+  @Path("check/{client_uuid}")
+  public Response check(@PathParam("client_uuid") UUID client_uuid) {
+    Client client = repository.findById(client_uuid);
+    if (client == null) {
+      return Response.status(Response.Status.NOT_FOUND).entity(false).build();
+    }
+    return Response.ok(true).build();
+  }
+
+
+  @GET
+  @Transactional
+  @Path("zipcode/{zipcode}")
+  public Response clientsFromZipcode(@PathParam("zipcode") int zipcode) {
+    List<String> clientList;
+    clientList = repository.findByZipcode(zipcode);
+        if (clientList.isEmpty()) {
+          return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        else
+          return Response.ok(clientList).build();
+    }
+
 }

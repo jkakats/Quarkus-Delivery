@@ -1,5 +1,6 @@
 package gr.aueb.mscis.softeng.team6.delivery.resource;
 
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static io.restassured.RestAssured.with;
 import static io.restassured.http.ContentType.JSON;
@@ -15,6 +16,7 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
 import java.util.UUID;
+import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -167,4 +169,49 @@ class ClientResourceTest {
   void testDelete() {
     when().delete("{uuid}", uuid).then().statusCode(204);
   }
+
+
+  @Test
+  @Order(10)
+  void testCheckTrue() {
+    Boolean result =
+      with()
+        .pathParam("client_uuid", "4948b178-f325-4f5f-b8ea-0b4d60cd006c")
+        .when()
+        .get("check/{client_uuid}")
+        .then()
+        .statusCode(200)
+        .extract()
+        .as(Boolean.class);
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  @Order(11)
+  void testCheckFalse() {
+
+    given()
+      .pathParam("client_uuid", "dummy")
+      .when()
+      .get("check/{client_uuid}")
+      .then()
+      .assertThat()
+      .statusCode(404);
+  }
+
+  @Test
+  @Order(12)
+  void testClientsFromZipcode() {
+    var uuids =
+      with()
+        .pathParam("zipcode", 10434)
+        .when()
+        .get("zipcode/{zipcode}")
+        .then()
+        .statusCode(200)
+        .extract()
+        .as(List.class);
+    assertThat(uuids).hasSize(3).asList().first().isEqualTo("4948b178-f325-4f5f-b8ea-0b4d60cd006c");
+  }
+
 }
