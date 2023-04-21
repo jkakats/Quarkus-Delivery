@@ -22,5 +22,5 @@ public interface ProductService {
 
   @GET
   @Path("/check")
-  Boolean getProductCheck();
+  Boolean getProductCheck(@QueryParam("product_id") List<Long> product_ids);
 }
