@@ -10,7 +10,6 @@ import java.util.List;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -25,7 +24,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @RequestScoped
-@Path("/stats/{store}")
+@Path("/stats/")
 public class ClientStatisticsResource {
 
   @Inject protected ClientMapper clientMapper;
@@ -43,7 +42,7 @@ public class ClientStatisticsResource {
    */
   @GET
   @Transactional
-  @RolesAllowed({"admin", "manager"})
+  @Path ("{store}/clients")
   @Operation(description = "Frequent clients")
   public Response clients(
     @PathParam("store") Long id,
