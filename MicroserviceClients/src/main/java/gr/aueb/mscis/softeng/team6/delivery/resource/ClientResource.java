@@ -62,9 +62,9 @@ public class ClientResource {
   @GET
   @Transactional
   @Path("{uuid}")
-  @RolesAllowed({"client", "admin", "manager"})
+  //@RolesAllowed({"client", "admin", "manager"})
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
-    JwtUtil.checkClient(jwt, uuid);
+    //JwtUtil.checkClient(jwt, uuid);
     var client = repository.findByIdOptional(uuid).orElseThrow();
     return Response.ok(mapper.serialize(client)).build();
   }
