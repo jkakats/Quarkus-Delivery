@@ -27,6 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
@@ -46,7 +47,7 @@ public class ClientResource {
   /** Get all the clients. */
   @GET
   @Transactional
-  @RolesAllowed({"admin", "manager"})
+  @Operation(summary = "Gets all clients")
   public Response list() {
     var clients = repository.streamAll().map(mapper::serialize).toList();
     return Response.ok(clients).build();
@@ -61,6 +62,7 @@ public class ClientResource {
   @Transactional
   @Path("{uuid}")
   @RolesAllowed({"client", "admin", "manager"})
+  @Operation(description = "Given the uuid of a client operation return client.", summary = "Gets a single client")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     JwtUtil.checkClient(jwt, uuid);
     var client = repository.findByIdOptional(uuid).orElseThrow();
@@ -78,6 +80,7 @@ public class ClientResource {
     @APIResponse(responseCode = "201", description = "Created"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Operation(summary = "Creates a new client")
   public Response create(@Context UriInfo uriInfo, @Valid ClientDto dto)
       throws PersistenceException {
     var client = mapper.deserialize(dto);
@@ -102,6 +105,8 @@ public class ClientResource {
     @APIResponse(responseCode = "200", description = "Updated"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Operation(summary = "Updates a client", description = "User gives client's uuid and information of client which desires" +
+    "to be changed and operation updates client.")
   public Response update(@PathParam("uuid") UUID uuid, @Valid ClientDto dto)
       throws NoSuchElementException, PersistenceException {
     JwtUtil.checkClient(jwt, uuid);
@@ -121,6 +126,7 @@ public class ClientResource {
   @Path("{uuid}")
   @RolesAllowed({"client", "admin"})
   @APIResponse(responseCode = "204", description = "Deleted")
+  @Operation(summary = "Deletes a client", description = "User provides the uuid of a client and operation deletes him.")
   public Response delete(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     JwtUtil.checkClient(jwt, uuid);
     if (!repository.deleteById(uuid)) {
@@ -142,6 +148,8 @@ public class ClientResource {
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "401", description = "Login failed")
   })
+  @Operation(summary = "Authenticate a client", description = "User provides the username and the password of a client and" +
+    "operation authenticates him if username and password are correct.")
   public Response login(
       @FormParam("username") @NotNull String username,
       @FormParam("password") @NotNull String password) {

@@ -44,7 +44,10 @@ public class ClientStatisticsResource {
   @GET
   @Transactional
   @Path ("{store}/clients")
-  @Operation(description = "Frequent clients")
+  @Operation(description = "The manager of a store provides the store's id, a number of clients who wish to be found, " +
+    "the start date and the end date of a period. With these parameters operation return above specified number of customers" +
+    "who ordered most times from this store in above defined period.", summary = "Frequent clients of a store for a certain" +
+    "period")
   public Response clients(
     @PathParam("store") Long id,
     @QueryParam("start") @NotNull LocalDateTime start,
