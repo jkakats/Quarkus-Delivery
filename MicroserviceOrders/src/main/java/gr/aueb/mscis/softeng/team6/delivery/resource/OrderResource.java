@@ -47,6 +47,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.Explode;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
@@ -80,6 +81,7 @@ public class OrderResource {
   @GET
   @Transactional
   @RolesAllowed({"admin"})
+  @Operation(summary = "Gets all orders")
   public Response list() {
     var orders = repository.streamAll().map(mapper::serialize).toList();
     return Response.ok(orders).build();
@@ -94,6 +96,7 @@ public class OrderResource {
   @Transactional
   @Path("/{uuid}")
   @RolesAllowed({"admin", "manager", "client"})
+  @Operation(summary = "Gets an order", description = "User gives the uuid of an order and operation return the corresponding order.")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid).orElseThrow();
     JwtUtil.checkManager(jwt, order.getStore_id());
@@ -132,6 +135,7 @@ public class OrderResource {
     @APIResponse(responseCode = "201", description = "Created"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Operation(summary = "Creates a new order.")
   public Response create(@Context UriInfo uriInfo, @Valid OrderDto dto)
       throws PersistenceException {
     JwtUtil.checkClient(jwt, dto.client_uuid());
@@ -168,6 +172,8 @@ public class OrderResource {
     @APIResponse(responseCode = "200", description = "Updated"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Operation(summary = "Updates an order", description = "Given the uuid of an order and its new information operation updates " +
+    "order.")
   public Response update(@PathParam("uuid") UUID uuid, @Valid OrderDto dto)
       throws NoSuchElementException, PersistenceException {
     var order = repository.findByIdOptional(uuid, PESSIMISTIC_WRITE).orElseThrow();
@@ -187,6 +193,7 @@ public class OrderResource {
   @Path("{uuid}")
   @RolesAllowed({"admin", "manager"})
   @APIResponse(responseCode = "204", description = "Deleted")
+  @Operation(summary = "Delete an order", description = "Given a uuid of an order operation deletes it.")
   public Response delete(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid).orElseThrow();
     JwtUtil.checkManager(jwt, order.getStore_id());
