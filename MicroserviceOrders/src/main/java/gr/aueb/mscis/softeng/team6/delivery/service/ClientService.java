@@ -15,7 +15,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 public interface ClientService {
 
   @GET
-  @Path("/{zipcode}")
+  @Path("/zipcode/{zipcode}")
   List<String> getClientIds(@PathParam("zipcode") int zipcode);
 
   @GET

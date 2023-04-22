@@ -68,9 +68,11 @@ public class OrderResource {
   @Inject protected ReviewService reviewService;
   @Inject protected JsonWebToken jwt;
 
+  @Inject
   @RestClient
   ClientService clientService;
 
+  @Inject
   @RestClient
   ProductService productService;
 
@@ -139,10 +141,8 @@ public class OrderResource {
     repository.flush();
     Boolean correctClient = clientService.getClientCheck(order.getClient_uuid());
     List<Long> prod_ids = new ArrayList();
-    Iterator iter = order.getProducts().iterator();
-    while (iter.hasNext()) {
-      prod_ids.add(order.getProducts().iterator().next().getProduct_id());
-      iter.next();
+    for(OrderProduct prod : order.getProducts()){
+      prod_ids.add(prod.getProduct_id());
     }
     Boolean correctProducts = productService.getProductCheck(prod_ids);
     if(correctClient && correctProducts) {

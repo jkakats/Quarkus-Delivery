@@ -14,7 +14,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @ApplicationScoped
 @Path("/products")
-@RegisterRestClient
+@RegisterRestClient(configKey = "product-api")
 public interface ProductService {
 
   @GET

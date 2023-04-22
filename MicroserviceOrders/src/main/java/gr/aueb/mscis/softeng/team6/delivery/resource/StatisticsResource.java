@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -47,8 +48,8 @@ public class StatisticsResource {
    */
   @GET
   @Transactional
-  @Path("topClientUUIDs")
-  @RolesAllowed({"admin", "manager"})
+  @Path("/topClientUUIDs")
+  @PermitAll
   @Operation(description = "Frequent clients")
   public Response clients(
       @PathParam("store") Long store_id,
@@ -58,7 +59,7 @@ public class StatisticsResource {
     //JwtUtil.checkManager(jwt, store_id);
     var clients = service.findFrequentClients(store_id, start, end, max);
     var result = clients.stream().toList();
-    return Response.ok(new Result<>(result)).build();
+    return Response.ok((result)).build();
   }
 
   /**
