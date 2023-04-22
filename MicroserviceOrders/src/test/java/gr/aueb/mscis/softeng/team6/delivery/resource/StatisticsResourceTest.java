@@ -3,6 +3,7 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 import static io.restassured.RestAssured.with;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.LocalDateTimeConverter;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.service.ClientService;
@@ -63,8 +64,8 @@ class StatisticsResourceTest {
             .then()
             .statusCode(200)
             .extract()
-            .as(new TypeRef<StatisticsResource.Result<List<UUID>>>() {});
-    assertThat(clients.result()).hasSizeBetween(1, 10);
+            .jsonPath().getList(".", UUID.class);
+    assertThat(clients).hasSizeBetween(1, 10);
   }
 
   @Test

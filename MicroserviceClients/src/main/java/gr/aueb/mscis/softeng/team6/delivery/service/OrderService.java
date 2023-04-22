@@ -13,7 +13,7 @@ import javax.ws.rs.QueryParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @ApplicationScoped
-@Path("/orders")
+@Path("/stats")
 @RegisterRestClient(configKey = "order-api")
 public interface OrderService {
 

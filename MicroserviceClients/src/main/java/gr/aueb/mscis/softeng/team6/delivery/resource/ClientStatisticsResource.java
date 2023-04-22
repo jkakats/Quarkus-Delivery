@@ -1,6 +1,8 @@
 package gr.aueb.mscis.softeng.team6.delivery.resource;
 
 
+import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
+
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
@@ -24,7 +26,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @RequestScoped
-@Path("/stats/")
+@Path("/stats/{store}")
 public class ClientStatisticsResource {
 
   @Inject protected ClientMapper clientMapper;
@@ -43,9 +45,9 @@ public class ClientStatisticsResource {
    */
   @GET
   @Transactional
-  @Path ("{store}/clients")
+  @Path ("/clients")
   @Operation(description = "Frequent clients")
-  public Response clients(
+  public Response clients (
     @PathParam("store") Long id,
     @QueryParam("start") @NotNull LocalDateTime start,
     @QueryParam("end") @NotNull LocalDateTime end,
@@ -53,7 +55,8 @@ public class ClientStatisticsResource {
     List<UUID> clientUUIDs = orderResource.getTopClientsOfAStoreForAPeriod(id, start, end, max);
     List<Client> clients = new ArrayList<>();
     for (UUID uuid : clientUUIDs) {
-      clients.add (clientRepository.findById(uuid));
+      var c = clientRepository.findByIdOptional(uuid).orElseThrow();
+      clients.add (c);
     }
     var result = clients.stream().map(clientMapper::serialize).toList();
     return Response.ok(new Result<>(result)).build();
