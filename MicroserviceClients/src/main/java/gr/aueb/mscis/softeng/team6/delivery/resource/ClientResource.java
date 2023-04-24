@@ -166,10 +166,10 @@ public class ClientResource {
   @GET
   @Transactional
   @Path("check/{client_uuid}")
-  public Response check(@PathParam("client_uuid") UUID client_uuid) {
+  public Response check(@PathParam("client_uuid") UUID client_uuid) throws NoSuchElementException{
     Client client = repository.findById(client_uuid);
     if (client == null) {
-      return Response.status(Response.Status.NOT_FOUND).entity(false).build();
+      return Response.ok(false).build();
     }
     return Response.ok(true).build();
   }

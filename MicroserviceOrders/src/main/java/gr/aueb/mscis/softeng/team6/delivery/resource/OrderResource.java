@@ -141,7 +141,6 @@ public class OrderResource {
     JwtUtil.checkClient(jwt, dto.client_uuid());
     var order = mapper.deserialize(dto);
     // NOTE: persistAndFlush doesn't work here
-    order = repository.getEntityManager().merge(order);
     repository.flush();
     Boolean correctClient = clientService.getClientCheck(order.getClient_uuid());
     List<Long> prod_ids = new ArrayList();
@@ -149,7 +148,9 @@ public class OrderResource {
       prod_ids.add(prod.getProduct_id());
     }
     Boolean correctProducts = productService.getProductCheck(prod_ids);
+    System.out.println(correctClient+" , "+correctProducts);
     if(correctClient && correctProducts) {
+      order = repository.getEntityManager().merge(order);
       var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(order.getUuid());
       return Response.created(uri).build();
     }
