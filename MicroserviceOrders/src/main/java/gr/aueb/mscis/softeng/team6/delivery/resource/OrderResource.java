@@ -148,7 +148,6 @@ public class OrderResource {
       prod_ids.add(prod.getProduct_id());
     }
     Boolean correctProducts = productService.getProductCheck(prod_ids);
-    System.out.println(correctClient+" , "+correctProducts);
     if(correctClient && correctProducts) {
       order = repository.getEntityManager().merge(order);
       var uri = uriInfo.getRequestUriBuilder().path("{uuid}").build(order.getUuid());
@@ -213,6 +212,7 @@ public class OrderResource {
   @Path("{uuid}/confirm")
   @RolesAllowed({"admin", "manager"})
   @APIResponse(responseCode = "202", description = "Accepted")
+  @Operation(summary = "Confirms an order", description = "The store manager confirms the order")
   public Response confirm(
       @PathParam("uuid") UUID uuid, @FormParam("estimated_wait") @NotNull Long estimatedWait)
       throws NoSuchElementException {
@@ -235,6 +235,7 @@ public class OrderResource {
   @Path("{uuid}/deliver")
   @RolesAllowed({"admin", "manager"})
   @APIResponse(responseCode = "202", description = "Accepted")
+  @Operation(summary = "Marks the given order as delivered", description = "Once the order is delivered to the client it can be marked as delivered")
   public Response deliver(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid, PESSIMISTIC_WRITE).orElseThrow();
     JwtUtil.checkManager(jwt, order.getStore_id());
@@ -258,6 +259,7 @@ public class OrderResource {
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Operation(summary = "Review the given order")
   @Parameter(name = "product_ratings", explode = Explode.TRUE)
   public Response review(
       @PathParam("uuid") UUID uuid,

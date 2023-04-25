@@ -50,7 +50,7 @@ public class StatisticsResource {
   @Transactional
   @Path("/topClientUUIDs")
   @PermitAll
-  @Operation(description = "Frequent clients")
+  @Operation(summary = "Frequent clients")
   public Response clients(
       @PathParam("store") Long store_id,
       @QueryParam("start") @NotNull LocalDateTime start,
@@ -72,7 +72,7 @@ public class StatisticsResource {
   @Transactional
   @Path("delivery")
   @RolesAllowed({"admin", "manager"})
-  @Operation(description = "Average delivery time")
+  @Operation(summary = "Average delivery time", description = "View the average delivery time of a store for a certain area")
   public Response delivery( @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
     JwtUtil.checkManager(jwt, id);
     List<String> clientIds = clientService.getClientIds(zipCode);
@@ -92,7 +92,7 @@ public class StatisticsResource {
   @Transactional
   @Path("rush")
   @RolesAllowed({"admin", "manager"})
-  @Operation(description = "Rush hours")
+  @Operation(summary = "Rush hours", description = "View the store's rush hours for a given week")
   public Response rush(
       @PathParam("store") Long store_id,
       @QueryParam("week") @NotNull LocalDateTime week,
