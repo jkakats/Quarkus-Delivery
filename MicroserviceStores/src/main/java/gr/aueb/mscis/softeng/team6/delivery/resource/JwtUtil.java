@@ -18,12 +18,12 @@ class JwtUtil {
 
   private JwtUtil() {}
 
-//  /** Check if the token belongs to the client with the given UUID. */
-//  static void checkClient(JsonWebToken jwt, UUID uuid) {
-//    if (jwt.getGroups().contains("client") && !jwt.getName().equals(uuid.toString())) {
-//      throw new UnauthorizedException();
-//    }
-//  }
+  //  /** Check if the token belongs to the client with the given UUID. */
+  //  static void checkClient(JsonWebToken jwt, UUID uuid) {
+  //    if (jwt.getGroups().contains("client") && !jwt.getName().equals(uuid.toString())) {
+  //      throw new UnauthorizedException();
+  //    }
+  //  }
 
   /** Check if the token belongs to the manager of the store with the given ID. */
   static void checkManager(JsonWebToken jwt, Long id) {
@@ -32,22 +32,22 @@ class JwtUtil {
     }
   }
 
-//  /** Generate an API token for a client. */
-//  static UserToken clientToken(ClientDto client) {
-//    var address = client.address() == null ? "" : client.address().toString();
-//    var token =
-//        Jwt.upn(client.uuid().toString())
-//            .claim(Claims.email, client.email())
-//            .claim(Claims.full_name, client.name())
-//            .claim(Claims.phone_number, client.phoneNumber())
-//            .claim(Claims.preferred_username, client.username())
-//            .claim(Claims.address, address)
-//            .groups("client")
-//            .jws()
-//            .algorithm(ES256)
-//            .sign();
-//    return new UserToken(client.uuid(), token);
-//  }
+  //  /** Generate an API token for a client. */
+  //  static UserToken clientToken(ClientDto client) {
+  //    var address = client.address() == null ? "" : client.address().toString();
+  //    var token =
+  //        Jwt.upn(client.uuid().toString())
+  //            .claim(Claims.email, client.email())
+  //            .claim(Claims.full_name, client.name())
+  //            .claim(Claims.phone_number, client.phoneNumber())
+  //            .claim(Claims.preferred_username, client.username())
+  //            .claim(Claims.address, address)
+  //            .groups("client")
+  //            .jws()
+  //            .algorithm(ES256)
+  //            .sign();
+  //    return new UserToken(client.uuid(), token);
+  //  }
 
   /** Generate an API token for an administrator. */
   static ApiToken adminToken(String name) {

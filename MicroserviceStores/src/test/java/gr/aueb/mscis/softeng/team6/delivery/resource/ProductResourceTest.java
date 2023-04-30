@@ -35,8 +35,10 @@ class ProductResourceTest {
 
   private static Long id = null;
 
-  private static final List<Long> TEST_True_productIds = new ArrayList<Long>(Arrays.asList(1L, 2L, 3L));
-  private static final List<Long> TEST_False_productIds = new ArrayList<Long>(Arrays.asList(100L, 2L, 3L));
+  private static final List<Long> TEST_True_productIds =
+      new ArrayList<Long>(Arrays.asList(1L, 2L, 3L));
+  private static final List<Long> TEST_False_productIds =
+      new ArrayList<Long>(Arrays.asList(100L, 2L, 3L));
 
   @Test
   @Order(1)
@@ -50,14 +52,14 @@ class ProductResourceTest {
   @Order(2)
   void testListById() {
     var products =
-      with()
-        .queryParam("product_id", TEST_True_productIds)
-        .when()
-        .get()
-        .then()
-        .statusCode(200)
-        .extract()
-        .as(new TypeRef<List<ProductDto>>() {});
+        with()
+            .queryParam("product_id", TEST_True_productIds)
+            .when()
+            .get()
+            .then()
+            .statusCode(200)
+            .extract()
+            .as(new TypeRef<List<ProductDto>>() {});
     assertThat(products).hasSize(3).first().returns("Πίτα Γύρο Χοιρινό", ProductDto::name);
   }
 
@@ -65,14 +67,13 @@ class ProductResourceTest {
   @Order(3)
   void testListWithInvalidId() {
     given()
-      .queryParam("product_id", TEST_False_productIds)
-      .when()
-      .get()
-      .then()
-      .assertThat()
-      .statusCode(404);
+        .queryParam("product_id", TEST_False_productIds)
+        .when()
+        .get()
+        .then()
+        .assertThat()
+        .statusCode(404);
   }
-
 
   @Test
   @Order(4)
@@ -167,19 +168,18 @@ class ProductResourceTest {
     when().delete("{id}", id).then().statusCode(204);
   }
 
-
   @Test
   @Order(10)
   void testCheckTrue() {
     Boolean result =
-      with()
-        .queryParam("product_id", TEST_True_productIds)
-        .when()
-        .get("check")
-        .then()
-        .statusCode(200)
-        .extract()
-        .as(Boolean.class);
+        with()
+            .queryParam("product_id", TEST_True_productIds)
+            .when()
+            .get("check")
+            .then()
+            .statusCode(200)
+            .extract()
+            .as(Boolean.class);
     assertThat(result).isTrue();
   }
 
@@ -187,16 +187,14 @@ class ProductResourceTest {
   @Order(11)
   void testCheckFalse() {
     Boolean result =
-      with()
-        .queryParam("product_id", TEST_False_productIds)
-        .when()
-        .get("check")
-        .then()
-        .statusCode(200)
-        .extract()
-        .as(Boolean.class);
+        with()
+            .queryParam("product_id", TEST_False_productIds)
+            .when()
+            .get("check")
+            .then()
+            .statusCode(200)
+            .extract()
+            .as(Boolean.class);
     assertThat(result).isFalse();
   }
-
-
 }

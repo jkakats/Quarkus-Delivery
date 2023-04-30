@@ -27,7 +27,6 @@ public abstract class ProductMapper {
   public abstract ProductDto serialize(Product product);
 
   @Mapping(target = "id", ignore = true)
-
   @Mapping(target = "store.products", ignore = true)
   public abstract void update(@MappingTarget Product product, ProductDto productDto);
 

@@ -146,5 +146,4 @@ public class StoreResource {
     var stores = storeRepository.findByArea(new Area().setZipCode(zipCode), products);
     return Response.ok(storeMapper.serialize(stores)).build();
   }
-
 }

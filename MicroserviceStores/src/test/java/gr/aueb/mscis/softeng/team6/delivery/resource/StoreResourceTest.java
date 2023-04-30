@@ -112,7 +112,6 @@ class StoreResourceTest {
     assertThat(stores).singleElement().returns(id, StoreDto::id);
   }
 
-
   @Test
   @Order(6)
   @TestTransaction

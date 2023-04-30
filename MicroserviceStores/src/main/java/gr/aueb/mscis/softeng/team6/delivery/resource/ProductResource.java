@@ -27,6 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
@@ -45,6 +46,7 @@ public class ProductResource {
   /** Get all the products or products with specific id. */
   @GET
   @Transactional
+  @Operation(summary = "Gets products", description = "Gets all products or products by id")
   public Response list(@QueryParam("product_id") List<Long> productIds) {
     if (productIds == null || productIds.isEmpty()) {
       // return all products
@@ -56,7 +58,8 @@ public class ProductResource {
       for (Long id : productIds) {
         Product product = repository.findByIdOptional(id).orElse(null);
         if (product == null) {
-          return Response.status(Response.Status.NOT_FOUND).build(); // return 404 if product not found
+          return Response.status(Response.Status.NOT_FOUND)
+              .build(); // return 404 if product not found
         } else {
           productList.add(mapper.serialize(product));
         }
@@ -64,9 +67,6 @@ public class ProductResource {
       return Response.ok(productList).build();
     }
   }
-
-
-
 
   /**
    * Get a single product.
@@ -76,6 +76,7 @@ public class ProductResource {
   @GET
   @Transactional
   @Path("{id}")
+  @Operation(summary = "Gets a product", description = "Returns a single product by ID")
   public Response read(@PathParam("id") Long id) throws NoSuchElementException {
     var product = repository.findByIdOptional(id).orElseThrow();
     return Response.ok(mapper.serialize(product)).build();
@@ -93,6 +94,7 @@ public class ProductResource {
     @APIResponse(responseCode = "201", description = "Created"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Operation(summary = "Add a product", description = "Adds a new product to the store")
   public Response create(@Context UriInfo uriInfo, @Valid ProductDto dto)
       throws PersistenceException {
     JwtUtil.checkManager(jwt, dto.store().id());
@@ -118,6 +120,7 @@ public class ProductResource {
     @APIResponse(responseCode = "200", description = "Updated"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Operation(summary = "Update a product", description = "Updates an existing product in the store")
   public Response update(@PathParam("id") Long id, @Valid ProductDto dto)
       throws NoSuchElementException, PersistenceException {
     JwtUtil.checkManager(jwt, dto.store().id());
@@ -137,6 +140,9 @@ public class ProductResource {
   @Path("{id}")
   @RolesAllowed({"admin", "manager"})
   @APIResponse(responseCode = "204", description = "Deleted")
+  @Operation(
+      summary = "Delete a product",
+      description = "Deletes an existing product from the store")
   public Response delete(@PathParam("id") Long id) throws NoSuchElementException {
     var product = repository.findByIdOptional(id).orElseThrow();
     JwtUtil.checkManager(jwt, product.getStore().getId());
@@ -148,6 +154,9 @@ public class ProductResource {
   @GET
   @Transactional
   @Path("catalogue")
+  @Operation(
+      summary = "Get all product names",
+      description = "Retrieves the names of all products in the store")
   public Response catalogue() {
     return Response.ok(repository.listNames()).build();
   }
@@ -160,28 +169,36 @@ public class ProductResource {
   @GET
   @Transactional
   @Path("search")
+  @Operation(
+      summary = "Search products by name",
+      description = "Retrieves products matching the given name")
   public Response search(@QueryParam("q") @NotBlank String name) {
     Object[] params = {name};
     var products = repository.stream("name", params).map(mapper::serialize).toList();
     return Response.ok(products).build();
   }
 
+  /**
+   * Check if all products in a list exist.
+   *
+   * @param productIds a list of product IDs
+   */
   @GET
   @Transactional
   @Path("check")
-  public Response check(@QueryParam("product_id") List<Long> productIds) throws NoSuchElementException
-  {
-      // check if all products exist
-     boolean check=true;
-      for (Long id : productIds)
-      {
-        Product product = repository.findById(id);
-        if (product == null) {
-          check=false;
-          break;
-        }
+  @Operation(
+      summary = "Check if all products exist",
+      description = "Given a list of product IDs, check if all products exist.")
+  public Response check(@QueryParam("product_id") List<Long> productIds)
+      throws NoSuchElementException {
+    boolean check = true;
+    for (Long id : productIds) {
+      Product product = repository.findById(id);
+      if (product == null) {
+        check = false;
+        break;
       }
-      return Response.ok(check).build();
     }
-
+    return Response.ok(check).build();
+  }
 }

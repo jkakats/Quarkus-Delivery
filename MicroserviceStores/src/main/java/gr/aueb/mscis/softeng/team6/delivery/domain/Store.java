@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ColumnResult;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,13 +16,10 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import org.hibernate.annotations.NamedNativeQueries;
-import org.hibernate.annotations.NamedNativeQuery;
 
 /**
  * Store entity.
@@ -31,7 +27,6 @@ import org.hibernate.annotations.NamedNativeQuery;
  * @since 0.1.0
  * @version 1.0.0
  */
-
 @Entity
 @Table(
     name = "store",
@@ -112,7 +107,6 @@ public class Store {
     this.products = products;
     return this;
   }
-
 
   /**
    * Add an area to the store.
