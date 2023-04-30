@@ -1,0 +1,455 @@
+---
+openapi: 3.0.3
+info:
+  title: Delivery API
+  version: 1.0.1
+paths:
+  /orders:
+    get:
+      tags:
+      - Order Resource
+      summary: Gets all orders
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+    post:
+      tags:
+      - Order Resource
+      summary: Creates a new order.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDto'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Validation failed
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - client
+  /orders/store/{id}:
+    get:
+      tags:
+      - Order Resource
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /orders/{uuid}:
+    get:
+      tags:
+      - Order Resource
+      summary: Gets an order
+      description: User gives the uuid of an order and operation return the corresponding
+        order.
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+        - client
+    put:
+      tags:
+      - Order Resource
+      summary: Updates an order
+      description: Given the uuid of an order and its new information operation updates
+        order.
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDto'
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Validation failed
+        "404":
+          description: Not found
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+    delete:
+      tags:
+      - Order Resource
+      summary: Delete an order
+      description: Given a uuid of an order operation deletes it.
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /orders/{uuid}/confirm:
+    post:
+      tags:
+      - Order Resource
+      summary: Confirms an order
+      description: The store manager confirms the order
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - estimated_wait
+              type: object
+              properties:
+                estimated_wait:
+                  format: int64
+                  type: integer
+      responses:
+        "202":
+          description: Accepted
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /orders/{uuid}/deliver:
+    post:
+      tags:
+      - Order Resource
+      summary: Marks the given order as delivered
+      description: Once the order is delivered to the client it can be marked as delivered
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "202":
+          description: Accepted
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /orders/{uuid}/review:
+    post:
+      tags:
+      - Order Resource
+      summary: Review the given order
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - rating
+              - product_ratings
+              type: object
+              properties:
+                rating:
+                  maximum: 5
+                  minimum: 0
+                  type: integer
+                comment:
+                  type: string
+                product_ratings:
+                  minItems: 1
+                  type: array
+                  items:
+                    type: integer
+            encoding:
+              product_ratings:
+                explode: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Validation failed
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - client
+  /stats/{store}/delivery:
+    get:
+      tags:
+      - Statistics Resource
+      summary: Average delivery time
+      description: View the average delivery time of a store for a certain area
+      parameters:
+      - name: store
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - name: zip_code
+        in: query
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /stats/{store}/rush:
+    get:
+      tags:
+      - Statistics Resource
+      summary: Rush hours
+      description: View the store's rush hours for a given week
+      parameters:
+      - name: store
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - name: limit
+        in: query
+        schema:
+          format: int32
+          default: "5"
+          type: integer
+      - name: week
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/LocalDateTime'
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /stats/{store}/topClientUUIDs:
+    get:
+      tags:
+      - Statistics Resource
+      summary: Frequent clients
+      parameters:
+      - name: store
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - name: end
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/LocalDateTime'
+      - name: max
+        in: query
+        schema:
+          format: int32
+          default: "10"
+          type: integer
+      - name: start
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/LocalDateTime'
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    ApiToken:
+      type: object
+      properties:
+        token:
+          type: string
+    Confirmation:
+      type: object
+      properties:
+        uuid:
+          $ref: '#/components/schemas/UUID'
+        cost:
+          type: number
+        estimatedWait:
+          format: int64
+          type: integer
+    LocalDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50
+    OrderDto:
+      type: object
+      properties:
+        uuid:
+          $ref: '#/components/schemas/UUID'
+        confirmed:
+          type: boolean
+        delivered:
+          type: boolean
+        orderedTime:
+          $ref: '#/components/schemas/LocalDateTime'
+        deliveredTime:
+          $ref: '#/components/schemas/LocalDateTime'
+        estimatedWait:
+          format: int64
+          type: integer
+        review:
+          $ref: '#/components/schemas/OrderReviewDto'
+        client_uuid:
+          $ref: '#/components/schemas/UUID'
+        store_id:
+          format: int64
+          type: integer
+        products:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProductDto'
+    OrderProductDto:
+      required:
+      - quantity
+      type: object
+      properties:
+        product_id:
+          format: int64
+          type: integer
+        price:
+          type: number
+        quantity:
+          format: int32
+          minimum: 1
+          type: integer
+        review:
+          $ref: '#/components/schemas/ProductReviewDto'
+    OrderReviewDto:
+      required:
+      - rating
+      type: object
+      properties:
+        rating:
+          maximum: 5
+          minimum: 0
+          type: integer
+        comment:
+          type: string
+    ProductReviewDto:
+      required:
+      - rating
+      type: object
+      properties:
+        rating:
+          maximum: 5
+          minimum: 0
+          type: integer
+    UUID:
+      format: uuid
+      pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      type: string
+  securitySchemes:
+    SecurityScheme:
+      type: http
+      description: Authentication
+      scheme: bearer
+      bearerFormat: JWT

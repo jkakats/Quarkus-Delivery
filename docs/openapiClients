@@ -1,0 +1,267 @@
+---
+openapi: 3.0.3
+info:
+  title: Delivery API
+  version: 1.0.1
+paths:
+  /clients:
+    get:
+      tags:
+      - Client Resource
+      summary: Gets all clients
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+      - Client Resource
+      summary: Creates a new client
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDto'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Validation failed
+        "409":
+          description: Unique constraint failed
+  /clients/check/{client_uuid}:
+    get:
+      tags:
+      - Client Resource
+      parameters:
+      - name: client_uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+  /clients/login:
+    post:
+      tags:
+      - Client Resource
+      summary: Authenticate a client
+      description: User provides the username and the password of a client andoperation
+        authenticates him if username and password are correct.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - username
+              - password
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Login failed
+  /clients/zipcode/{zipcode}:
+    get:
+      tags:
+      - Client Resource
+      parameters:
+      - name: zipcode
+        in: path
+        required: true
+        schema:
+          format: int32
+          type: integer
+      responses:
+        "200":
+          description: OK
+  /clients/{uuid}:
+    get:
+      tags:
+      - Client Resource
+      summary: Gets a single client
+      description: Given the uuid of a client operation return client.
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+    put:
+      tags:
+      - Client Resource
+      summary: Updates a client
+      description: User gives client's uuid and information of client which desiresto
+        be changed and operation updates client.
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDto'
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Validation failed
+        "404":
+          description: Not found
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - client
+    delete:
+      tags:
+      - Client Resource
+      summary: Deletes a client
+      description: User provides the uuid of a client and operation deletes him.
+      parameters:
+      - name: uuid
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - client
+        - admin
+  /stats/{store}/clients:
+    get:
+      tags:
+      - Client Statistics Resource
+      summary: Frequent clients of a store for a certainperiod
+      description: "The manager of a store provides the store's id, a number of clients\
+        \ who wish to be found, the start date and the end date of a period. With\
+        \ these parameters operation return above specified number of customerswho\
+        \ ordered most times from this store in above defined period."
+      parameters:
+      - name: store
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      - name: end
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/LocalDateTime'
+      - name: max
+        in: query
+        schema:
+          format: int32
+          default: "10"
+          type: integer
+      - name: start
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/LocalDateTime'
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    AddressDto:
+      type: object
+      properties:
+        street:
+          type: string
+        apartment:
+          type: string
+        area:
+          $ref: '#/components/schemas/AreaDto'
+    ApiToken:
+      type: object
+      properties:
+        token:
+          type: string
+    AreaDto:
+      required:
+      - city
+      - state
+      type: object
+      properties:
+        zipCode:
+          format: int32
+          maximum: 89999
+          minimum: 10000
+          type: integer
+        city:
+          pattern: \S
+          type: string
+        state:
+          pattern: \S
+          type: string
+    ClientDto:
+      required:
+      - username
+      - password
+      - name
+      - email
+      - phoneNumber
+      type: object
+      properties:
+        uuid:
+          $ref: '#/components/schemas/UUID'
+        username:
+          pattern: "[a-zA-Z0-9_-]+"
+          type: string
+        password:
+          type: string
+        name:
+          pattern: \S
+          type: string
+        email:
+          pattern: \S
+          type: string
+        phoneNumber:
+          pattern: \S
+          type: string
+        address:
+          $ref: '#/components/schemas/AddressDto'
+    LocalDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50
+    UUID:
+      format: uuid
+      pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      type: string
+  securitySchemes:
+    SecurityScheme:
+      type: http
+      description: Authentication
+      scheme: bearer
+      bearerFormat: JWT

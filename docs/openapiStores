@@ -1,0 +1,369 @@
+---
+openapi: 3.0.3
+info:
+  title: Delivery API
+  version: 1.0.1
+paths:
+  /products:
+    get:
+      tags:
+      - Product Resource
+      summary: Gets products
+      description: Gets all products or products by id
+      parameters:
+      - name: product_id
+        in: query
+        schema:
+          type: array
+          items:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+      - Product Resource
+      summary: Add a product
+      description: Adds a new product to the store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDto'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Validation failed
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /products/catalogue:
+    get:
+      tags:
+      - Product Resource
+      summary: Get all product names
+      description: Retrieves the names of all products in the store
+      responses:
+        "200":
+          description: OK
+  /products/check:
+    get:
+      tags:
+      - Product Resource
+      summary: Check if all products exist
+      description: "Given a list of product IDs, check if all products exist."
+      parameters:
+      - name: product_id
+        in: query
+        schema:
+          type: array
+          items:
+            format: int64
+            type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+  /products/search:
+    get:
+      tags:
+      - Product Resource
+      summary: Search products by name
+      description: Retrieves products matching the given name
+      parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          pattern: \S
+          type: string
+      responses:
+        "200":
+          description: OK
+  /products/{id}:
+    get:
+      tags:
+      - Product Resource
+      summary: Gets a product
+      description: Returns a single product by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+    put:
+      tags:
+      - Product Resource
+      summary: Update a product
+      description: Updates an existing product in the store
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDto'
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Validation failed
+        "404":
+          description: Not found
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+    delete:
+      tags:
+      - Product Resource
+      summary: Delete a product
+      description: Deletes an existing product from the store
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /stores:
+    get:
+      tags:
+      - Store Resource
+      responses:
+        "200":
+          description: OK
+    post:
+      tags:
+      - Store Resource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreDto'
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Validation failed
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+  /stores/search:
+    post:
+      tags:
+      - Store Resource
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              required:
+              - zip_code
+              - products
+              type: object
+              properties:
+                zip_code:
+                  format: int32
+                  type: integer
+                products:
+                  minItems: 1
+                  type: array
+                  items:
+                    type: string
+            encoding:
+              products:
+                explode: true
+      responses:
+        "200":
+          description: OK
+  /stores/{id}:
+    get:
+      tags:
+      - Store Resource
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not found
+    put:
+      tags:
+      - Store Resource
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreDto'
+      responses:
+        "200":
+          description: Updated
+        "400":
+          description: Validation failed
+        "404":
+          description: Not found
+        "409":
+          description: Unique constraint failed
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+    delete:
+      tags:
+      - Store Resource
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+      security:
+      - SecurityScheme:
+        - admin
+        - manager
+components:
+  schemas:
+    ApiToken:
+      type: object
+      properties:
+        token:
+          type: string
+    AreaDto:
+      required:
+      - city
+      - state
+      type: object
+      properties:
+        zipCode:
+          format: int32
+          maximum: 89999
+          minimum: 10000
+          type: integer
+        city:
+          pattern: \S
+          type: string
+        state:
+          pattern: \S
+          type: string
+    ProductDto:
+      required:
+      - name
+      - price
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          pattern: \S
+          type: string
+        price:
+          type: number
+        comment:
+          type: string
+        store:
+          $ref: '#/components/schemas/StoreDto'
+    StoreDto:
+      required:
+      - name
+      - type
+      type: object
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          pattern: \S
+          type: string
+        type:
+          pattern: \S
+          type: string
+        areas:
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/AreaDto'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDto'
+  securitySchemes:
+    SecurityScheme:
+      type: http
+      description: Authentication
+      scheme: bearer
+      bearerFormat: JWT
