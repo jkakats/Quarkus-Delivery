@@ -1,11 +1,13 @@
 package gr.aueb.mscis.softeng.team6.delivery.resource;
 
+import gr.aueb.mscis.softeng.team6.delivery.health.ServiceState;
 import gr.aueb.mscis.softeng.team6.delivery.service.ClientService;
 import gr.aueb.mscis.softeng.team6.delivery.service.StatisticsService;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -18,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -38,6 +41,9 @@ public class StatisticsResource {
   @RestClient
   ClientService clientService;
 
+  @Inject
+  ServiceState serviceState;
+
   /**
    * List the most frequent clients of a store during a certain time period.
    *
@@ -57,6 +63,13 @@ public class StatisticsResource {
       @QueryParam("end") @NotNull LocalDateTime end,
       @QueryParam("max") @DefaultValue("10") Integer max) {
     //JwtUtil.checkManager(jwt, store_id);
+    if(!serviceState.isHealthyState()) {
+      try {
+        TimeUnit.MILLISECONDS.sleep(5000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
     var clients = service.findFrequentClients(store_id, start, end, max);
     var result = clients.stream().toList();
     return Response.ok((result)).build();
@@ -72,6 +85,7 @@ public class StatisticsResource {
   @Transactional
   @Path("delivery")
   @RolesAllowed({"admin", "manager"})
+  @CircuitBreaker(requestVolumeThreshold = 4, delay = 10000, successThreshold = 2)
   @Operation(summary = "Average delivery time", description = "View the average delivery time of a store for a certain area")
   public Response delivery( @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
     JwtUtil.checkManager(jwt, id);
