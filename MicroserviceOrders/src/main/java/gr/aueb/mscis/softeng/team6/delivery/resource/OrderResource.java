@@ -43,9 +43,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.Explode;
@@ -96,6 +99,8 @@ public class OrderResource {
   @Transactional
   @Path("/{uuid}")
   @RolesAllowed({"admin", "manager", "client"})
+  @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 4000, successThreshold = 2)
+  @Fallback(fallbackMethod = "fallbackGet")
   @Operation(summary = "Gets an order", description = "User gives the uuid of an order and operation return the corresponding order.")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid).orElseThrow();
@@ -131,6 +136,8 @@ public class OrderResource {
   @POST
   @Transactional
   @RolesAllowed({"admin", "client"})
+  @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 4000, successThreshold = 2)
+  @Fallback(fallbackMethod = "fallbackPost")
   @APIResponses({
     @APIResponse(responseCode = "201", description = "Created"),
     @APIResponse(responseCode = "400", description = "Validation failed")
@@ -296,4 +303,12 @@ public class OrderResource {
   @Schema
   protected record Confirmation(UUID uuid, BigDecimal cost, Long estimatedWait)
       implements Serializable {}
+
+  public Response fallbackGet(@PathParam("uuid") UUID uuid){
+    return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Remote Microservice down")).build();
+  }
+
+  public Response fallbackPost(@Context UriInfo uriInfo, @Valid OrderDto dto){
+    return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Remote Microservice down")).build();
+  }
 }

@@ -2,6 +2,7 @@ package gr.aueb.mscis.softeng.team6.delivery.health;
 
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Liveness;
@@ -10,6 +11,10 @@ import org.eclipse.microprofile.health.Liveness;
 @Liveness
 @ApplicationScoped
 public class ServiceHealth implements HealthCheck {
+
+  @Inject
+  ServiceState serviceState;
+
 
   @Override
   public HealthCheckResponse call(){
@@ -20,6 +25,10 @@ public class ServiceHealth implements HealthCheck {
   }
 
   public boolean isHealthy(){
-    return true;
+    if(!serviceState.isHealthyState()) {
+      return false;
+    }else{
+      return true;
+    }
   }
 }

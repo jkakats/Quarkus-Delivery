@@ -21,6 +21,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -85,7 +87,9 @@ public class StatisticsResource {
   @Transactional
   @Path("delivery")
   @RolesAllowed({"admin", "manager"})
-  @CircuitBreaker(requestVolumeThreshold = 4, delay = 10000, successThreshold = 2)
+  @Timeout(2000)
+  @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 4000, successThreshold = 2)
+  @Fallback(fallbackMethod = "fallback")
   @Operation(summary = "Average delivery time", description = "View the average delivery time of a store for a certain area")
   public Response delivery( @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
     JwtUtil.checkManager(jwt, id);
@@ -123,4 +127,9 @@ public class StatisticsResource {
    * @since 1.0.0
    */
   protected record Result<T>(T result) implements Serializable {}
+
+  public Response fallback(@PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode){
+    return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Remote Microservice down")).build();
+  }
+
 }
