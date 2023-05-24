@@ -3,6 +3,7 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
+import gr.aueb.mscis.softeng.team6.delivery.health.ServiceState;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
@@ -10,6 +11,7 @@ import gr.aueb.mscis.softeng.team6.delivery.service.AuthenticationService;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -46,6 +48,9 @@ public class ClientResource {
   @Inject protected ClientMapper mapper;
   @Inject protected JsonWebToken jwt;
 
+  @Inject
+  ServiceState serviceState;
+
   /** Get all the clients. */
   @GET
   @Transactional
@@ -67,6 +72,13 @@ public class ClientResource {
   @Operation(description = "Given the uuid of a client operation return client.", summary = "Gets a single client")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     //JwtUtil.checkClient(jwt, uuid);
+    if(!serviceState.isHealthyState()) {
+      try {
+        TimeUnit.MILLISECONDS.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
     var client = repository.findByIdOptional(uuid).orElseThrow();
     return Response.ok(mapper.serialize(client)).build();
   }
@@ -167,6 +179,9 @@ public class ClientResource {
   @Transactional
   @Path("check/{client_uuid}")
   public Response check(@PathParam("client_uuid") UUID client_uuid) throws NoSuchElementException{
+    if(!serviceState.isHealthyState()) {
+      return Response.serverError().build();
+    }
     Client client = repository.findById(client_uuid);
     if (client == null) {
       return Response.ok(false).build();
@@ -179,6 +194,14 @@ public class ClientResource {
   @Transactional
   @Path("zipcode/{zipcode}")
   public Response clientsFromZipcode(@PathParam("zipcode") int zipcode) {
+    System.out.println("called");
+    if(!serviceState.isHealthyState()) {
+      try {
+        TimeUnit.MILLISECONDS.sleep(5000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
     List<String> clientList;
     clientList = repository.findByZipcode(zipcode);
         if (clientList.isEmpty()) {

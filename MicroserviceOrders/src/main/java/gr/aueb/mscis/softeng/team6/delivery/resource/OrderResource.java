@@ -50,6 +50,8 @@ import javax.ws.rs.core.UriInfo;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.Explode;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -84,6 +86,8 @@ public class OrderResource {
   @GET
   @Transactional
   @RolesAllowed({"admin"})
+  @Counted(name="countAllOrders",description = "Count how many times AllOrders service has been invoked")
+  @Timed(name="timeAllOrders",description = "How long it takes to invoke AllOrders service")
   @Operation(summary = "Gets all orders")
   public Response list() {
     var orders = repository.streamAll().map(mapper::serialize).toList();
@@ -101,6 +105,8 @@ public class OrderResource {
   @RolesAllowed({"admin", "manager", "client"})
   @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 4000, successThreshold = 2)
   @Fallback(fallbackMethod = "fallbackGet")
+  @Counted(name="countSingleOrder",description = "Count how many times SingleOrder service has been invoked")
+  @Timed(name="timeSingleOrder",description = "How long it takes to invoke SingleOrder service")
   @Operation(summary = "Gets an order", description = "User gives the uuid of an order and operation return the corresponding order.")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var order = repository.findByIdOptional(uuid).orElseThrow();
@@ -138,6 +144,8 @@ public class OrderResource {
   @RolesAllowed({"admin", "client"})
   @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 4000, successThreshold = 2)
   @Fallback(fallbackMethod = "fallbackPost")
+  @Counted(name="countCreateOrder",description = "Count how many times CreateOrder service has been invoked")
+  @Timed(name="timeCreateOrder",description = "How long it takes to invoke CreateOrder service")
   @APIResponses({
     @APIResponse(responseCode = "201", description = "Created"),
     @APIResponse(responseCode = "400", description = "Validation failed")
@@ -175,6 +183,8 @@ public class OrderResource {
   @Transactional
   @Path("{uuid}")
   @RolesAllowed({"admin", "manager"})
+  @Counted(name="countUpdateOrder",description = "Count how many times UpdateOrder service has been invoked")
+  @Timed(name="timeUpdateOrder",description = "How long it takes to invoke UpdateOrder service")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "Updated"),
     @APIResponse(responseCode = "400", description = "Validation failed")
@@ -199,6 +209,8 @@ public class OrderResource {
   @Transactional
   @Path("{uuid}")
   @RolesAllowed({"admin", "manager"})
+  @Counted(name="countDeleteOrder",description = "Count how many times DeleteOrder service has been invoked")
+  @Timed(name="timeDeleteOrder",description = "How long it takes to invoke DeleteOrder service")
   @APIResponse(responseCode = "204", description = "Deleted")
   @Operation(summary = "Delete an order", description = "Given a uuid of an order operation deletes it.")
   public Response delete(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
@@ -218,6 +230,8 @@ public class OrderResource {
   @Transactional
   @Path("{uuid}/confirm")
   @RolesAllowed({"admin", "manager"})
+  @Counted(name="countConfirmOrder",description = "Count how many times ConfirmOrder service has been invoked")
+  @Timed(name="timeConfirmOrder",description = "How long it takes to invoke ConfirmOrder service")
   @APIResponse(responseCode = "202", description = "Accepted")
   @Operation(summary = "Confirms an order", description = "The store manager confirms the order")
   public Response confirm(
@@ -241,6 +255,8 @@ public class OrderResource {
   @Transactional
   @Path("{uuid}/deliver")
   @RolesAllowed({"admin", "manager"})
+  @Counted(name="countDeliveredOrder",description = "Count how many times DeliveredOrder service has been invoked")
+  @Timed(name="timeDeliveredOrder",description = "How long it takes to invoke DeliveredOrder service")
   @APIResponse(responseCode = "202", description = "Accepted")
   @Operation(summary = "Marks the given order as delivered", description = "Once the order is delivered to the client it can be marked as delivered")
   public Response deliver(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
@@ -262,6 +278,8 @@ public class OrderResource {
   @Transactional
   @Path("{uuid}/review")
   @RolesAllowed({"admin", "client"})
+  @Counted(name="countReviewOrder",description = "Count how many times ReviewOrder service has been invoked")
+  @Timed(name="timeReviewOrder",description = "How long it takes to invoke ReviewOrder service")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "400", description = "Validation failed")
@@ -288,6 +306,8 @@ public class OrderResource {
   @Transactional
   @Path("store/{id}")
   @RolesAllowed({"admin", "manager"})
+  @Counted(name="countStoreOrders",description = "Count how many times StoreOrders service has been invoked")
+  @Timed(name="timeStoreOrders",description = "How long it takes to invoke StoreOrders service")
   public Response StoreOrders(@PathParam("id") Long id) throws NoSuchElementException {
     JwtUtil.checkManager(jwt, id);
     Object[] params = {id};
@@ -304,10 +324,14 @@ public class OrderResource {
   protected record Confirmation(UUID uuid, BigDecimal cost, Long estimatedWait)
       implements Serializable {}
 
+  @Counted(name="countGetOrderFallback",description = "Count how many times GetOrderFallback service has been invoked")
+  @Timed(name="timeGetOrderFallback",description = "How long it takes to invoke GetOrderFallback service")
   public Response fallbackGet(@PathParam("uuid") UUID uuid){
     return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Remote Microservice down")).build();
   }
 
+  @Counted(name="countPostOrderFallback",description = "Count how many times PostOrderFallback service has been invoked")
+  @Timed(name="timePostOrderFallback",description = "How long it takes to invoke PostOrderFallback service")
   public Response fallbackPost(@Context UriInfo uriInfo, @Valid OrderDto dto){
     return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Remote Microservice down")).build();
   }
