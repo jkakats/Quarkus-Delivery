@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+  labels:
+    tier: backend
+    app: delivery
+spec:
+  ports:
+    - protocol: TCP
+      port: 8585
+      targetPort: 8585
+  selector:
+    api: orders

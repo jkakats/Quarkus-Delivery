@@ -23,8 +23,6 @@ import org.hibernate.annotations.OnDeleteAction;
 /**
  * Order product entity.
  *
- *
- *
  * @since 0.1.0
  * @version 1.0.0
  */
@@ -43,12 +41,11 @@ public class OrderProduct {
   @JoinColumn(name = "order_id")
   private Order order;
 
-  @Column(name="product_id")
+  @Column(name = "product_id")
   private long product_id;
 
-  @Column(name="price")
+  @Column(name = "price")
   private BigDecimal price;
-
 
   /** Quantity field. */
   @NotNull
@@ -117,7 +114,7 @@ public class OrderProduct {
     if (!(that instanceof OrderProduct other)) {
       return false;
     }
-    return order.equals(other.order) && (product_id==other.product_id);
+    return order.equals(other.order) && (product_id == other.product_id);
   }
 
   @Override
@@ -131,5 +128,4 @@ public class OrderProduct {
         "OrderProduct{order=\"%s\", product=\"%s\", quantity=%d}",
         order.getUuid(), product_id, quantity);
   }
-
 }

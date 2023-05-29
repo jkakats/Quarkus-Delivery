@@ -16,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
@@ -34,26 +33,25 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 @SqlResultSetMapping(
-  name = "ScalarResult",
-  columns = {@ColumnResult(name = "result")})
+    name = "ScalarResult",
+    columns = {@ColumnResult(name = "result")})
 @NamedQueries({
   @NamedQuery(
-    name = "findFrequentClients",
-    query =
-      """
+      name = "findFrequentClients",
+      query =
+          """
     select o.client_uuid from Order o
       where o.store_id = :store
       and (o.orderedTime between :start and :end)
     group by o.client_uuid
     order by count(o) desc
-    """
-    )})
-
+    """)
+})
 @NamedNativeQueries({
   @NamedNativeQuery(
-    name = "getAverageDeliveryTime",
-    query =
-      """
+      name = "getAverageDeliveryTime",
+      query =
+          """
     SELECT
       ROUND(AVG(DATEDIFF(MINUTE, `ordered_time`, `delivered_time`))) `result`
     FROM `order`
@@ -61,12 +59,11 @@ import org.hibernate.annotations.Type;
       AND `store_id` = :store
       AND `client_uuid` IN :clientUUIDs
     """,
-    resultSetMapping = "ScalarResult"
-    ),
+      resultSetMapping = "ScalarResult"),
   @NamedNativeQuery(
-    name = "getRushHours",
-    query =
-      """
+      name = "getRushHours",
+      query =
+          """
     SELECT
       EXTRACT(HOUR FROM `ordered_time`) `result`
     FROM `order`
@@ -75,8 +72,7 @@ import org.hibernate.annotations.Type;
     GROUP BY `result`
     HAVING COUNT(`result`) > :limit
     """,
-    resultSetMapping = "ScalarResult"
-    )
+      resultSetMapping = "ScalarResult")
 })
 /**
  * Order entity.
@@ -139,12 +135,12 @@ public class Order {
   private OrderReview review;
 
   /** Client relation field. */
-  @Column(name="client_uuid")
+  @Column(name = "client_uuid")
   @Type(type = "uuid-char")
   private UUID client_uuid;
 
   /** Store relation field. */
-  @Column(name="store_id")
+  @Column(name = "store_id")
   private Long store_id;
 
   @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
@@ -256,14 +252,19 @@ public class Order {
     return this;
   }
 
-    /**
-     * Add a product to the order.
-     *
-     //* @param product_id the product to be added.
-     //* @param quantity the quantity of the product.
-     */
-  public void addProduct(long product_id,BigDecimal price, int quantity) {
-    var orderProduct = new OrderProduct().setOrder(this).setProduct_id(product_id).setPrice(price).setQuantity(quantity);
+  /**
+   * Add a product to the order.
+   *
+   * <p>//* @param product_id the product to be added. //* @param quantity the quantity of the
+   * product.
+   */
+  public void addProduct(long product_id, BigDecimal price, int quantity) {
+    var orderProduct =
+        new OrderProduct()
+            .setOrder(this)
+            .setProduct_id(product_id)
+            .setPrice(price)
+            .setQuantity(quantity);
     this.products.add(orderProduct);
   }
 

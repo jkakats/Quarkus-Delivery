@@ -11,9 +11,5 @@ import javax.validation.constraints.NotNull;
  * @since 1.0.0
  */
 public record ProductDto(
-    Long id,
-    @NotNull @NotBlank String name,
-    @NotNull BigDecimal price,
-    String comment
-    )
+    Long id, @NotNull @NotBlank String name, @NotNull BigDecimal price, String comment)
     implements Serializable {}

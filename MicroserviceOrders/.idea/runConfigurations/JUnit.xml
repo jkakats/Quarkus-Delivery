@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="JUnit" type="JUnit" factoryName="JUnit">
     <module name="delivery" />
+    <shortenClasspath name="ARGS_FILE" />
     <extension name="coverage" track_test_folders="true">
       <pattern>
         <option name="PATTERN" value="org.hibernate.tool.schema.ast.GeneratedSqlScriptParserTokenTypes" />

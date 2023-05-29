@@ -19,9 +19,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(
     componentModel = "cdi",
     injectionStrategy = CONSTRUCTOR,
-    uses = {
-      OrderMapper.OrderProductMapper.class
-    })
+    uses = {OrderMapper.OrderProductMapper.class})
 public abstract class OrderMapper {
   @Mapping(target = "store.orders", ignore = true)
   @Mapping(target = "store.products", ignore = true)

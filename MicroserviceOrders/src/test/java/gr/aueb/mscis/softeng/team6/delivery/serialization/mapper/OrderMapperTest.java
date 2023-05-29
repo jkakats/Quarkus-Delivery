@@ -32,8 +32,9 @@ public class OrderMapperTest {
   @Test
   void testDeserialize() {
     var orderReview = new OrderReviewDto(TEST_RATING, "");
-    long id= 6;
-    var orderProducts = Set.of(new OrderProductDto(id, TEST_PRICE,2, new ProductReviewDto((short) 4)));
+    long id = 6;
+    var orderProducts =
+        Set.of(new OrderProductDto(id, TEST_PRICE, 2, new ProductReviewDto((short) 4)));
     var dto =
         new OrderDto(
             TEST_UUID,

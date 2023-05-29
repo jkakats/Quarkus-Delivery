@@ -31,7 +31,7 @@ public class OrderServiceTest {
     UUID client_uuid = UUID.randomUUID();
     long store_id = 4L;
     var p = new OrderProduct().setProduct_id(11L).setPrice(TEST_PRICE).setQuantity(1);
-    Set<OrderProduct> products = new HashSet<OrderProduct> ();
+    Set<OrderProduct> products = new HashSet<OrderProduct>();
     products.add(p);
     var order = service.submitOrder(client_uuid, store_id, products);
 
@@ -69,4 +69,3 @@ public class OrderServiceTest {
     assertThat(order.getDeliveredTime()).isCloseTo(now(), byLessThan(1, MINUTES));
   }
 }
-

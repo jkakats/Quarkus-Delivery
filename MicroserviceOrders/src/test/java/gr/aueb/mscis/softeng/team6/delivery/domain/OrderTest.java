@@ -42,7 +42,7 @@ class OrderTest {
   @Test
   void testCost() {
     var cost = TEST_PRICE.multiply(new BigDecimal(TEST_QUANTITY));
-    order.addProduct(2,TEST_PRICE, TEST_QUANTITY);
+    order.addProduct(2, TEST_PRICE, TEST_QUANTITY);
     assertThat(order.getCost()).isEqualTo(cost);
   }
 

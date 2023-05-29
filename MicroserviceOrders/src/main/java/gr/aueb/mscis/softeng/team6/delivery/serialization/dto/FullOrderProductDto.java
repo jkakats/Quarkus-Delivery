@@ -12,5 +12,8 @@ import javax.validation.constraints.NotNull;
  * @since 1.0.0
  */
 public record FullOrderProductDto(
-  ProductDto productDto, BigDecimal price, @NotNull @Min(1) Integer quantity, ProductReviewDto review)
+    ProductDto productDto,
+    BigDecimal price,
+    @NotNull @Min(1) Integer quantity,
+    ProductReviewDto review)
     implements Serializable {}

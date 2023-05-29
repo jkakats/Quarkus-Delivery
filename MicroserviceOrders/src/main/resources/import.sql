@@ -84,7 +84,7 @@ VALUES (1, 4, 'Πίτα Γύρο Χοιρινό', 3.50, 'Απ'' όλα'),
 
 --- ORDERS ---
 
-SET @o1 = RANDOM_UUID();
+SET @o1 = '2958b178-f325-4f5f-b8ea-0b4d64cd006d';
 SET @o2 = RANDOM_UUID();
 SET @o3 = RANDOM_UUID();
 SET @o4 = RANDOM_UUID();

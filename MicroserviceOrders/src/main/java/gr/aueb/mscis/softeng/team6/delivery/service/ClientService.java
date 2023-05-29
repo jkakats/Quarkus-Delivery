@@ -25,5 +25,4 @@ public interface ClientService {
   @GET
   @Path("/check/{client_uuid}")
   Boolean getClientCheck(@PathParam("client_uuid") UUID client_uuid);
-
 }

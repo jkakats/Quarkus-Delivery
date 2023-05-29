@@ -29,7 +29,6 @@ class OrderProductTest {
   @Test
   void testToString() {
     orderProduct.setOrder(new Order());
-    assertThat(orderProduct)
-        .hasToString("OrderProduct{order=\"null\", product=\"0\", quantity=1}");
+    assertThat(orderProduct).hasToString("OrderProduct{order=\"null\", product=\"0\", quantity=1}");
   }
 }

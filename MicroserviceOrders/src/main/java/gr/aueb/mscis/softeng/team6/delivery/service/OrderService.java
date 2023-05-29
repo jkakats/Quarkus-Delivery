@@ -53,7 +53,8 @@ public class OrderService {
   @Transactional
   public void confirmOrder(Order order, Long estimatedWait) {
     repository.persistAndFlush(order.setConfirmed(true).setEstimatedWait(estimatedWait));
-    messageProvider.sendMessage(order.getClient_uuid(), order.getUuid(), order.getCost(), estimatedWait);
+    messageProvider.sendMessage(
+        order.getClient_uuid(), order.getUuid(), order.getCost(), estimatedWait);
   }
 
   /**

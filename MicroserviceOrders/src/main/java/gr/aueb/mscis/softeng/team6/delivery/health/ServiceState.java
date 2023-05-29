@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 @Singleton
 public class ServiceState {
 
-  private boolean healthyState=true;
+  private boolean healthyState = true;
 
   public boolean isHealthyState() {
     return healthyState;

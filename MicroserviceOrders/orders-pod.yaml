@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: orders-microservice
+  labels:
+    api: orders
+    app: delivery
+spec:
+  containers:
+    - name: orders-mc
+      image: jkakats/orders-microservice:1.0.1
+      ports:
+        - containerPort: 8585
+          name: http
+          protocol: TCP

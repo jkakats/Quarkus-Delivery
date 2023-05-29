@@ -1,8 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.serialization.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AddressDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AreaDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
@@ -19,7 +16,6 @@ class ClientMapperTest {
   private static final String TEST_EMAIL = "john@doe.com";
   private static final String TEST_PHONE_NUMBER = "6987654321";
 
-
   @Test
   void testDeserialize() {
     var address = new AddressDto("Lefkados", "47A", new AreaDto(11362, "Athina", "Attica"));
@@ -30,5 +26,4 @@ class ClientMapperTest {
     Assertions.assertEquals(dto.email(), TEST_EMAIL);
     Assertions.assertEquals(dto.phoneNumber(), TEST_PHONE_NUMBER);
   }
-
 }

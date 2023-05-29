@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -23,7 +22,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
-import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.metrics.annotation.Counted;
@@ -43,12 +41,9 @@ public class StatisticsResource {
   @Inject protected StatisticsService service;
   @Inject protected JsonWebToken jwt;
 
-  @Inject
-  @RestClient
-  ClientService clientService;
+  @Inject @RestClient ClientService clientService;
 
-  @Inject
-  ServiceState serviceState;
+  @Inject ServiceState serviceState;
 
   /**
    * List the most frequent clients of a store during a certain time period.
@@ -62,16 +57,18 @@ public class StatisticsResource {
   @Transactional
   @Path("/topClientUUIDs")
   @PermitAll
-  @Counted(name="countTopClientUUIDs",description = "Count how many times topClientUUIDs has been invoked")
-  @Timed(name="timeTopClientUUIDs",description = "How long it takes to invoke topClientUUIDs")
+  @Counted(
+      name = "countTopClientUUIDs",
+      description = "Count how many times topClientUUIDs has been invoked")
+  @Timed(name = "timeTopClientUUIDs", description = "How long it takes to invoke topClientUUIDs")
   @Operation(summary = "Frequent clients")
   public Response clients(
       @PathParam("store") Long store_id,
       @QueryParam("start") @NotNull LocalDateTime start,
       @QueryParam("end") @NotNull LocalDateTime end,
       @QueryParam("max") @DefaultValue("10") Integer max) {
-    //JwtUtil.checkManager(jwt, store_id);
-    if(!serviceState.isHealthyState()) {
+    // JwtUtil.checkManager(jwt, store_id);
+    if (!serviceState.isHealthyState()) {
       try {
         TimeUnit.MILLISECONDS.sleep(5000);
       } catch (InterruptedException e) {
@@ -93,17 +90,27 @@ public class StatisticsResource {
   @Transactional
   @Path("delivery")
   @RolesAllowed({"admin", "manager"})
-  @Counted(name="countDelivery",description = "Count how many times avg delivery time service has been invoked")
-  @Timed(name="timeDelivery",description = "How long it takes to invoke avg delivery time service")
-  @Timeout(value = 2000,unit = ChronoUnit.MILLIS)
-  @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.5, delay = 4000, successThreshold = 2)
+  @Counted(
+      name = "countDelivery",
+      description = "Count how many times avg delivery time service has been invoked")
+  @Timed(
+      name = "timeDelivery",
+      description = "How long it takes to invoke avg delivery time service")
+  @Timeout(value = 2000, unit = ChronoUnit.MILLIS)
+  @CircuitBreaker(
+      requestVolumeThreshold = 4,
+      failureRatio = 0.5,
+      delay = 4000,
+      successThreshold = 2)
   @Fallback(fallbackMethod = "fallback")
-  @Operation(summary = "Average delivery time", description = "View the average delivery time of a store for a certain area")
-  public Response delivery( @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
+  @Operation(
+      summary = "Average delivery time",
+      description = "View the average delivery time of a store for a certain area")
+  public Response delivery(
+      @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
     JwtUtil.checkManager(jwt, id);
     List<String> clientIds = clientService.getClientIds(zipCode);
-    var average =
-        service.getAverageDeliveryTime(id, clientIds);
+    var average = service.getAverageDeliveryTime(id, clientIds);
     return Response.ok(new Result<>(average)).build();
   }
 
@@ -118,8 +125,10 @@ public class StatisticsResource {
   @Transactional
   @Path("rush")
   @RolesAllowed({"admin", "manager"})
-  @Counted(name="countRush",description = "Count how many times rush hours service has been invoked")
-  @Timed(name="timeRush",description = "How long it takes to invoke rush hours service")
+  @Counted(
+      name = "countRush",
+      description = "Count how many times rush hours service has been invoked")
+  @Timed(name = "timeRush", description = "How long it takes to invoke rush hours service")
   @Operation(summary = "Rush hours", description = "View the store's rush hours for a given week")
   public Response rush(
       @PathParam("store") Long store_id,
@@ -138,11 +147,17 @@ public class StatisticsResource {
    */
   protected record Result<T>(T result) implements Serializable {}
 
-  @Counted(name="countAvgDeliveryFallback",description = "Count how many times AvgDeliveryFallback service has been invoked")
-  @Timed(name="timeAvgDeliveryFallback",description = "How long it takes to invoke AvgDeliveryFallback service")
-  public Response fallback(@PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode){
+  @Counted(
+      name = "countAvgDeliveryFallback",
+      description = "Count how many times AvgDeliveryFallback service has been invoked")
+  @Timed(
+      name = "timeAvgDeliveryFallback",
+      description = "How long it takes to invoke AvgDeliveryFallback service")
+  public Response fallback(
+      @PathParam("store") Long id, @QueryParam("zip_code") @NotNull Integer zipCode) {
     System.out.println("fallback");
-    return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorMessage("Remote Microservice down")).build();
+    return Response.status(Response.Status.BAD_REQUEST)
+        .entity(new ErrorMessage("Remote Microservice down"))
+        .build();
   }
-
 }

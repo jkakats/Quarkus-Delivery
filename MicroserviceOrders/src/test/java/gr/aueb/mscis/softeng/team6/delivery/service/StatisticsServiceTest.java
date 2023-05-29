@@ -1,6 +1,5 @@
 package gr.aueb.mscis.softeng.team6.delivery.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 /*
 @QuarkusTest
 public class StatisticsServiceTest {

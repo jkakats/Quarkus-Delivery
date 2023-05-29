@@ -5,8 +5,6 @@ import static io.restassured.RestAssured.with;
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AddressDto;
-import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.AreaDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.FullOrderDto;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.OrderDto;
@@ -53,24 +51,28 @@ class OrderResourceTest {
 
   private Long id = 4L;
 
-  @InjectMock
-  @RestClient
-  static ClientService clientService;
+  @InjectMock @RestClient static ClientService clientService;
 
-  @InjectMock
-  @RestClient
-  static ProductService productService;
+  @InjectMock @RestClient static ProductService productService;
 
   @BeforeEach
-  public void setup2(){
-    Mockito.when(clientService.getClient(TEST_CLIENT_UUID)).thenReturn(
-      new ClientDto(
-        TEST_CLIENT_UUID, "jonhndoe2", null, "John Doe", "john@doe.com", "6987654321", null));
+  public void setup2() {
+    Mockito.when(clientService.getClient(TEST_CLIENT_UUID))
+        .thenReturn(
+            new ClientDto(
+                TEST_CLIENT_UUID,
+                "jonhndoe2",
+                null,
+                "John Doe",
+                "john@doe.com",
+                "6987654321",
+                null));
     Boolean correctClient = Boolean.TRUE;
     Boolean correctProducts = Boolean.TRUE;
     Mockito.when(clientService.getClientCheck(TEST_CLIENT_UUID)).thenReturn(correctClient);
     Mockito.when(productService.getProductCheck(List.of(11L))).thenReturn(correctProducts);
-    Mockito.when(productService.getProduct(List.of(1L))).thenReturn(List.of(new ProductDto(1L,"Πίτα Γύρο Χοιρινό",TEST_PRICE,"Απ'' όλα")));
+    Mockito.when(productService.getProduct(List.of(1L)))
+        .thenReturn(List.of(new ProductDto(1L, "Πίτα Γύρο Χοιρινό", TEST_PRICE, "Απ'' όλα")));
   }
 
   @Test
@@ -88,11 +90,12 @@ class OrderResourceTest {
   @TestTransaction
   void testCreate() {
     var client =
-      new ClientDto(
-        TEST_CLIENT_UUID, "jonhndoe2", null, "John Doe", "john@doe.com", "6987654321", null);
+        new ClientDto(
+            TEST_CLIENT_UUID, "jonhndoe2", null, "John Doe", "john@doe.com", "6987654321", null);
     var orderProducts = Set.of(new OrderProductDto(11L, TEST_COST, TEST_QUANTITY, null));
     var body =
-        new OrderDto(null, false, false, null, null, null, null, TEST_CLIENT_UUID, 2L, orderProducts);
+        new OrderDto(
+            null, false, false, null, null, null, null, TEST_CLIENT_UUID, 2L, orderProducts);
     var token = JwtUtil.clientToken(client).token();
     var location =
         with()
@@ -225,8 +228,8 @@ class OrderResourceTest {
   @Test
   @Order(9)
   @TestSecurity(
-    user = "root",
-    roles = {"admin"})
+      user = "root",
+      roles = {"admin"})
   @SuppressWarnings("unchecked")
   void testStoreOrders() {
     var result = when().get("store/{id}", id).then().statusCode(200).extract().as(List.class);

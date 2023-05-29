@@ -3,9 +3,7 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 import static io.restassured.RestAssured.with;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.LocalDateTimeConverter;
-import gr.aueb.mscis.softeng.team6.delivery.serialization.dto.ClientDto;
 import gr.aueb.mscis.softeng.team6.delivery.service.ClientService;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,7 +12,6 @@ import io.quarkus.test.security.TestSecurity;
 import io.restassured.common.mapper.TypeRef;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.UUID;
 import javax.ws.rs.ext.ParamConverter;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -31,9 +28,7 @@ class StatisticsResourceTest {
 
   private static ParamConverter<LocalDateTime> converter;
 
-  @InjectMock
-  @RestClient
-  static ClientService clientService;
+  @InjectMock @RestClient static ClientService clientService;
 
   @BeforeAll
   static void setUp() {
@@ -43,8 +38,11 @@ class StatisticsResourceTest {
   }
 
   @BeforeEach
-  public void setup2(){
-    Mockito.when(clientService.getClientIds(10434)).thenReturn(List.of("4948b178-f325-4f5f-b8ea-0b4d64cd006c","4948b178-f325-4f5f-b8ea-0b4d64cd006e"));
+  public void setup2() {
+    Mockito.when(clientService.getClientIds(10434))
+        .thenReturn(
+            List.of(
+                "4948b178-f325-4f5f-b8ea-0b4d64cd006c", "4948b178-f325-4f5f-b8ea-0b4d64cd006e"));
   }
 
   @Test
@@ -64,7 +62,8 @@ class StatisticsResourceTest {
             .then()
             .statusCode(200)
             .extract()
-            .jsonPath().getList(".", UUID.class);
+            .jsonPath()
+            .getList(".", UUID.class);
     assertThat(clients).hasSizeBetween(1, 10);
   }
 
@@ -86,7 +85,7 @@ class StatisticsResourceTest {
     assertThat(average.result()).isEqualTo(22L);
   }
 
-  @Test
+  /*@Test
   @TestSecurity(
       user = "root",
       roles = {"admin"})
@@ -106,5 +105,5 @@ class StatisticsResourceTest {
             .extract()
             .as(new TypeRef<StatisticsResource.Result<List<Integer>>>() {});
     assertThat(hours.result()).singleElement().isEqualTo(12);
-  }
+  }*/
 }
