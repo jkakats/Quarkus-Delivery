@@ -30,7 +30,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
@@ -54,6 +57,9 @@ public class ClientResource {
   /** Get all the clients. */
   @GET
   @Transactional
+  @Counted(name = "countListClients", description = "Count how many times list has invoked")
+  @Timed(name = "timeListClients", description = "How long it takes to invoke list")
+  @Retry(maxRetries = 2)
   @Operation(summary = "Gets all clients")
   public Response list() {
     var clients = repository.streamAll().map(mapper::serialize).toList();
@@ -69,6 +75,9 @@ public class ClientResource {
   @Transactional
   @Path("{uuid}")
   //@RolesAllowed({"client", "admin", "manager"})
+  @Counted(name = "countSingleClient", description = "Count how many times read has invoked")
+  @Timed(name = "timeSingleClient", description = "How long it takes to invoke read")
+  @Retry(maxRetries = 2)
   @Operation(description = "Given the uuid of a client operation return client.", summary = "Gets a single client")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     //JwtUtil.checkClient(jwt, uuid);
@@ -94,6 +103,9 @@ public class ClientResource {
     @APIResponse(responseCode = "201", description = "Created"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Counted(name = "countCreateClient", description = "Count how many times create has invoked")
+  @Timed(name = "timeCreateClient", description = "How long it takes to invoke create")
+  @Retry(maxRetries = 2)
   @Operation(summary = "Creates a new client")
   public Response create(@Context UriInfo uriInfo, @Valid ClientDto dto)
       throws PersistenceException {
@@ -119,6 +131,9 @@ public class ClientResource {
     @APIResponse(responseCode = "200", description = "Updated"),
     @APIResponse(responseCode = "400", description = "Validation failed")
   })
+  @Counted(name = "countUpdateClient", description = "Count how many times update has invoked")
+  @Timed(name = "timeUpdateClient", description = "How long it takes to invoke update")
+  @Retry(maxRetries = 2)
   @Operation(summary = "Updates a client", description = "User gives client's uuid and information of client which desires" +
     "to be changed and operation updates client.")
   public Response update(@PathParam("uuid") UUID uuid, @Valid ClientDto dto)
@@ -140,6 +155,9 @@ public class ClientResource {
   @Path("{uuid}")
   @RolesAllowed({"client", "admin"})
   @APIResponse(responseCode = "204", description = "Deleted")
+  @Counted(name = "countDeleteClient", description = "Count how many times delete has invoked")
+  @Timed(name = "timeDeleteClient", description = "How long it takes to invoke delete")
+  @Retry(maxRetries = 2)
   @Operation(summary = "Deletes a client", description = "User provides the uuid of a client and operation deletes him.")
   public Response delete(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     JwtUtil.checkClient(jwt, uuid);
@@ -162,6 +180,9 @@ public class ClientResource {
     @APIResponse(responseCode = "200", description = "OK"),
     @APIResponse(responseCode = "401", description = "Login failed")
   })
+  @Counted(name = "countLoginClient", description = "Count how many times login has invoked")
+  @Timed(name = "timeLoginClient", description = "How long it takes to invoke login")
+  @Retry(maxRetries = 2)
   @Operation(summary = "Authenticate a client", description = "User provides the username and the password of a client and" +
     "operation authenticates him if username and password are correct.")
   public Response login(
@@ -175,9 +196,17 @@ public class ClientResource {
     }
   }
 
+  /**
+   * Checks if a client exists.
+   *
+   * @param client_uuid the client's uuid
+   */
   @GET
   @Transactional
   @Path("check/{client_uuid}")
+  @Counted(name = "countCheckIfClientExist", description = "Count how many times check has invoked")
+  @Timed(name = "timeCheckIfClientExist", description = "How long it takes to invoke check")
+  @Retry(maxRetries = 2)
   public Response check(@PathParam("client_uuid") UUID client_uuid) throws NoSuchElementException{
     if(!serviceState.isHealthyState()) {
       return Response.serverError().build();
@@ -189,10 +218,16 @@ public class ClientResource {
     return Response.ok(true).build();
   }
 
-
+  /**
+   * Finds the clients with a provided zipcode
+   * @param zipcode a zipcode
+   */
   @GET
   @Transactional
   @Path("zipcode/{zipcode}")
+  @Counted(name = "countFindClientsWithZipcode", description = "Count how many times clientsFromZipcode has invoked")
+  @Timed(name = "timeFindClientsWithZipcode", description = "How long it takes to invoke clientsFromZipcode")
+  @Retry(maxRetries = 2)
   public Response clientsFromZipcode(@PathParam("zipcode") int zipcode) {
     System.out.println("called");
     if(!serviceState.isHealthyState()) {
