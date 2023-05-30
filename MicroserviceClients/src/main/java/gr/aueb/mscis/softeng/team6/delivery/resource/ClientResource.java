@@ -80,7 +80,6 @@ public class ClientResource {
   @Retry(maxRetries = 2)
   @Operation(description = "Given the uuid of a client operation return client.", summary = "Gets a single client")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
-    //JwtUtil.checkClient(jwt, uuid);
     if(!serviceState.isHealthyState()) {
       try {
         TimeUnit.MILLISECONDS.sleep(1000);

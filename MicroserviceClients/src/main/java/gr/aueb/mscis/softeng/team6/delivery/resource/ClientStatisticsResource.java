@@ -4,6 +4,7 @@ package gr.aueb.mscis.softeng.team6.delivery.resource;
 import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
 
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
+import gr.aueb.mscis.softeng.team6.delivery.health.ServiceState;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
 import gr.aueb.mscis.softeng.team6.delivery.service.OrderService;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -39,6 +41,9 @@ public class ClientStatisticsResource {
   @Inject
   @RestClient
   OrderService orderResource;
+
+  @Inject
+  ServiceState serviceState;
 
   /**
    * List the most frequent clients of a store during a certain time period.
@@ -69,6 +74,13 @@ public class ClientStatisticsResource {
     @QueryParam("start") @NotNull LocalDateTime start,
     @QueryParam("end") @NotNull LocalDateTime end,
     @QueryParam("max") @DefaultValue("10") Integer max) {
+    if(!serviceState.isHealthyState()) {
+      try {
+        TimeUnit.MILLISECONDS.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
     List<UUID> clientUUIDs = orderResource.getTopClientsOfAStoreForAPeriod(id, start, end, max);
     List<Client> clients = new ArrayList<>();
     for (UUID uuid : clientUUIDs) {
