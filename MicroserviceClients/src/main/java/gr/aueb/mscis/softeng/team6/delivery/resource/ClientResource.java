@@ -62,6 +62,13 @@ public class ClientResource {
   @Retry(maxRetries = 2)
   @Operation(summary = "Gets all clients")
   public Response list() {
+    if(!serviceState.isHealthyState()) {
+      try {
+        TimeUnit.MILLISECONDS.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
     var clients = repository.streamAll().map(mapper::serialize).toList();
     return Response.ok(clients).build();
   }
@@ -80,13 +87,6 @@ public class ClientResource {
   @Retry(maxRetries = 2)
   @Operation(description = "Given the uuid of a client operation return client.", summary = "Gets a single client")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
-    if(!serviceState.isHealthyState()) {
-      try {
-        TimeUnit.MILLISECONDS.sleep(1000);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
     var client = repository.findByIdOptional(uuid).orElseThrow();
     return Response.ok(mapper.serialize(client)).build();
   }
