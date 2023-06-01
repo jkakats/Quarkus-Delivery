@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stores-microservice
+  labels:
+    api: store
+    app: delivery
+spec:
+  containers:
+    - name: stores-mc
+      image: jkakats/stores-microservice:1.0.1
+      ports:
+        - containerPort: 9090
+          name: http
+          protocol: TCP

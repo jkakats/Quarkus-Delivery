@@ -10,12 +10,12 @@ import org.eclipse.microprofile.health.Liveness;
 @ApplicationScoped
 public class ServiceHealth implements HealthCheck {
 
-  @Inject
-  protected ServiceState serviceState;
+  @Inject protected ServiceState serviceState;
 
   @Override
-  public HealthCheckResponse call () {
-    if (serviceState.isHealthyState()) return HealthCheckResponse.up("Client microservice is healthy");
+  public HealthCheckResponse call() {
+    if (serviceState.isHealthyState())
+      return HealthCheckResponse.up("Client microservice is healthy");
     else return HealthCheckResponse.down("Client microservice is healthy");
   }
 }

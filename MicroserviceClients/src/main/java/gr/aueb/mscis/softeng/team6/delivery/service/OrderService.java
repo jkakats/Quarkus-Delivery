@@ -14,16 +14,15 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @ApplicationScoped
 @Path("/stats")
-@RegisterRestClient(configKey = "order-api")
+@RegisterRestClient(configKey = "orders-api")
 public interface OrderService {
 
-  //Get the clients of a store who made most orders between start (time) and end (time)
+  // Get the clients of a store who made most orders between start (time) and end (time)
   @GET
   @Path("/{store}/topClientUUIDs")
-  List<UUID> getTopClientsOfAStoreForAPeriod (@PathParam("store") Long storeID,
-                                              @QueryParam("start") @NotNull LocalDateTime start,
-                                              @QueryParam("end") @NotNull LocalDateTime end,
-                                              @QueryParam("max") @DefaultValue("10") Integer max);
-
-
+  List<UUID> getTopClientsOfAStoreForAPeriod(
+      @PathParam("store") Long storeID,
+      @QueryParam("start") @NotNull LocalDateTime start,
+      @QueryParam("end") @NotNull LocalDateTime end,
+      @QueryParam("max") @DefaultValue("10") Integer max);
 }

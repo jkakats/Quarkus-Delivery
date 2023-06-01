@@ -27,14 +27,15 @@ public class ClientRepository implements PanacheRepositoryBase<Client, UUID> {
   }
 
   public List<String> findByZipcode(int zipcode) {
-     List<Client> clients= find("select c from Client c where address_zip_code like :zipcode",
-    Parameters.with("zipcode", zipcode).map()).list();
-     List<String>clients_uuids= new ArrayList<>();
+    List<Client> clients =
+        find(
+                "select c from Client c where address_zip_code like :zipcode",
+                Parameters.with("zipcode", zipcode).map())
+            .list();
+    List<String> clients_uuids = new ArrayList<>();
     for (Client client : clients) {
       clients_uuids.add(client.getUuid().toString());
     }
-  return clients_uuids;
+    return clients_uuids;
   }
-
-
 }

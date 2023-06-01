@@ -23,13 +23,13 @@ public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceEx
     var cause = exception.getCause();
     if (cause.getCause() instanceof SQLIntegrityConstraintViolationException) {
       return Response.status(Response.Status.CONFLICT)
-        .entity(new ErrorMessage("Unique or foreign key constraint violation"))
-        .build();
+          .entity(new ErrorMessage("Unique or foreign key constraint violation"))
+          .build();
     } else {
       getLogger("delivery").error(cause.getMessage(), exception);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-        .entity(new ErrorMessage(cause))
-        .build();
+          .entity(new ErrorMessage(cause))
+          .build();
     }
   }
 }

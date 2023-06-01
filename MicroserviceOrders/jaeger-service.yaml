@@ -1,17 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: orders-api
+  name: jaeger
   labels:
-    tier: backend
     app: delivery
 spec:
   type: NodePort
   ports:
     - protocol: TCP
-      port: 8585
-      targetPort: 8585
+      port: 4317
+      targetPort: 4317
+    - protocol: TCP
+      port: 16686
+      targetPort: 16686
       # Optional field,
-      nodePort: 30080
+      nodePort: 30083
   selector:
-    api: orders
+    api: jaeger

@@ -47,15 +47,14 @@ public class ProductResource {
   @Inject protected ProductMapper mapper;
   @Inject protected JsonWebToken jwt;
 
-  @Inject
-  ServiceState serviceState;
+  @Inject ServiceState serviceState;
 
   /** Get all the products or products with specific id. */
   @GET
   @Transactional
   @Counted(
-    name = "countAllProducts",
-    description = "Count how many times Products has been invoked")
+      name = "countAllProducts",
+      description = "Count how many times Products has been invoked")
   @Timed(name = "timeAllProducts", description = "How long it takes to invoke AllProducts")
   @Operation(summary = "Gets products", description = "Gets all products or products by id")
   public Response list(@QueryParam("product_id") List<Long> productIds) {
@@ -96,9 +95,11 @@ public class ProductResource {
   @Transactional
   @Path("{id}")
   @Counted(
-    name = "countSingleProduct",
-    description = "Count how many times SingleOrder service has been invoked")
-  @Timed(name = "timeSingleProduct", description = "How long it takes to invoke SingleProduct service")
+      name = "countSingleProduct",
+      description = "Count how many times SingleOrder service has been invoked")
+  @Timed(
+      name = "timeSingleProduct",
+      description = "How long it takes to invoke SingleProduct service")
   @Operation(summary = "Gets a product", description = "Returns a single product by ID")
   public Response read(@PathParam("id") Long id) throws NoSuchElementException {
     var product = repository.findByIdOptional(id).orElseThrow();
@@ -114,8 +115,8 @@ public class ProductResource {
   @Transactional
   @RolesAllowed({"admin", "manager"})
   @Counted(
-    name = "countAddProduct",
-    description = "Count how many times AddProduct service has been invoked")
+      name = "countAddProduct",
+      description = "Count how many times AddProduct service has been invoked")
   @Timed(name = "timeAddProduct", description = "How long it takes to invoke AddProduct service")
   @APIResponses({
     @APIResponse(responseCode = "201", description = "Created"),
@@ -144,9 +145,11 @@ public class ProductResource {
   @Path("{id}")
   @RolesAllowed({"admin", "manager"})
   @Counted(
-    name = "countUpdateProduct",
-    description = "Count how many times UpdateProduct service has been invoked")
-  @Timed(name = "timeUpdateProduct", description = "How long it takes to invoke UpdateProduct service")
+      name = "countUpdateProduct",
+      description = "Count how many times UpdateProduct service has been invoked")
+  @Timed(
+      name = "timeUpdateProduct",
+      description = "How long it takes to invoke UpdateProduct service")
   @APIResponses({
     @APIResponse(responseCode = "200", description = "Updated"),
     @APIResponse(responseCode = "400", description = "Validation failed")
@@ -172,9 +175,11 @@ public class ProductResource {
   @RolesAllowed({"admin", "manager"})
   @APIResponse(responseCode = "204", description = "Deleted")
   @Counted(
-    name = "countDeleteProduct",
-    description = "Count how many times DeleteProduct service has been invoked")
-  @Timed(name = "timeDeleteProduct", description = "How long it takes to invoke DeleteProduct service")
+      name = "countDeleteProduct",
+      description = "Count how many times DeleteProduct service has been invoked")
+  @Timed(
+      name = "timeDeleteProduct",
+      description = "How long it takes to invoke DeleteProduct service")
   @Operation(
       summary = "Delete a product",
       description = "Deletes an existing product from the store")
@@ -190,8 +195,8 @@ public class ProductResource {
   @Transactional
   @Path("catalogue")
   @Counted(
-    name = "countCatalogue",
-    description = "Count how many times Catalogue service has been invoked")
+      name = "countCatalogue",
+      description = "Count how many times Catalogue service has been invoked")
   @Timed(name = "timeCatalogue", description = "How long it takes to invoke Catalogue service")
   @Operation(
       summary = "Get all product names",
@@ -209,8 +214,8 @@ public class ProductResource {
   @Transactional
   @Path("search")
   @Counted(
-    name = "countSearch",
-    description = "Count how many times Search service has been invoked")
+      name = "countSearch",
+      description = "Count how many times Search service has been invoked")
   @Timed(name = "timeSearch", description = "How long it takes to invoke Search service")
   @Operation(
       summary = "Search products by name",
@@ -229,9 +234,7 @@ public class ProductResource {
   @GET
   @Transactional
   @Path("check")
-  @Counted(
-    name = "countCheck",
-    description = "Count how many times Check service has been invoked")
+  @Counted(name = "countCheck", description = "Count how many times Check service has been invoked")
   @Timed(name = "timeCheck", description = "How long it takes to invoke Check service")
   @Operation(
       summary = "Check if all products exist",

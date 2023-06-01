@@ -13,14 +13,13 @@ import javax.ws.rs.core.Response;
 @Path("/ClientService")
 public class AppFailingAPI {
 
-  @Inject
-  ServiceState serviceState;
+  @Inject ServiceState serviceState;
 
   @POST
   @Transactional
   @RolesAllowed({"admin"})
   @Path("/failing")
-  public Response fail () {
+  public Response fail() {
     serviceState.setHealthyState(false);
     return Response.ok().build();
   }
@@ -29,9 +28,8 @@ public class AppFailingAPI {
   @Transactional
   @RolesAllowed({"admin"})
   @Path("/isOK")
-  public Response healthy () {
+  public Response healthy() {
     serviceState.setHealthyState(true);
     return Response.ok().build();
   }
-
 }

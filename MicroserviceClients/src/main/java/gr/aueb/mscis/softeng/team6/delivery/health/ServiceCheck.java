@@ -11,19 +11,17 @@ import org.eclipse.microprofile.health.Readiness;
 @ApplicationScoped
 public class ServiceCheck implements HealthCheck {
 
-  @Inject
-  protected ClientRepository repository;
+  @Inject protected ClientRepository repository;
 
   @Override
-  public HealthCheckResponse call () {
+  public HealthCheckResponse call() {
     if (isOK()) return HealthCheckResponse.up("Client microservice is ready to answer requests");
     else return HealthCheckResponse.down("Client microservice is not ready to answer requests");
   }
 
-  private boolean isOK () {
+  private boolean isOK() {
     var allClients = repository.findAll();
     if (allClients.list().size() > 0) return true;
     else return false;
   }
-
 }

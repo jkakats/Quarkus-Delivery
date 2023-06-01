@@ -1,17 +1,14 @@
 package gr.aueb.mscis.softeng.team6.delivery.resource;
 
-
-import static javax.persistence.LockModeType.PESSIMISTIC_WRITE;
-
 import gr.aueb.mscis.softeng.team6.delivery.domain.Client;
 import gr.aueb.mscis.softeng.team6.delivery.health.ServiceState;
 import gr.aueb.mscis.softeng.team6.delivery.persistence.ClientRepository;
 import gr.aueb.mscis.softeng.team6.delivery.serialization.mapper.ClientMapper;
 import gr.aueb.mscis.softeng.team6.delivery.service.OrderService;
-import java.util.ArrayList;
-import java.util.List;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.RequestScoped;
@@ -38,12 +35,9 @@ public class ClientStatisticsResource {
 
   @Inject protected ClientMapper clientMapper;
   @Inject protected ClientRepository clientRepository;
-  @Inject
-  @RestClient
-  OrderService orderResource;
+  @Inject @RestClient OrderService orderResource;
 
-  @Inject
-  ServiceState serviceState;
+  @Inject ServiceState serviceState;
 
   /**
    * List the most frequent clients of a store during a certain time period.
@@ -55,26 +49,28 @@ public class ClientStatisticsResource {
    */
   @GET
   @Transactional
-  @Path ("/clients")
+  @Path("/clients")
   @Counted(name = "countFrequentClients", description = "Count how many times clients has invoked")
   @Timed(name = "timeFrequentClients", description = "How long it takes to invoke clients")
   @CircuitBreaker(
-    requestVolumeThreshold = 4,
-    failureRatio = 0.5,
-    delay = 4000,
-    successThreshold = 2)
+      requestVolumeThreshold = 4,
+      failureRatio = 0.5,
+      delay = 4000,
+      successThreshold = 2)
   @Fallback()
   @Retry(maxRetries = 2)
-  @Operation(description = "The manager of a store provides the store's id, a number of clients who wish to be found, " +
-    "the start date and the end date of a period. With these parameters operation return above specified number of customers" +
-    "who ordered most times from this store in above defined period.", summary = "Frequent clients of a store for a certain" +
-    "period")
-  public Response clients (
-    @PathParam("store") Long id,
-    @QueryParam("start") @NotNull LocalDateTime start,
-    @QueryParam("end") @NotNull LocalDateTime end,
-    @QueryParam("max") @DefaultValue("10") Integer max) {
-    if(!serviceState.isHealthyState()) {
+  @Operation(
+      description =
+          "The manager of a store provides the store's id, a number of clients who wish to be found, "
+              + "the start date and the end date of a period. With these parameters operation return above specified number of customers"
+              + "who ordered most times from this store in above defined period.",
+      summary = "Frequent clients of a store for a certain" + "period")
+  public Response clients(
+      @PathParam("store") Long id,
+      @QueryParam("start") @NotNull LocalDateTime start,
+      @QueryParam("end") @NotNull LocalDateTime end,
+      @QueryParam("max") @DefaultValue("10") Integer max) {
+    if (!serviceState.isHealthyState()) {
       try {
         TimeUnit.MILLISECONDS.sleep(1000);
       } catch (InterruptedException e) {
@@ -85,12 +81,11 @@ public class ClientStatisticsResource {
     List<Client> clients = new ArrayList<>();
     for (UUID uuid : clientUUIDs) {
       var c = clientRepository.findByIdOptional(uuid).orElseThrow();
-      clients.add (c);
+      clients.add(c);
     }
     var result = clients.stream().map(clientMapper::serialize).toList();
     return Response.ok(new Result<>(result)).build();
   }
-
 
   /**
    * Generic result wrapper.
@@ -98,5 +93,4 @@ public class ClientStatisticsResource {
    * @since 1.0.0
    */
   protected record Result<T>(T result) implements Serializable {}
-
 }

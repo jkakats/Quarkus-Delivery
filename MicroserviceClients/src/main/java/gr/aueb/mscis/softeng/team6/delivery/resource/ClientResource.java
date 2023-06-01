@@ -51,8 +51,7 @@ public class ClientResource {
   @Inject protected ClientMapper mapper;
   @Inject protected JsonWebToken jwt;
 
-  @Inject
-  ServiceState serviceState;
+  @Inject ServiceState serviceState;
 
   /** Get all the clients. */
   @GET
@@ -62,7 +61,7 @@ public class ClientResource {
   @Retry(maxRetries = 2)
   @Operation(summary = "Gets all clients")
   public Response list() {
-    if(!serviceState.isHealthyState()) {
+    if (!serviceState.isHealthyState()) {
       try {
         TimeUnit.MILLISECONDS.sleep(1000);
       } catch (InterruptedException e) {
@@ -81,11 +80,13 @@ public class ClientResource {
   @GET
   @Transactional
   @Path("{uuid}")
-  //@RolesAllowed({"client", "admin", "manager"})
+  // @RolesAllowed({"client", "admin", "manager"})
   @Counted(name = "countSingleClient", description = "Count how many times read has invoked")
   @Timed(name = "timeSingleClient", description = "How long it takes to invoke read")
   @Retry(maxRetries = 2)
-  @Operation(description = "Given the uuid of a client operation return client.", summary = "Gets a single client")
+  @Operation(
+      description = "Given the uuid of a client operation return client.",
+      summary = "Gets a single client")
   public Response read(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     var client = repository.findByIdOptional(uuid).orElseThrow();
     return Response.ok(mapper.serialize(client)).build();
@@ -133,8 +134,11 @@ public class ClientResource {
   @Counted(name = "countUpdateClient", description = "Count how many times update has invoked")
   @Timed(name = "timeUpdateClient", description = "How long it takes to invoke update")
   @Retry(maxRetries = 2)
-  @Operation(summary = "Updates a client", description = "User gives client's uuid and information of client which desires" +
-    "to be changed and operation updates client.")
+  @Operation(
+      summary = "Updates a client",
+      description =
+          "User gives client's uuid and information of client which desires"
+              + "to be changed and operation updates client.")
   public Response update(@PathParam("uuid") UUID uuid, @Valid ClientDto dto)
       throws NoSuchElementException, PersistenceException {
     JwtUtil.checkClient(jwt, uuid);
@@ -157,7 +161,9 @@ public class ClientResource {
   @Counted(name = "countDeleteClient", description = "Count how many times delete has invoked")
   @Timed(name = "timeDeleteClient", description = "How long it takes to invoke delete")
   @Retry(maxRetries = 2)
-  @Operation(summary = "Deletes a client", description = "User provides the uuid of a client and operation deletes him.")
+  @Operation(
+      summary = "Deletes a client",
+      description = "User provides the uuid of a client and operation deletes him.")
   public Response delete(@PathParam("uuid") UUID uuid) throws NoSuchElementException {
     JwtUtil.checkClient(jwt, uuid);
     if (!repository.deleteById(uuid)) {
@@ -182,8 +188,11 @@ public class ClientResource {
   @Counted(name = "countLoginClient", description = "Count how many times login has invoked")
   @Timed(name = "timeLoginClient", description = "How long it takes to invoke login")
   @Retry(maxRetries = 2)
-  @Operation(summary = "Authenticate a client", description = "User provides the username and the password of a client and" +
-    "operation authenticates him if username and password are correct.")
+  @Operation(
+      summary = "Authenticate a client",
+      description =
+          "User provides the username and the password of a client and"
+              + "operation authenticates him if username and password are correct.")
   public Response login(
       @FormParam("username") @NotNull String username,
       @FormParam("password") @NotNull String password) {
@@ -206,8 +215,8 @@ public class ClientResource {
   @Counted(name = "countCheckIfClientExist", description = "Count how many times check has invoked")
   @Timed(name = "timeCheckIfClientExist", description = "How long it takes to invoke check")
   @Retry(maxRetries = 2)
-  public Response check(@PathParam("client_uuid") UUID client_uuid) throws NoSuchElementException{
-    if(!serviceState.isHealthyState()) {
+  public Response check(@PathParam("client_uuid") UUID client_uuid) throws NoSuchElementException {
+    if (!serviceState.isHealthyState()) {
       return Response.serverError().build();
     }
     Client client = repository.findById(client_uuid);
@@ -219,17 +228,22 @@ public class ClientResource {
 
   /**
    * Finds the clients with a provided zipcode
+   *
    * @param zipcode a zipcode
    */
   @GET
   @Transactional
   @Path("zipcode/{zipcode}")
-  @Counted(name = "countFindClientsWithZipcode", description = "Count how many times clientsFromZipcode has invoked")
-  @Timed(name = "timeFindClientsWithZipcode", description = "How long it takes to invoke clientsFromZipcode")
+  @Counted(
+      name = "countFindClientsWithZipcode",
+      description = "Count how many times clientsFromZipcode has invoked")
+  @Timed(
+      name = "timeFindClientsWithZipcode",
+      description = "How long it takes to invoke clientsFromZipcode")
   @Retry(maxRetries = 2)
   public Response clientsFromZipcode(@PathParam("zipcode") int zipcode) {
     System.out.println("called");
-    if(!serviceState.isHealthyState()) {
+    if (!serviceState.isHealthyState()) {
       try {
         TimeUnit.MILLISECONDS.sleep(5000);
       } catch (InterruptedException e) {
@@ -238,11 +252,8 @@ public class ClientResource {
     }
     List<String> clientList;
     clientList = repository.findByZipcode(zipcode);
-        if (clientList.isEmpty()) {
-          return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        else
-          return Response.ok(clientList).build();
-    }
-
+    if (clientList.isEmpty()) {
+      return Response.status(Response.Status.NOT_FOUND).build();
+    } else return Response.ok(clientList).build();
+  }
 }

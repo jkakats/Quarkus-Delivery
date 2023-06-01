@@ -23,7 +23,6 @@ import org.hibernate.validator.constraints.Length;
  * @since 0.1.0
  * @version 1.0.0
  */
-
 @Entity
 @Table(
     name = "client",
